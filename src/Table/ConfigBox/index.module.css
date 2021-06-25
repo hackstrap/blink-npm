@@ -1,0 +1,30 @@
+.configBox {
+    position: relative;
+}
+
+.add {
+    height: 1rem;
+    width: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.options {
+    position: absolute;
+    z-index: 2;
+    background-color: white;
+    color: black;
+    padding: 0.5rem 1rem;
+    border: 1px solid #4b74ff;
+    font-size: 0.9rem;
+    border-radius: 0.3rem;
+    white-space: nowrap;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+}
+

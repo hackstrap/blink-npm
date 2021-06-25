@@ -1,10 +1,12 @@
 import React from 'react'
 
-import { ExampleComponent } from 'blink-npm'
+import { BlinkApp } from 'blink-npm'
 import 'blink-npm/dist/index.css'
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
+  return (
+    <BlinkApp screen={'startupScreen'} view={'homeView'} page={'metrics'} />
+  )
 }
 
 export default App

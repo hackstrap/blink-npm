@@ -1,0 +1,19 @@
+label{
+    display: flex;
+    align-items: center;
+}
+
+.checkBox{
+    display: inline-block;
+    height: 0.9rem;
+    width: 0.9rem;
+    background-color: #DADADA;
+    padding: 2px;
+    margin: 0 0.5rem;
+    border-radius: 2px;
+    border: 1.8px solid rgb(173, 173, 173);
+}
+
+label input:checked + .checkBox{
+    background-color: #0A6FCC;
+}

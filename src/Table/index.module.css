@@ -1,0 +1,118 @@
+.tableContainer {
+  max-width: 100%;
+}
+
+.table {
+  /* width: fit-content; */
+  /* max-width: 40%; */
+  /* overflow-x: scroll; */
+  margin: 0 auto;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px;
+  border: 1px solid #c2c9d1;
+}
+
+.table::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.table {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tableDataBlock {
+  display: flex;
+  width: fit-content;
+  position: relative;
+}
+
+.noresult {
+  color: #10389b;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+}
+
+.tableDroppable {
+  display: flex;
+}
+
+.loader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metadataBlock {
+  width: 100%;
+}
+
+.scrollDot,
+.scrollDotActive {
+  background-color: #979797;
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 50%;
+  margin: 0 0.2rem;
+}
+
+.scrollDotActive {
+  background-color: #10389b;
+}
+
+.scrollBtn {
+  background: transparent;
+  border: none;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.tableHeadWrapper {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.scrollBtnContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scrollBtnContainer div {
+  display: flex;
+  flex-direction: row;
+}
+
+.scrollTable {
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  /* max-width: 60%; */
+}
+
+.scrollTable::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollTable::-webkit-scrollbar-thumb {
+  background: #212121;
+}
+
+@media only screen and (max-width: 720px) {
+  .scrollTable {
+    min-width: 320px;
+  }
+}

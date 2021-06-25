@@ -1,0 +1,28 @@
+.edit {
+    cursor: pointer;
+}
+
+.boxContainer {
+    position: relative;
+}
+
+.box {
+    background-color: white;
+    padding: 0.5rem 0.8rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.16);
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    border-radius: 0.3rem;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.label {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}

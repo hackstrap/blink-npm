@@ -1,0 +1,33 @@
+.head,
+.cell {
+  height: 3rem;
+  /* padding: 0.5rem; */
+  display: flex;
+  align-items: center;
+  border: 1px solid #c6cbd4;
+  /* background-color: #fbfbfb; */
+  /* text-align: center; */
+  /* justify-content: center; */
+  /* white-space: nowrap; */
+  /* overflow: auto; */
+  padding: 0.3rem;
+}
+
+.head {
+  font-size: 0.9rem;
+  /* color: #10389b; */
+  background-color: white;
+  font-weight: 600;
+}
+
+.head:hover {
+  color: #10389b;
+  transition: color 200ms ease-out;
+}
+
+.cell {
+  font-size: 0.8rem;
+}
+.cell > div {
+  width: 100%;
+}
