@@ -78,6 +78,11 @@ const InvestorScreen = () => {
     }
   };
 
+  React.useEffect(() => {
+    appContext?.setCurrentView("dashboard");
+    appContext?.setCurrentPage("metrics");
+  }, []);
+
   return (
     <Container maxWidth="lg" className={classes.screen}>
       <div className={classes.navigationBtnContainer}>

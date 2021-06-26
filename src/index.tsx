@@ -1,9 +1,7 @@
 import * as React from 'react'
 // import styles from './styles.module.css'
 import App from './App'
-
 import AppContext from './AppContext'
-
 import { CssBaseline, ThemeProvider } from '@material-ui/core'
 import { defaultTheme as theme } from './theme'
 

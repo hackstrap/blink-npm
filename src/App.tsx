@@ -41,7 +41,6 @@ import PieChartIcon from '@material-ui/icons/PieChart'
 import StartupScreen from './Components/StartupScreen/StartupScreen'
 import InvestorScreen from './Components/InvestorScreen/InvestorScreen'
 import { Button, Container, Hidden } from '@material-ui/core'
-// import "suneditor/dist/css/suneditor.min.css"; // Import Sun Editor's CSS File
 
 const drawerWidth = 240
 

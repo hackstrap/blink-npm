@@ -71,6 +71,11 @@ const StartupScreen = () => {
     }
   };
 
+  React.useEffect(() => {
+    appContext?.setCurrentView("home");
+    appContext?.setCurrentPage("metrics");
+  }, []);
+
   return (
     <Container maxWidth="lg" className={classes.screen}>
       <div className={classes.navigationBtnContainer}>

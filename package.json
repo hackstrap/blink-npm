@@ -1,6 +1,6 @@
 {
-  "name": "blink-npm",
-  "version": "1.0.0",
+  "name": "@hackstrap/blink-npm",
+  "version": "1.0.5",
   "description": "This repo contains the code for blink npm pakage",
   "author": "AbhijeetNandvikar",
   "license": "MIT",
@@ -24,7 +24,8 @@
     "deploy": "gh-pages -d example/build"
   },
   "peerDependencies": {
-    "react": "^16.0.0",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2"
   },
@@ -56,8 +57,8 @@
     "microbundle-crl": "^0.13.10",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0",
     "react-scripts": "^3.4.1",
     "typescript": "^3.7.5"
   },
@@ -65,13 +66,13 @@
     "dist"
   ],
   "dependencies": {
+    "@uiw/react-md-editor": "^3.4.2",
     "axios": "^0.21.1",
     "chart.js": "^3.3.2",
     "date-fns": "^2.22.1",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.6.2",
-    "react-date-range": "^1.3.0",
-    "suneditor": "^2.41.0",
-    "suneditor-react": "^3.1.2"
+    "markdown-it": "^12.0.6",
+    "react-date-range": "^1.3.0"
   }
 }
