@@ -1,8 +1,10 @@
 import axios from 'axios'
 
-const mainRoute = process.env.REACT_APP_BLINK_ENDPOINT
-  ? process.env.REACT_APP_BLINK_ENDPOINT
-  : 'https://blink.hackstrap.com/'
+// const mainRoute = process.env.REACT_APP_BLINK_ENDPOINT
+//   ? process.env.REACT_APP_BLINK_ENDPOINT
+//   : 'https://blink.hackstrap.com/'
+
+const mainRoute = 'https://blink.hackstrap.com/'
 const token = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3N1ZXIiOiJoYWNrc3RyYXAiLCJhdWRpZW5jZSI6Imh0dHBzOi8vaGFja3N0cmFwLmNvbSIsImFsZ29yaXRobXMiOlsiSFMyNTYiXSwiY2xhaW1zIjp7Im9yZyI6ImhhY2tzdHJhcCJ9LCJpYXQiOjE2MjQ3ODkwNTd9.Dmo2eZKUtAOD7o7UPopoKRgma2jbESyYos8HKdU_tXk`
 
 const startupId = 'startup-1slug'
