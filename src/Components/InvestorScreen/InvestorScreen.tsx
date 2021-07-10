@@ -6,6 +6,7 @@ import {
   Typography,
   Button,
   ButtonGroup,
+  Select,
 } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
@@ -16,6 +17,8 @@ import Portfolio from "./Portfolio/Portfolio";
 import Dashboard from "./Dashboard/Dashboard";
 import AppsIcon from "@material-ui/icons/Apps";
 import AppContext, { globalContext } from "../../AppContext";
+import { OptionInterface } from "../interfaces";
+import { fetchCollection, fetchInvestorInfo } from "../fetch";
 
 const useStyles = makeStyles({
   screen: {
@@ -59,30 +62,87 @@ const useStyles = makeStyles({
     paddingRight: "1.5rem",
     fontSize: "1.2rem",
   },
+  navContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
 });
+
+export const extractStartupsInvested = (data: any[]) => {
+  let idArray: string[] = [];
+  data.forEach((item) => {
+    if (!idArray.includes(item?.startup_id)) idArray.push(item.startup_id);
+  });
+  return idArray.map((item) => {
+    return {
+      Header: item,
+      accessor: item,
+    };
+  });
+};
 
 const InvestorScreen = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
   // const [currentView, setCurrentView] = useState("portfolio");
+  const [investorInfo, setInvestorInfo] =
+    React.useState<null | OptionInterface>(null);
+
   const appContext = useContext(globalContext);
+
+  const [startupOptions, setStartupOptions] = React.useState<OptionInterface[]>(
+    [
+      {
+        Header: "Startup 1",
+        accessor: "startup-1slug",
+      },
+      {
+        Header: "Startup 2",
+        accessor: "startup-2slug",
+      },
+    ]
+  );
 
   const renderCurrentView = (view: string | undefined) => {
     switch (view) {
       case "settings":
-        return <SettingsView />;
+        return (
+          <SettingsView
+            investorInfo={{ Header: "investor 1", accessor: "investor-1slug" }}
+          />
+        );
       // case "portfolio":
       //   return <Portfolio />;
       default:
-        return <Dashboard />;
+        return (
+          <Dashboard
+            startupOptions={startupOptions}
+            setStartupOptions={(value: OptionInterface[]) =>
+              setStartupOptions(value)
+            }
+          />
+        );
     }
   };
 
   React.useEffect(() => {
     appContext?.setCurrentView("dashboard");
     appContext?.setCurrentPage("metrics");
+    fetchInvestorInfo("investment", "", "investor-1slug").then((res) => {
+      let options = extractStartupsInvested(res.data);
+      setStartupOptions(options);
+    });
   }, []);
 
+  // const startupOptions = [
+
+  // ];
+
+  const renderOptions = (options: OptionInterface[]) => {
+    return options.map((item) => {
+      return <option value={item.accessor}>{item.Header}</option>;
+    });
+  };
   return (
     <Container maxWidth="lg" className={classes.screen}>
       <div className={classes.navigationBtnContainer}>
@@ -106,6 +166,7 @@ const InvestorScreen = () => {
           <SettingsOutlinedIcon />
         </Button>
       </div>
+
       <div className={classes.introductionContainer}>
         <Typography variant="h2">
           Welcome to Your Analytics Dashboard

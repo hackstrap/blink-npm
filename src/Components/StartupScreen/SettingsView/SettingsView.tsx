@@ -75,7 +75,11 @@ const SettingsView = () => {
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
       case "profile":
-        return <ProfileSettings />;
+        return (
+          <ProfileSettings
+            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
+          />
+        );
       default:
         return <div></div>;
       // case "database":

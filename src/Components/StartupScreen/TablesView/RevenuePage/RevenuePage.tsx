@@ -1,58 +1,160 @@
 import React, { useState } from 'react'
 import RevenueTable from '../../../TableComponents/RevenueTable'
 import { testData, usersTableData } from '../../../../RevenueData'
-import { Container } from '@material-ui/core'
+import { CircularProgress, Container } from '@material-ui/core'
 import UsersTable from '../../../TableComponents/UsersTable'
-import { fetchCollection, postToCollection } from '../../../fetch'
-
-interface TableDataInterface {
-  currency?: string
-  fields: string[]
-  data: YearDataInterface
-}
-
-interface YearDataInterface {
-  [key: string]: (string | number)[][]
-}
-const initData = {
-  currency: 'INR',
-  fields: [
-    '',
-    'Total Revenue',
-    'MRR',
-    'Total new MRR',
-    'Total Non-Recurring Revenue'
-  ],
-  data: {
-    '2020': [
-      ['janurary'],
-      ['february'],
-      ['march'],
-      ['april'],
-      ['may'],
-      ['june'],
-      ['july'],
-      ['august'],
-      ['september'],
-      ['october'],
-      ['november'],
-      ['december']
-    ],
-    '2019': [
-      ['janurary'],
-      ['february'],
-      ['march'],
-      ['april'],
-      ['may'],
-      ['june'],
-      ['july'],
-      ['august'],
-      ['september'],
-      ['october'],
-      ['november'],
-      ['december']
-    ]
+import { fetchCollection, updateCollection } from '../../../fetch'
+import {
+  TableDataInterface,
+  YearDataInterface,
+  OptionInterface
+} from '../../../interfaces'
+export const fields = [
+  {
+    Header: '',
+    accessor: ''
+  },
+  {
+    Header: 'Total Revenue',
+    accessor: 'total_revenue'
+  },
+  {
+    Header: 'Total MRR',
+    accessor: 'total_mrr'
+  },
+  {
+    Header: 'Total New MRR',
+    accessor: 'total_new_mrr'
+  },
+  {
+    Header: 'Total Non-Recurring Revenue',
+    accessor: 'total_non_recurring_revenue'
   }
+]
+
+export const userTableFields = [
+  { Header: '', accessor: '' },
+  {
+    Header: 'Total Monthly Active Users',
+    accessor: 'total_monthly_active_users'
+  },
+  { Header: 'Total Customer', accessor: 'total_customers' },
+  // { Header: "Total new MMR", accessor: "totalNewMMR" },
+  // { Header: "Total New Customers", accessor: "totalNewCustomers" },
+  // { Header: "ARPC -Total New Customers", accessor: "arpc_totalNewCustomers" },
+  {
+    Header: 'Total Customers at the beginning of Month',
+    accessor: 'total_customers_at_beginning_of_month'
+  },
+  {
+    Header: 'Total New Customers Acquired',
+    accessor: 'total_new_customers_acquired'
+  },
+  {
+    Header: 'Total New Customers Churned',
+    accessor: 'total_customers_churned'
+  }
+  // {
+  //   Header: "Average Revenue Per Account",
+  //   accessor: "averageRevenuePerAccount",
+  // },
+]
+
+export const createEmptyData = (year: string, fields: OptionInterface[]) => {
+  const initYearData = () => {
+    let data: (string | number)[][] = []
+    for (let i = 0; i < 12; i++) {
+      data[i] = fields.map((field, j) => {
+        if (j === 0) {
+          return monthsArray[i]
+        } else {
+          return 0
+        }
+      })
+    }
+    return data
+  }
+  return {
+    currency: 'INR',
+    fields,
+    data: {
+      [year]: initYearData()
+    }
+  }
+}
+
+export const convertToFrontendSchema = (
+  data: object[],
+  fields: OptionInterface[],
+  year: string
+) => {
+  // fields = fields.slice(1);
+  const convertedData: any = {
+    fields,
+    data: {
+      [year]: []
+    },
+    currency: 'INR'
+  }
+
+  if (data.length == 0) {
+    return createEmptyData(year, fields)
+  } else {
+    convertedData.data[year] = data.map((monthData: any) => {
+      let arr: (string | number)[] = []
+      fields.forEach((field, i) => {
+        if (monthData[field.accessor]) {
+          arr.push(monthData[field.accessor])
+        } else if (i === 0) {
+          arr.push(monthsArray[monthData['month'] - 1])
+        } else {
+          arr.push(0)
+        }
+      })
+      arr.push(monthData._id)
+      return arr
+    })
+    return convertedData
+  }
+}
+
+export const convertToBackendSchema = (
+  data: TableDataInterface,
+  fields: OptionInterface[],
+  year: string,
+  startupId: string
+) => {
+  // fields should be strictly according to sequence of table rows
+  let serverData = data.data[year].map((monthData, monthIndex) => {
+    let obj = {}
+    data.fields.forEach((field, i) => {
+      if (i !== 0) {
+        // because we want to ignore 1st field
+        obj = {
+          ...obj,
+          [field.accessor]: monthData[i]
+        }
+      }
+    })
+    // Adding the id
+    if (monthData[fields.length]) {
+      obj = {
+        ...obj,
+        // as ID will be the last one in array
+        _id: monthData[fields.length]
+      }
+    } else {
+      obj = {
+        ...obj,
+        month: monthIndex + 1,
+        year: parseInt(year),
+        startup_id: startupId
+      }
+    }
+
+    return obj
+  })
+  return serverData
 }
 
 const monthsArray = [
@@ -70,90 +172,57 @@ const monthsArray = [
   'december'
 ]
 
-const RevenuePage = () => {
-  const [tableData, setTableData] = useState<TableDataInterface | null>(null)
-  const [rawRevenueData, setRawRevenueData] = useState<object[] | null>(null)
-  const serverData = {
-    currency: 'INR',
-    fields: [
-      '',
-      'Total Revenue',
-      'MMR',
-      'Total new MMR',
-      'Total Non-Recurring Revenue'
-    ],
-    data: {
-      '2020': [['janurary'], ['february'], ['march'], ['april'], ['may']],
-      '2019': [['janurary'], ['february'], ['march'], ['april'], ['may']]
-    }
-  }
+interface PropsInterface {
+  selectedStartup: OptionInterface
+}
 
-  // React.useEffect(() => {
-  //   fetchCollection("revenue").then((res) => {
-  //     setRawRevenueData(res.data);
-  //     console.log(res.data);
-  //   });
-  //   // let dateObj = new Date();
-  //   // postToCollection("revenue", {
-  //   //   year: 2020,
-  //   //   month: 5,
-  //   //   total_mrr: 3100,
-  //   //   total_new_mrr: 1100,
-  //   //   total_non_recurring_revenue: 2000,
-  //   //   startup_name: "startup_1slug",
-  //   //   last_updated: dateObj.toISOString(),
-  //   //   gross_profit_margin: 0,
-  //   //   total_revenue_gr: 0,
-  //   //   total_mrr_gr: 0,
-  //   // }).then((res) => {
-  //   //   console.log(res);
-  //   // });
-  // }, []);
+const RevenuePage = (props: PropsInterface) => {
+  const [revenueTableData, setRevenueTableData] =
+    useState<TableDataInterface | null>(null)
+  const [usersTableData, setUsersTableData] =
+    useState<TableDataInterface | null>(null)
+  // const [rawRevenueData, setRawRevenueData] = useState<object[] | null>(null);
+  const [currentYear, setCurrentYear] = useState<string>(
+    new Date().getFullYear().toString()
+  )
+  const [currentYearUserTable, setCurrentYearUserTable] = useState<string>(
+    new Date().getFullYear().toString()
+  )
 
-  // const covertToFrontendSchema = (data: object[], fields: string[]) => {
-  //   fields = fields.slice(1);
-  //   const convertedData: any = {
-  //     fields: ["", ...fields],
-  //     data: {
-  //       "2020": [],
-  //     },
-  //   };
-  //   convertedData.data["2020"] = data.map((monthData: any) => {
-  //     let arr = fields.map((field, i) => {
-  //       if (i === 0) return monthsArray[monthData["month"] - 1];
-  //       if (monthData[field]) {
-  //         return monthData[field];
-  //       } else {
-  //         return 0;
-  //       }
-  //     });
-  //     return arr;
-  //   });
-  //   return convertedData;
-  // };
+  React.useEffect(() => {
+    fetchCollection('revenue', currentYear, props.selectedStartup.accessor)
+      .then((res) => {
+        const frontendData = convertToFrontendSchema(
+          res.data,
+          fields,
+          currentYear
+        )
+        setRevenueTableData(frontendData)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [currentYear])
 
-  // React.useEffect(() => {
-  //   if (rawRevenueData !== null) {
-  //     setTableData(
-  //       covertToFrontendSchema(rawRevenueData, [
-  //         "month",
-  //         "total_revenue",
-  //         "total_mrr",
-  //         "total_new_mrr",
-  //         "total_non_recurring_revenue",
-  //       ])
-  //     );
-  //     console.log(
-  //       covertToFrontendSchema(rawRevenueData, [
-  //         "month",
-  //         "total_revenue",
-  //         "total_mrr",
-  //         "total_new_mrr",
-  //         "total_non_recurring_revenue",
-  //       ])
-  //     );
-  //   }
-  // }, [rawRevenueData]);
+  React.useEffect(() => {
+    fetchCollection(
+      'users',
+      currentYearUserTable,
+      props.selectedStartup.accessor
+    )
+      .then((res) => {
+        const frontendData = convertToFrontendSchema(
+          res.data,
+          userTableFields,
+          currentYearUserTable
+        )
+        setUsersTableData(frontendData)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [currentYearUserTable])
+
   return (
     <div
       style={{
@@ -164,20 +233,48 @@ const RevenuePage = () => {
         gap: '64px'
       }}
     >
-      {testData !== null ? (
+      {revenueTableData ? (
         <div>
           <RevenueTable
-            data={testData}
+            data={revenueTableData}
+            currentYear={currentYear}
+            setCurrentYear={(year: string) => {
+              setCurrentYear(year)
+            }}
             changeHandler={(value) => {
-              // console.log(value);
-              console.log(value)
-              // setTableData(value);
+              const data = convertToBackendSchema(
+                value,
+                fields,
+                currentYear,
+                props.selectedStartup.accessor
+              )
+              updateCollection('revenue', data, props.selectedStartup.accessor)
             }}
           />
-          <UsersTable data={usersTableData} changeHandler={() => {}} />
+          <br />
         </div>
       ) : (
-        <div>No Data Avaliable</div>
+        <CircularProgress />
+      )}
+      {usersTableData ? (
+        <UsersTable
+          data={usersTableData}
+          changeHandler={(value) => {
+            const data = convertToBackendSchema(
+              value,
+              userTableFields,
+              currentYearUserTable,
+              props.selectedStartup.accessor
+            )
+            updateCollection('users', data, props.selectedStartup.accessor)
+          }}
+          currentYear={currentYearUserTable}
+          setCurrentYear={(year: string) => {
+            setCurrentYearUserTable(year)
+          }}
+        />
+      ) : (
+        <CircularProgress />
       )}
     </div>
   )

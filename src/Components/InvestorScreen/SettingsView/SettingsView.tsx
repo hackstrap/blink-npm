@@ -14,6 +14,7 @@ import DashboardPage from "./DashboardPage/DashboardPage";
 import ContactsPage from "./ContactsPage/ContactsPage";
 import DatabasePage from "./DatabasePage/DatabasePage";
 import { globalContext } from "../../../AppContext";
+import { OptionInterface } from "../../interfaces";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -67,7 +68,11 @@ const useStyles = makeStyles((theme: Theme) => {
   };
 });
 
-const SettingsView = () => {
+interface PropsInterface {
+  investorInfo: OptionInterface;
+}
+
+const SettingsView = (props: PropsInterface) => {
   const theme = useTheme();
   const classes = useStyles(theme);
   // const [currentPage, setCurrentPage] = useState("profile");
@@ -76,7 +81,7 @@ const SettingsView = () => {
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
       case "profile":
-        return <ProfileSettings />;
+        return <ProfileSettings investorInfo={props.investorInfo} />;
       default:
         return <div></div>;
       // case "database":

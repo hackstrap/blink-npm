@@ -22,6 +22,7 @@ import {
   investorTableData,
 } from "../../../../RevenueData";
 import InvestorDetailsTable from "../../../TableComponents/InvestorDetailsTable";
+import { fetchCollection, fetchInvestorInfo } from "../../../fetch";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -77,30 +78,21 @@ interface OptionInterface {
   accessor: string;
 }
 
-interface UserInfoInterface {
-  name: string;
-  email: string;
-  startupName: string;
-  businessModel: OptionInterface;
-  startupStage: OptionInterface;
-  sector: OptionInterface;
-  tech: OptionInterface;
-  startupDescription: string;
+interface InvestorInfoInterface {
+  investor_id: string;
+  investor_email_id: string;
+  investor_name: string;
+  investor_profile_image: string;
+  investor_org: string;
+  investor_type: string;
+}
+interface PropsInterface {
+  investorInfo: OptionInterface;
 }
 
-const ProfileSettings = () => {
+const ProfileSettings = (props: PropsInterface) => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  // const [userInfo, setUserInfo] = useState<UserInfoInterface>({
-  //   name: "",
-  //   email: "",
-  //   startupName: "",
-  //   businessModel: { Header: "", accessor: "" },
-  //   startupStage: { Header: "", accessor: "" },
-  //   sector: { Header: "", accessor: "" },
-  //   tech: { Header: "", accessor: "" },
-  //   startupDescription: "",
-  // });
   const CssTextField = withStyles({
     root: {
       "& label.Mui-focused": {
@@ -121,26 +113,43 @@ const ProfileSettings = () => {
     },
   })(TextField);
 
-  useEffect(() => {
-    // setUserInfo();
-  }, []);
+  const [investorDetails, setInvestorDetails] =
+    React.useState<InvestorInfoInterface>({
+      investor_id: "",
+      investor_email_id: "",
+      investor_name: "",
+      investor_profile_image: "",
+      investor_org: "",
+      investor_type: "",
+    });
+
+  React.useEffect(() => {
+    fetchInvestorInfo("investor", undefined, props.investorInfo.accessor).then(
+      (res) => {
+        console.log(res.data);
+        setInvestorDetails(res.data[0]);
+      }
+    );
+  }, [props]);
   return (
     <div className={classes.mainConatiner}>
-      <Container maxWidth="md">
-        <Typography variant="h3" className={classes.heading}>
-          Basic Info
-        </Typography>
+      {investorDetails ? (
+        <Container maxWidth="md">
+          <Typography variant="h3" className={classes.heading}>
+            Basic Info
+          </Typography>
 
-        <div className={classes.inputContainer}>
-          <Typography className={classes.inputLabel}>Name</Typography>
-          <CssTextField
-            variant="outlined"
-            placeholder="Enter Name"
-            className={classes.inputValue}
-          />
-        </div>
+          <div className={classes.inputContainer}>
+            <Typography className={classes.inputLabel}>Name</Typography>
+            <CssTextField
+              variant="outlined"
+              placeholder="Enter Name"
+              className={classes.inputValue}
+              value={investorDetails.investor_name}
+            />
+          </div>
 
-        {/* <div className={classes.inputContainer}>
+          {/* <div className={classes.inputContainer}>
           <Typography className={classes.inputLabel}>Email</Typography>
           <CssTextField
             variant="outlined"
@@ -149,7 +158,7 @@ const ProfileSettings = () => {
           />
         </div> */}
 
-        {/* <div className={classes.inputContainer}>
+          {/* <div className={classes.inputContainer}>
           <Typography className={classes.inputLabel}>Startup Name</Typography>
           <CssTextField
             variant="outlined"
@@ -158,7 +167,7 @@ const ProfileSettings = () => {
           />
         </div> */}
 
-        {/* <div className={classes.inputContainer}>
+          {/* <div className={classes.inputContainer}>
           <Typography className={classes.inputLabel}>Sectors</Typography>
           <CssTextField
             variant="outlined"
@@ -166,7 +175,10 @@ const ProfileSettings = () => {
             className={classes.inputValue}
           />
         </div> */}
-      </Container>
+        </Container>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

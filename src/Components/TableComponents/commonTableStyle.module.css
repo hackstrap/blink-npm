@@ -43,6 +43,8 @@
   position: absolute;
   z-index: 20;
   background-color: white;
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .editableInput {
@@ -95,5 +97,12 @@
   border: 1px solid gray;
   padding: 12px;
   float: left;
+  background-color: white;
+}
+
+.selectInput {
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px solid gray;
   background-color: white;
 }

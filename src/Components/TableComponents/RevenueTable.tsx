@@ -1,127 +1,106 @@
-import React, { useState, useReducer, ReactNode, useMemo } from 'react'
-import Table, { TableConfig, TableUIConfig } from '../../Table'
-import styles from './commonTableStyle.module.css'
+import React, { useState, useReducer, ReactNode, useMemo } from "react";
+import Table, { TableConfig, TableUIConfig } from "../../Table";
+import styles from "./commonTableStyle.module.css";
 import {
   Button,
+  capitalize,
   makeStyles,
   Theme,
   Tooltip,
   Typography,
   useTheme,
-  withStyles
-} from '@material-ui/core'
-interface YearDataInterface {
-  [key: string]: (string | number)[][]
-}
-
-interface TableDataInterface {
-  currency?: string
-  fields: string[]
-  data: YearDataInterface
-}
-
-interface TablePropsInterface {
-  data: TableDataInterface
-  changeHandler: (data: any) => void
-}
-interface ActionInterface {
-  type: string
-  payload?: any
-}
-
-interface RevenueTableRowInterface {
-  [key: string]: string | number | ReactNode
-}
-
-// program to convert first letter of a string to uppercase
-function capitalizeFirstLetter(str: string) {
-  // converting first letter to uppercase
-  const capitalized = str.charAt(0).toUpperCase() + str.slice(1)
-
-  return capitalized
-}
+  withStyles,
+} from "@material-ui/core";
+import {
+  YearDataInterface,
+  TableDataInterface,
+  ActionInterface,
+  TablePropsInterface,
+  RevenueTableRowInterface,
+} from "../interfaces";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
     mainTableContainer: {
-      width: '100%',
-      height: '100%',
-      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.05);',
-      borderRadius: '20px',
-      padding: '64px',
-      paddingTop: '48px',
-      [theme.breakpoints.down('md')]: {
-        padding: '15px',
-        paddingTop: '32px',
-        paddingBottom: '32px'
+      width: "100%",
+      height: "100%",
+      boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05);",
+      borderRadius: "20px",
+      padding: "64px",
+      paddingTop: "48px",
+      [theme.breakpoints.down("md")]: {
+        padding: "15px",
+        paddingTop: "32px",
+        paddingBottom: "32px",
       },
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      backgroundColor: 'white'
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
+      backgroundColor: "white",
     },
     infoContainer: {
-      alignItems: 'center',
-      [theme.breakpoints.down('md')]: {
+      alignItems: "center",
+      [theme.breakpoints.down("md")]: {
         gap: 15,
-        flexDirection: 'column',
-        alignItems: 'flex-start'
+        flexDirection: "column",
+        alignItems: "flex-start",
       },
-      display: 'flex',
-      width: '100%'
+      display: "flex",
+      width: "100%",
     },
     btnGroup: {
-      display: 'flex',
-      marginLeft: 'auto',
-      [theme.breakpoints.down('md')]: {
-        marginLeft: 0
-      }
+      display: "flex",
+      marginLeft: "auto",
+      [theme.breakpoints.down("md")]: {
+        marginLeft: 0,
+      },
     },
     boldText: {
-      fontSize: '1rem',
-      fontWeight: 'bold'
-    }
-  }
-})
+      fontSize: "1rem",
+      fontWeight: "bold",
+    },
+  };
+});
 
 const assignWidth = (normalWidth: number, extension: number) =>
-  window.innerWidth > 1500 ? normalWidth + extension : normalWidth
+  window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
 
-const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
-  const theme = useTheme()
-  const classes = useStyles(theme)
-  const [currentYear, setCurrentYear] = useState('')
-  const [saveChangesBtn, setSaveChangesBtn] = useState(false)
+const RevenueTable = ({
+  data,
+  changeHandler,
+  currentYear,
+  setCurrentYear,
+}: TablePropsInterface) => {
+  const theme = useTheme();
+  const classes = useStyles(theme);
+  const [saveChangesBtn, setSaveChangesBtn] = useState(false);
 
   const monthsArray = [
-    'janurary',
-    'february',
-    'march',
-    'april',
-    'may',
-    'june',
-    'july',
-    'august',
-    'september',
-    'october',
-    'november',
-    'december'
-  ]
-  // const [tableConfig, setTableConfig] = useState<TableUIConfig>({
-  //   columns: [],
-  // });
+    "janurary",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+  ];
 
   const addMonth = (year: (string | number)[][], payload: any) => {
-    let data = [...year]
-    data[payload.index] = [payload.monthName, 0, 0, 0]
-    return data
-  }
+    let data = [...year];
+    data[payload.index] = [payload.monthName, 0, 0, 0];
+    return data;
+  };
 
   const removeMonth = (year: (string | number)[][], payload: any) => {
-    let data = [...year]
-    data[payload.index] = []
-    return data
-  }
+    let data = [...year];
+    data[payload.index] = [];
+    return data;
+  };
 
   const updateData = (
     data: (string | number)[][],
@@ -129,17 +108,17 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
     columnIndex: number,
     value: string | number
   ) => {
-    data[columnIndex][rowIndex] = value
-    return data
-  }
+    data[columnIndex][rowIndex] = value;
+    return data;
+  };
   const reducer = (
     state: TableDataInterface,
     action: ActionInterface
   ): TableDataInterface => {
-    let currentState = { ...state }
-    changeHandler({ state, action })
+    let currentState = { ...state };
     switch (action.type) {
-      case 'UPDATE_DATA':
+      case "UPDATE_DATA":
+        setSaveChangesBtn(true);
         return {
           ...currentState,
           data: {
@@ -149,10 +128,11 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
               action?.payload?.rowIndex + 1,
               action?.payload?.columnIndex,
               action?.payload?.value
-            )
-          }
-        }
-      case 'ADD_MONTH': {
+            ),
+          },
+        };
+      case "ADD_MONTH": {
+        setSaveChangesBtn(true);
         return {
           ...currentState,
           data: {
@@ -160,11 +140,12 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             [currentYear]: addMonth(
               currentState.data[currentYear],
               action.payload
-            )
-          }
-        }
+            ),
+          },
+        };
       }
-      case 'REMOVE_MONTH': {
+      case "REMOVE_MONTH": {
+        setSaveChangesBtn(true);
         return {
           ...currentState,
           data: {
@@ -172,76 +153,36 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             [currentYear]: removeMonth(
               currentState.data[currentYear],
               action.payload
-            )
-          }
-        }
+            ),
+          },
+        };
       }
-
-      // let config = { ...tableConfig };
-      // config.columns.push({
-      //   Header: action.payload,
-      //   accessor: action.payload,
-      // });
-      // setTableConfig(config);
-      // console.log("Add month called");
-      // return currentState.data[currentYear].push([action.payload]);
+      case "RESET": {
+        return {
+          ...action.payload,
+        };
+      }
     }
-    return state
-  }
+    return state;
+  };
 
   const calculateTotalrevenue = (data: any[]) => {
-    let total = 0
+    let total = 0;
     data.forEach((d: number, i: number) => {
-      if (i > 1) total += d
-    })
-    return total
-  }
+      if (i > 1 && i <= state.fields.length - 1) total += d;
+    });
+    return total;
+  };
 
-  // const init = () => {
-  //   const initYear = monthsArray.map(month=>{
-  //     let arr = []
-  //     for(let i=0;i<=4;i++){
-  //       if(i===0) arr.push(month)
-  //       else arr.push(0)
-  //     }
-  //     return arr
-  //   })
-  //   return {
-  //     currency : 'INR',
-  //     fields : ['', 'totalRevenue','mmr','newMmr','churn'],
-  //     data:{
-  //       [(new Date).getFullYear()] : initYear
-  //     }
-  //   }
-  // }
+  const init = (data: TableDataInterface) => {
+    return { ...data };
+  };
 
-  const init = (data: TableDataInterface) => data
-
-  const [state, dispatch] = useReducer(reducer, data, init)
-
-  // React.useEffect(() => {
-  //   changeHandler(state);
-  // }, [state]);
-
-  React.useEffect(() => {
-    if (data !== null) {
-      setCurrentYear(Object.keys(data.data)[0])
-    }
-  }, [])
-
-  // const HtmlTooltip = withStyles((theme: Theme) => ({
-  //   tooltip: {
-  //     // backgroundColor: "#f5f5f9",
-  //     // color: "rgba(0, 0, 0, 0.87)",
-  //     // maxWidth: 220,
-  //     // fontSize: theme.typography.pxToRem(12),
-  //     // border: "1px solid #dadde9",
-  //   },
-  // }))(Tooltip);
+  const [state, dispatch] = useReducer(reducer, data, init);
 
   const tooltipArray = [
     {
-      heading: 'Total Revenue',
+      heading: "Total Revenue",
       description: (
         <div>
           <p>
@@ -249,10 +190,10 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             services.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Monthly Recurring Revenue (MRR)',
+      heading: "Monthly Recurring Revenue (MRR)",
       description: (
         <div>
           <p>
@@ -261,20 +202,20 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             particular month.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'New MRR',
+      heading: "New MRR",
       description: (
         <div>
           <p>
             New MRR is monthly recurring revenue that comes from new customers.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Non-Recurring Revenue',
+      heading: "Non-Recurring Revenue",
       description: (
         <div>
           <p>
@@ -282,11 +223,11 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             not happen again.
           </p>
         </div>
-      )
+      ),
     },
 
     {
-      heading: 'First Month of Financial year',
+      heading: "First Month of Financial year",
       description: (
         <div>
           <p>
@@ -295,10 +236,10 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             accounting year).
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Accounting Method',
+      heading: "Accounting Method",
       description: (
         <div>
           <p>
@@ -306,14 +247,14 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             Cash to report income when you receive payment from a customer.
           </p>
         </div>
-      )
-    }
-  ]
+      ),
+    },
+  ];
 
   const renderToolTip = (
     data: {
-      heading: string
-      description: JSX.Element
+      heading: string;
+      description: JSX.Element;
     } | null
   ) => {
     if (data) {
@@ -322,18 +263,22 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
           <h3>{data.heading}</h3>
           <div>{data.description}</div>
         </div>
-      )
+      );
     } else {
-      return false
+      return false;
     }
-  }
+  };
+
+  React.useEffect(() => {
+    dispatch({ type: "RESET", payload: data });
+  }, [data]);
 
   const generateTableData = (state: TableDataInterface) => {
     if (state.data[currentYear]) {
-      let thisData = { ...state }
-      let currentData: RevenueTableRowInterface[] = []
-      let loop1 = thisData.fields.length
-      let loop2 = thisData.data[currentYear].length
+      let thisData = { ...state };
+      let currentData: RevenueTableRowInterface[] = [];
+      let loop1 = thisData.fields.length;
+      let loop2 = thisData.data[currentYear].length;
 
       // Data is passed in the tables row wise
       for (let i = 0; i < loop1 - 1; i++) {
@@ -345,17 +290,17 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
             <Tooltip
               title={renderToolTip({
                 heading: tooltipArray[i].heading,
-                description: tooltipArray[i].description
+                description: tooltipArray[i].description,
               })}
-              placement='right'
+              placement="right"
               arrow
             >
               <Typography className={classes.boldText}>
-                {thisData.fields[i + 1]}
+                {thisData.fields[i + 1].Header}
               </Typography>
             </Tooltip>
-          )
-        }
+          ),
+        };
         // Add data for each month
         for (let j = 0; j < 12; j++) {
           if (thisData.data[currentYear][j]) {
@@ -367,8 +312,8 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
                   <Typography>
                     {calculateTotalrevenue(thisData.data[currentYear][j])}
                   </Typography>
-                )
-              }
+                ),
+              };
             } else {
               currentData[i] = {
                 ...currentData[i],
@@ -383,158 +328,162 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
                     title={
                       thisData.data[currentYear][j][i + 1]
                         ? `${thisData.data[currentYear][j][i + 1]}`
-                        : '0'
+                        : "0"
                     }
                     onChange={(e) => {
                       dispatch({
-                        type: 'UPDATE_DATA',
+                        type: "UPDATE_DATA",
                         payload: {
                           rowIndex: i,
                           columnIndex: j,
-                          value: parseInt(e.target.value)
-                        }
-                      })
+                          value: parseInt(e.target.value),
+                        },
+                      });
                     }}
                     key={`row${i}column${j}`}
                   />
-                )
+                ),
                 // thisData.data[currentYear][j][i + 1],
-              }
+              };
             }
           } else {
             currentData[i] = {
               ...currentData[i],
-              [monthsArray[j]]: ''
-            }
+              [monthsArray[j]]: "",
+            };
           }
         }
       }
-      return currentData
+      return currentData;
     } else {
-      return []
+      return [];
     }
-  }
+  };
 
   const generateTableConfig = (
     state: TableDataInterface,
     monthsArray: string[]
   ) => {
-    console.log(currentYear)
-    if (currentYear.length !== 0) {
-      const currentData = [...state.data[currentYear]]
+    if (state.data[currentYear] !== undefined) {
+      const currentData = [...state.data[currentYear]];
       let tableConfig: TableUIConfig = {
-        columns: []
-      }
+        columns: [],
+      };
       tableConfig.columns.push({
-        Header: '',
-        accessor: 'dataRow',
-        width: assignWidth(8, 8)
-      })
+        Header: "",
+        accessor: "dataRow",
+        width: assignWidth(14, 2),
+      });
       currentData.forEach((monthData) => {
         if (monthData !== undefined && monthData.length > 0) {
           tableConfig.columns.push({
             Header: (
               <Typography className={styles.boldText}>
-                {capitalizeFirstLetter(`${monthData[0]}`)}
+                {capitalize(`${monthData[0]}`)}
               </Typography>
             ),
-            accessor: `${monthData[0]}`
-          })
+            accessor: `${monthData[0]}`,
+          });
         }
-      })
-      return tableConfig
+      });
+      return tableConfig;
     } else {
-      return { columns: [{ Header: '', accessor: '' }] }
+      return { columns: [{ Header: "", accessor: "" }] };
     }
-  }
+  };
 
-  const tableData = useMemo(
-    () => generateTableData(state),
-    [state, currentYear]
-  )
+  const tableData = useMemo(() => generateTableData(state), [state]);
   const tableConfig = useMemo(
     () => generateTableConfig(state, monthsArray),
-    [state.data[currentYear], currentYear]
-  )
+    [state.data[currentYear]]
+  );
 
   const renderMonthsCheckbox = (tableConfig: TableUIConfig) => {
-    let checkboxArray: ReactNode[] = []
+    let checkboxArray: ReactNode[] = [];
 
     monthsArray.forEach((month: string, i: number) => {
-      let displayedMonths: (string | number)[] = []
+      let displayedMonths: (string | number)[] = [];
       state.data[currentYear].forEach((arr, i) => {
-        if (arr && arr.length > 0) displayedMonths.push(arr[0])
-      })
+        if (arr && arr.length > 0) displayedMonths.push(arr[0]);
+      });
       checkboxArray.push(
         <div key={i}>
           <input
-            type='checkbox'
+            type="checkbox"
             id={monthsArray[i]}
             defaultChecked={displayedMonths.includes(month)}
             onClick={() => {
               if (!displayedMonths.includes(month)) {
                 dispatch({
-                  type: 'ADD_MONTH',
+                  type: "ADD_MONTH",
                   payload: {
                     monthName: month,
-                    index: i
-                  }
-                })
+                    index: i,
+                  },
+                });
               } else {
                 dispatch({
-                  type: 'REMOVE_MONTH',
+                  type: "REMOVE_MONTH",
                   payload: {
                     monthName: month,
-                    index: i
-                  }
-                })
+                    index: i,
+                  },
+                });
               }
             }}
           />
-          <label htmlFor={monthsArray[i]}>{capitalizeFirstLetter(month)}</label>
+          <label htmlFor={monthsArray[i]}>{capitalize(month)}</label>
         </div>
-      )
-    })
-    return checkboxArray
-  }
+      );
+    });
+    return checkboxArray;
+  };
 
-  const [showColumnConfig, setShowColumnConfig] = useState(false)
-  const [showCurrencyConfig, setShowCurrencyConfig] = useState(false)
-  const [showYearConfig, setShowYearConfig] = useState(false)
+  const [showColumnConfig, setShowColumnConfig] = useState(false);
+  const [showCurrencyConfig, setShowCurrencyConfig] = useState(false);
+  const [showYearConfig, setShowYearConfig] = useState(false);
 
   const renderCurrencyOptions = () => {
-    let currencyList = ['USD', 'INR']
+    let currencyList = ["USD", "INR"];
     return currencyList.map((c, i) => {
-      return <Typography key={i}>{c}</Typography>
-    })
-  }
+      return <Typography key={i}>{c}</Typography>;
+    });
+  };
 
-  const renderYearOptions = (years: string[]) => {
+  const renderYearOptions = () => {
+    let years: string[] = [];
+    for (
+      let i = new Date().getFullYear();
+      i > parseInt(currentYear) - 200;
+      i--
+    ) {
+      years = [...years, i.toString()];
+    }
     return years.map((year, i) => {
       return (
         <Typography
           onClick={() => {
-            setShowYearConfig(false)
-            setCurrentYear(year)
+            setShowYearConfig(false);
+            setCurrentYear(year);
           }}
           key={i}
         >
           {year}
         </Typography>
-      )
-    })
-  }
+      );
+    });
+  };
 
   return (
     <div className={classes.mainTableContainer}>
       <div className={classes.infoContainer}>
-        <Typography variant='h4'>Revenue Data</Typography>
+        <Typography variant="h4">Revenue Data</Typography>
         {saveChangesBtn ? (
           <Button
-            variant='outlined'
+            variant="outlined"
             onClick={() => {
-              changeHandler(state)
-              setSaveChangesBtn(false)
+              changeHandler(state);
+              setSaveChangesBtn(false);
             }}
           >
             Save Changes
@@ -547,9 +496,9 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
           <div>
             <Button
               onClick={(e) => {
-                setShowColumnConfig(!showColumnConfig)
+                setShowColumnConfig(!showColumnConfig);
               }}
-              variant='outlined'
+              variant="outlined"
             >
               Add/Remove Columns
             </Button>
@@ -567,9 +516,9 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
           <div>
             <Button
               onClick={(e) => {
-                setShowYearConfig(!showYearConfig)
+                setShowYearConfig(!showYearConfig);
               }}
-              variant='outlined'
+              variant="outlined"
             >
               {`Year: ${currentYear}`}
             </Button>
@@ -578,7 +527,7 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
                 className={styles.columnConfigBox}
                 onMouseLeave={(e) => setShowYearConfig(false)}
               >
-                {renderYearOptions(Object.keys(state.data))}
+                {renderYearOptions()}
               </div>
             ) : (
               <div></div>
@@ -587,9 +536,9 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
           <div>
             <Button
               onClick={(e) => {
-                setShowCurrencyConfig(!showCurrencyConfig)
+                setShowCurrencyConfig(!showCurrencyConfig);
               }}
-              variant='outlined'
+              variant="outlined"
             >
               {`Currency: ${state.currency}`}
             </Button>
@@ -612,7 +561,7 @@ const RevenueTable = ({ data, changeHandler }: TablePropsInterface) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RevenueTable
+export default RevenueTable;

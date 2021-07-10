@@ -4,138 +4,238 @@ import React, {
   useMemo,
   ReactNode,
   useReducer,
-  ReactElement
-} from 'react'
-import Table, { TableConfig, TableUIConfig } from '../../Table'
-import DropdownComponent from '../DropdownComponent/DropdownComponent'
-import styles from '../commonTableStyles.module.css'
+  ReactElement,
+} from "react";
+import Table, { TableConfig, TableUIConfig } from "../../Table";
+import DropdownComponent from "../DropdownComponent/DropdownComponent";
+import styles from "./commonTableStyle.module.css";
 
-interface YearDataInterface {
-  [key: string]: (string | number | { Header: string; accessor: string })[][]
-}
-interface TableDataInterface {
-  currency?: string
-  fields: { Header: string; accessor: string }[]
-  data: YearDataInterface
-}
-
-interface OptionsInterface {
-  department: { Header: string; accessor: string }[]
-  roleType: { Header: string; accessor: string }[]
-}
-
-interface TablePropsInterface {
-  data: TableDataInterface
-  changeHandler: (data: TableDataInterface) => void
-  options: OptionsInterface
-}
-
-interface ActionInterface {
-  type: string
-  payload?: any
-}
+import {
+  // TableDataInterface,
+  ActionInterface,
+  // TablePropsInterface,
+  OptionInterface,
+} from "../interfaces";
+import {
+  Button,
+  makeStyles,
+  Select,
+  Theme,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
+import { employeeTableFields } from "../StartupScreen/TablesView/EmployeePage/EmployeePage";
 
 interface TablePropsInterface {
-  data: TableDataInterface
-  changeHandler: (data: TableDataInterface) => void
+  data: TableDataInterface;
+  changeHandler: Function;
+  // options: {
+  //   [key: string]: OptionInterface[];
+  // };
+}
+
+export interface TableDataInterface {
+  currency?: string;
+  fields: OptionInterface[];
+  data: (string | number)[][];
 }
 
 interface EmployeeTableRowInterface {
-  [key: string]: string | number | ReactNode | JSX.Element
+  [key: string]: string | number | ReactNode | JSX.Element;
 }
+
+const useStyles = makeStyles((theme: Theme) => {
+  return {
+    mainTableContainer: {
+      width: "100%",
+      height: "100%",
+      boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05);",
+      borderRadius: "20px",
+      padding: "64px",
+      paddingTop: "48px",
+      [theme.breakpoints.down("md")]: {
+        padding: "15px",
+        paddingTop: "32px",
+        paddingBottom: "32px",
+      },
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
+      backgroundColor: "white",
+    },
+    infoContainer: {
+      alignItems: "center",
+      [theme.breakpoints.down("md")]: {
+        gap: 15,
+        flexDirection: "column",
+        alignItems: "flex-start",
+      },
+      display: "flex",
+      width: "100%",
+    },
+    btnGroup: {
+      display: "flex",
+      marginLeft: "auto",
+      [theme.breakpoints.down("md")]: {
+        marginLeft: 0,
+      },
+    },
+    boldText: {
+      fontSize: "1rem",
+      fontWeight: "bold",
+    },
+  };
+});
 
 // program to convert first letter of a string to uppercase
 function capitalizeFirstLetter(str: string) {
   // converting first letter to uppercase
-  const capitalized = str.charAt(0).toUpperCase() + str.slice(1)
+  const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
 
-  return capitalized
+  return capitalized;
 }
 
 const formatDate = (date: string | number) => {
-  console.log(date)
+  console.log(date);
   var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear()
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
 
-  if (month.length < 2) month = '0' + month
-  if (day.length < 2) day = '0' + day
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
 
-  return [year, month, day].join('-')
-}
+  return [year, month, day].join("-");
+};
 
 const assignWidth = (normalWidth: number, extension: number) =>
-  window.innerWidth > 1500 ? normalWidth + extension : normalWidth
+  window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
 
-const EmployeeTable = ({
-  data,
-  changeHandler,
-  options
-}: TablePropsInterface) => {
-  const [currentYear, setCurrentYear] = useState('2020')
-
-  const init = (data: TableDataInterface) => data
+const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
+  const theme = useTheme();
+  const classes = useStyles(theme);
+  const init = (data: TableDataInterface) => data;
+  const [saveChangesBtn, setSaveChangesBtn] = useState(false);
 
   const updateData = (
-    data: (string | number | { Header: string; accessor: string })[][],
+    data: (string | number)[][],
     rowIndex: number,
     columnIndex: number,
     value: string | number
   ) => {
-    data[rowIndex][columnIndex] = value
-    return data
-  }
+    setSaveChangesBtn(true);
+    let currentData = [...data];
+    currentData[rowIndex][columnIndex] = value;
+    return currentData;
+  };
+
+  const addRow = (data: (string | number)[][]) => {
+    setSaveChangesBtn(true);
+    let currentData = [...data];
+    currentData.push([]);
+    return currentData;
+  };
 
   const reducer = (
     state: TableDataInterface,
     action: ActionInterface
   ): TableDataInterface => {
-    console.log('reducer called', action)
-    let currentState = { ...state }
+    console.log("reducer called", action);
+    let currentState = { ...state };
     switch (action.type) {
-      case 'UPDATE_DATA':
-        console.log({
-          ...currentState,
-          data: {
-            ...currentState.data,
-            [currentYear]: updateData(
-              currentState.data[currentYear],
-              action.payload.rowIndex,
-              action.payload.columnIndex,
-              action.payload.value
-            )
-          }
-        })
+      case "UPDATE_DATA":
         return {
           ...currentState,
-          data: {
-            ...currentState.data,
-            [currentYear]: updateData(
-              currentState.data[currentYear],
-              action.payload.rowIndex,
-              action.payload.columnIndex,
-              action.payload.value
-            )
-          }
-        }
+          data: updateData(
+            currentState.data,
+            action.payload.rowIndex,
+            action.payload.columnIndex,
+            action.payload.value
+          ),
+        };
+      case "ADD_ROW":
+        return {
+          ...currentState,
+          data: addRow(currentState.data),
+        };
     }
-    return state
-  }
+    return state;
+  };
 
   const checkIfObject = (value: any) => {
-    if (typeof value === 'object') return ''
-    return value
-  }
+    if (typeof value === "object") return "";
+    return value;
+  };
 
   const checkIfOptionValue = (
     value: string | number | { Header: string; accessor: string }
   ) => {
-    if (typeof value === 'string') return undefined
-    else if (typeof value === 'number') return undefined
-    else return value
-  }
-  const [state, dispatch] = useReducer(reducer, data, init)
+    if (typeof value === "string") return undefined;
+    else if (typeof value === "number") return undefined;
+    else return value;
+  };
+  const [state, dispatch] = useReducer(reducer, data, init);
+
+  const departmentOptions = [
+    "Choose",
+    "General Management",
+    "Administration",
+    "Operations",
+    "Human Resource",
+    "Purchase",
+    "Engineering",
+    "Finance",
+    "Sales",
+    "Marketing",
+    "Product",
+    "Customer Support",
+    "Legal",
+  ];
+  const roleTypeOptions = [
+    "Choose",
+    "Contract",
+    "Part-time",
+    "Full-time",
+    "Internship",
+    "Apprenticeship",
+    "Freelance",
+  ];
+  const booleanOption = ["Choose", "true", "false"];
+  const renderTableOptions = (num: number) => {
+    if (num === 1) {
+      return departmentOptions.map((item, i) => {
+        return (
+          <option key={i} value={item}>
+            {item}
+          </option>
+        );
+      });
+    }
+    if (num === 2) {
+      return roleTypeOptions.map((item, i) => {
+        return (
+          <option key={i} value={item}>
+            {item}
+          </option>
+        );
+      });
+    }
+    if (num === 4) {
+      return booleanOption.map((item, i) => {
+        return (
+          <option key={i} value={item}>
+            {item}
+          </option>
+        );
+      });
+    }
+  };
+
+  const getDateString = (str: string | number) => {
+    if (typeof str === "string") {
+      return str.split("T")[0];
+    }
+  };
 
   const passRequiredElement = (
     i: number,
@@ -146,115 +246,125 @@ const EmployeeTable = ({
     switch (j) {
       case 1:
       case 2:
-        console.log(typeof thisData.data[currentYear][i][j])
+      case 4:
         return (
-          <div style={{ display: 'flex', width: '100%' }}>
-            <DropdownComponent
-              options={j < 2 ? options.department : options.roleType}
-              changeHandler={(value) => {
+          <Typography style={{ display: "flex", width: "100%" }}>
+            <select
+              className={styles.selectInput}
+              value={thisData.data[i][j]}
+              onChange={(e) => {
                 dispatch({
-                  type: 'UPDATE_DATA',
+                  type: "UPDATE_DATA",
                   payload: {
                     rowIndex: i,
                     columnIndex: j,
-                    value
-                  }
-                })
+                    value: e.target.value,
+                  },
+                });
               }}
-              defaultValue={checkIfOptionValue(
-                thisData.data[currentYear][i][j]
-              )}
-            />
-          </div>
-        )
-      case 5:
+            >
+              {renderTableOptions(j)}
+            </select>
+          </Typography>
+        );
       case 6:
-        // console.log(
-        //   date.toLocaleDateString("en-GB"),
-        //   thisData.data[currentYear][i][j]
-        // );
-        return (
-          <input
-            type='date'
-            onChange={(e) => {
+      case 7:
+        return thisData.data[i][j] ? (
+          <Typography>
+            <input
+              type="date"
+              onChange={(e) => {
+                let d = new Date(e.target.value);
+                dispatch({
+                  type: "UPDATE_DATA",
+                  payload: {
+                    rowIndex: i,
+                    columnIndex: j,
+                    value: d.toISOString(),
+                  },
+                });
+              }}
+              className={styles.selectInput}
+              value={getDateString(thisData.data[i][j])}
+            />
+          </Typography>
+        ) : (
+          <Typography
+            onClick={() => {
               dispatch({
-                type: 'UPDATE_DATA',
+                type: "UPDATE_DATA",
                 payload: {
                   rowIndex: i,
                   columnIndex: j,
-                  value: new Date(e.target.value).getTime()
-                }
-              })
+                  value: new Date().toISOString(),
+                },
+              });
             }}
-            value={checkIfObject(thisData.data[currentYear][i][j])}
-          />
-        )
-      case 4:
+          >
+            Add Date
+          </Typography>
+        );
+      case 5:
         return (
           <input
             className={styles.editableInput}
-            type='number'
-            value={
-              thisData.data[currentYear][i][j]
-                ? checkIfObject(thisData.data[currentYear][i][j])
-                : 0
-            }
+            type="number"
+            value={thisData.data[i][j] !== undefined ? thisData.data[i][j] : 0}
             title={
-              thisData.data[currentYear][i][j]
-                ? `${thisData.data[currentYear][i][j]}`
-                : '0'
+              thisData.data[i][j] !== undefined ? `${thisData.data[i][j]}` : "0"
             }
             onChange={(e) => {
               dispatch({
-                type: 'UPDATE_DATA',
+                type: "UPDATE_DATA",
                 payload: {
                   rowIndex: i,
                   columnIndex: j,
-                  value: checkIfObject(e.target.value)
-                }
-              })
+                  value: e.target.value,
+                },
+              });
             }}
             key={`row${i}column${j}`}
           />
-        )
+        );
       default:
         return (
           <input
             className={styles.editableInput}
+            // type="number"
             value={
-              thisData.data[currentYear][i][j]
-                ? checkIfObject(thisData.data[currentYear][i][j])
-                : ''
+              thisData.data[i][j] !== undefined
+                ? thisData.data[i][j]
+                : "No Data"
             }
             title={
-              thisData.data[currentYear][i][j]
-                ? `${thisData.data[currentYear][i][j]}`
-                : '0'
+              thisData.data[i][j] !== undefined
+                ? `${thisData.data[i][j]}`
+                : "No Data  "
             }
             onChange={(e) => {
               dispatch({
-                type: 'UPDATE_DATA',
+                type: "UPDATE_DATA",
                 payload: {
                   rowIndex: i,
                   columnIndex: j,
-                  value: checkIfObject(e.target.value)
-                }
-              })
+                  value: e.target.value,
+                },
+              });
             }}
             key={`row${i}column${j}`}
           />
-        )
+        );
     }
-  }
+  };
 
   const generateTableData = (state: TableDataInterface) => {
-    const thisData = { ...state }
-    const currentData: EmployeeTableRowInterface[] = []
-    if (state.data[currentYear]) {
+    const thisData = { ...state };
+    const currentData: EmployeeTableRowInterface[] = [];
+    if (state.data) {
       // 1st loop is for iterating over rows
-      let loop1 = thisData.data[currentYear].length
+      let loop1 = thisData.data.length;
       // 2nd loop is for iterating over columns
-      let loop2 = thisData.fields.length
+      let loop2 = thisData.fields.length;
       for (let i = 0; i < loop1; i++) {
         for (let j = 0; j < loop2; j++) {
           currentData[i] = {
@@ -264,119 +374,54 @@ const EmployeeTable = ({
               j,
               thisData,
               currentData
-            )
-          }
+            ),
+          };
         }
       }
     }
-    return currentData
-  }
+    return currentData;
+  };
 
   // thisData.data[currentYear][i][j]
 
-  const tableData = useMemo(() => generateTableData(state), [state])
+  const tableData = useMemo(() => generateTableData(state), [state]);
   // const tableConfig = useMemo(
   //   () => generateTableConfig(state, monthsArray),
   //   []
   // );
 
   const tableConfig: TableUIConfig = {
-    columns: [
-      {
-        Header: 'Name',
-        accessor: 'name',
-        width: assignWidth(15, 0)
-      },
-      {
-        Header: 'Department',
-        accessor: 'department',
-        width: assignWidth(15, 0)
-      },
-      {
-        Header: 'Role Type',
-        accessor: 'roleType',
-        width: assignWidth(10, 0)
-      },
-      {
-        Header: 'Position',
-        accessor: 'position',
-        width: assignWidth(10, 0)
-      },
-      {
-        Header: 'Annual Salary',
-        accessor: 'annualSalary',
-        width: assignWidth(10, 0)
-      },
-      {
-        Header: 'Start Date',
-        accessor: 'startDate'
-      },
-      {
-        Header: 'End Date',
-        accessor: 'endDate'
-      }
-    ]
-  }
-
-  const [showCurrencyConfig, setShowCurrencyConfig] = useState(false)
-  const [showYearConfig, setShowYearConfig] = useState(false)
-
-  const renderCurrencyOptions = () => {
-    let currencyList = ['USD', 'INR']
-    return currencyList.map((c, i) => {
-      return <div key={i}>{c}</div>
-    })
-  }
-
-  const renderYearOptions = (years: string[]) => {
-    return years.map((year, i) => {
-      return <div key={i}>{year}</div>
-    })
-  }
+    columns: employeeTableFields,
+  };
 
   return (
-    <div className={styles.employeeTableContainer}>
-      <div className={styles.infoContainer}>
-        <div className={styles.tableHeading}>Employee</div>
-        <div>
-          <button
-            onClick={(e) => {
-              setShowYearConfig(!showYearConfig)
+    <div className={classes.mainTableContainer}>
+      <div className={classes.infoContainer}>
+        <Typography variant="h4">Employee</Typography>
+        {saveChangesBtn ? (
+          <Button
+            variant="outlined"
+            onClick={() => {
+              changeHandler(state);
+              setSaveChangesBtn(false);
             }}
-            className={styles.columnConfigBtn}
           >
-            {`Year: ${currentYear}`}
-          </button>
-          {showYearConfig ? (
-            <div
-              className={styles.columnConfigBox}
-              onMouseLeave={(e) => setShowYearConfig(false)}
-            >
-              {renderYearOptions(Object.keys(state.data))}
-            </div>
-          ) : (
-            <div></div>
-          )}
-        </div>
-        <div>
-          <button
-            onClick={(e) => {
-              setShowCurrencyConfig(!showCurrencyConfig)
+            Save Changes
+          </Button>
+        ) : (
+          <div></div>
+        )}
+        <div className={classes.btnGroup}>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              dispatch({
+                type: "ADD_ROW",
+              });
             }}
-            className={styles.columnConfigBtn}
           >
-            {`Currency: ${state.currency}`}
-          </button>
-          {showCurrencyConfig ? (
-            <div
-              className={styles.columnConfigBox}
-              onMouseLeave={(e) => setShowCurrencyConfig(false)}
-            >
-              {renderCurrencyOptions()}
-            </div>
-          ) : (
-            <div></div>
-          )}
+            Add Row
+          </Button>
         </div>
       </div>
       <div className={styles.tableContainer}>
@@ -385,7 +430,7 @@ const EmployeeTable = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default EmployeeTable
+export default EmployeeTable;

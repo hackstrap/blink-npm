@@ -1,6 +1,7 @@
 .infoContainer {
   display: flex;
   margin-bottom: 24px;
+  flex-wrap: wrap;
 }
 .notesHeading {
   font-size: 1.5rem;
@@ -22,4 +23,19 @@
 
 .mainContainer > .quill > .ql-container {
   min-height: 500px;
+}
+
+.columnConfigBox {
+  display: flex;
+  width: 141px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 15px;
+  border-radius: 0.5rem;
+  box-shadow: 2px 2px 9px #bbb;
+  position: absolute;
+  z-index: 20;
+  background-color: white;
+  max-height: 400px;
+  overflow-y: auto;
 }

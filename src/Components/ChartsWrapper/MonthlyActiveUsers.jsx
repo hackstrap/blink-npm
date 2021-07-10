@@ -1,8 +1,18 @@
 import React from "react";
-import ChartComponent from "../../ChartsComponents/ChartComponent";
+import ChartComponent from "../ChartsComponents/ChartComponent";
+import { fetchCollection, updateCollection } from "../fetch";
+import { extractChartData } from "./MRRChart";
 
-const MonthlyActiveUsers = () => {
-  const data = {
+const chartFields = [
+  {
+    Header: "Monthly Active User Change %",
+    accessor: "total_monthly_active_users_gr",
+  },
+  { Header: "Monthly Active Users", accessor: "total_monthly_active_users" },
+];
+
+const MonthlyActiveUsers = (props) => {
+  let data = {
     labels: [
       "Jan",
       "Feb",
@@ -47,7 +57,7 @@ const MonthlyActiveUsers = () => {
     ],
   };
 
-  const [options, setOptions] = React.useState<any>({
+  const [options, setOptions] = React.useState({
     plugins: {
       legend: {
         display: true,
@@ -94,7 +104,7 @@ const MonthlyActiveUsers = () => {
         display: true,
         title: {
           display: true,
-          text: "Value",
+          text: "Monthly Active Users",
           color: "#000",
           font: {
             size: 12,
@@ -117,7 +127,7 @@ const MonthlyActiveUsers = () => {
         display: true,
         title: {
           display: true,
-          text: "Value",
+          text: "MAU Growth Rate %",
           color: "#000",
           font: {
             size: 12,
@@ -128,9 +138,50 @@ const MonthlyActiveUsers = () => {
     },
   });
 
-  const chartRef = React.useRef<HTMLDivElement>(null);
+  const [currentYear, setCurrentYear] = React.useState(
+    new Date().getFullYear().toString()
+  );
+  const [chartData, setChartData] = React.useState(null);
+  const [chartControl, setChartControl] = React.useState(null);
+  const chartRef = React.useRef(null);
 
+  const getDatasets = (dataset, serverData) => {
+    console.log(dataset, serverData);
+    // let currentData = [...dataset];
+    // currentData[1] = {
+    //   ...currentData[1],
+    //   data: serverData["total_monthly_active_users_gr"],
+    //   label: chartFields[1].Header,
+    // };
+    // currentData[1] = {
+    //   ...currentData[1],
+    //   data: serverData["total_monthly_active_users"],
+    //   label: chartFields[1].Header,
+    // };
+    // return currentData;
+  };
+
+  const getData = () => {
+    fetchCollection(
+      "users",
+      currentYear,
+      props?.selectedStartup?.accessor
+    ).then((res) => {
+      const serverData = extractChartData(res.data, chartFields);
+      console.log(res.data, serverData);
+      if (res.data.length) {
+        data = {
+          ...data,
+          datasets: getDatasets(data.datasets, serverData),
+        };
+        setChartData(data);
+      } else {
+        setChartData(null);
+      }
+    });
+  };
   React.useEffect(() => {
+    getDatasets();
     if (
       chartRef?.current?.clientWidth !== undefined &&
       chartRef?.current?.clientWidth < 500
@@ -155,7 +206,30 @@ const MonthlyActiveUsers = () => {
         },
       });
     }
-  }, []);
+    if (props.chartInfo) {
+      setChartControl({
+        showToInvestor: props.chartInfo?.investor_view,
+        updateShowToInvestor: (value) => {
+          updateCollection(
+            "charts",
+            [
+              {
+                ...props.chartInfo,
+                investor_view: value,
+              },
+            ],
+            props.selectedStartup.accessor
+          )
+            .then((res) => {
+              getData();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+      });
+    }
+  }, [currentYear, props]);
 
   return (
     <div ref={chartRef}>
@@ -163,8 +237,13 @@ const MonthlyActiveUsers = () => {
         title="Monthly Active Users (MAU)"
         description="MAU stands for monthly active user, it’s the number of users that have done something meaningful in your product in the last 30 days/calendar month."
         options={options}
-        data={data}
+        data={chartData}
         type="bar"
+        currentYear={currentYear}
+        setCurrentYear={(year) => {
+          setCurrentYear(year);
+        }}
+        chartControl={chartControl}
       />
     </div>
   );

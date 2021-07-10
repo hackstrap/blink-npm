@@ -73,13 +73,29 @@ const TablesView = () => {
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
       case "revenue":
-        return <RevenuePage />;
+        return (
+          <RevenuePage
+            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
+          />
+        );
       case "expenses":
-        return <ExpensesPage />;
+        return (
+          <ExpensesPage
+            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
+          />
+        );
       case "employee":
-        return <EmployeePage />;
+        return (
+          <EmployeePage
+            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
+          />
+        );
       default:
-        return <NotesPage />;
+        return (
+          <NotesPage
+            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
+          />
+        );
     }
   };
   return (
@@ -120,13 +136,17 @@ const TablesView = () => {
             >
               Expenses
             </Button>
-            {/* <Button
-            variant="contained"
-            className={appContext?.currentPage === "employee" ? classes.btnStyleActive : classes.btnStyleInactive}
-            onClick={() => appContext?.setCurrentPage("employee")}
-          >
-            Employee
-          </Button> */}
+            <Button
+              variant="contained"
+              className={
+                appContext?.currentPage === "employee"
+                  ? classes.btnStyleActive
+                  : classes.btnStyleInactive
+              }
+              onClick={() => appContext?.setCurrentPage("employee")}
+            >
+              Employee
+            </Button>
           </ButtonGroup>
         </div>
       </div>

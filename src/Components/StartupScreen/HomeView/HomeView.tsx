@@ -73,9 +73,17 @@ const HomeView = () => {
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
       case "notes":
-        return <NotesPage />;
+        return (
+          <NotesPage
+            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
+          />
+        );
       default:
-        return <MetricsPage />;
+        return (
+          <MetricsPage
+            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
+          />
+        );
     }
   };
   return (

@@ -1,7 +1,16 @@
 import React from "react";
-import ChartComponent from "../../ChartsComponents/ChartComponent";
-const LTV2CAC = () => {
-  const data = {
+import ChartComponent from "../ChartsComponents/ChartComponent";
+import { fetchCollection, updateCollection } from "../fetch";
+import { extractChartData } from "./MRRChart";
+
+const chartFields = [
+  { Header: "LTV", accessor: "customer_lifetime_value" },
+  { Header: "CAC", accessor: "customer_acquisition_cost" },
+  { Header: "LTV/CAC", accessor: "ltv_to_cac_ratio" },
+];
+
+const LTV2CAC = (props) => {
+  let data = {
     labels: [
       "Jan",
       "Feb",
@@ -59,7 +68,7 @@ const LTV2CAC = () => {
     ],
   };
 
-  const [options, setOptions] = React.useState<any>({
+  const [options, setOptions] = React.useState({
     plugins: {
       legend: {
         display: true,
@@ -109,7 +118,7 @@ const LTV2CAC = () => {
         display: true,
         title: {
           display: true,
-          text: "Value",
+          text: "Amount",
           color: "#000",
           font: {
             size: 12,
@@ -117,32 +126,76 @@ const LTV2CAC = () => {
           },
         },
       },
-      //   y1: {
-      //     ticks: {
-      //       font: {
-      //         size: 12,
-      //       },
-      //     },
-      //     grid: {
-      //       display: false,
-      //       borderWidth: 5,
-      //     },
-      //     position: "right",
-      //     display: true,
-      //     title: {
-      //       display: true,
-      //       text: "Value",
-      //       color: "#000",
-      //       font: {
-      //         size: 12,
-      //         weight: "bold",
-      //       },
-      //     },
-      //   },
+      y1: {
+        ticks: {
+          font: {
+            size: 12,
+          },
+        },
+        grid: {
+          display: false,
+          borderWidth: 5,
+        },
+        position: "right",
+        display: true,
+        title: {
+          display: true,
+          text: "LTV/CAC Ratio",
+          color: "#000",
+          font: {
+            size: 12,
+            weight: "bold",
+          },
+        },
+      },
     },
   });
 
-  const chartRef = React.useRef<HTMLDivElement>(null);
+  const [currentYear, setCurrentYear] = React.useState(
+    new Date().getFullYear().toString()
+  );
+  const chartRef = React.useRef(null);
+
+  const [chartData, setChartData] = React.useState(null);
+  const [chartControl, setChartControl] = React.useState(null);
+
+  const getDatasets = (dataset, serverData) => {
+    let currentData = [...dataset];
+    currentData[0] = {
+      ...currentData[0],
+      data: serverData["customer_lifetime_value"],
+      label: chartFields[0].Header,
+    };
+    currentData[1] = {
+      ...currentData[1],
+      data: serverData["customer_acquisition_cost"],
+      label: chartFields[1].Header,
+    };
+    currentData[2] = {
+      ...currentData[2],
+      data: serverData["ltv_to_cac_ratio"],
+      label: chartFields[2].Header,
+    };
+    return currentData;
+  };
+
+  const getData = () => {
+    fetchCollection("users", currentYear, props.selectedStartup.accessor).then(
+      (res) => {
+        const serverData = extractChartData(res.data, chartFields);
+        if (res.data.length) {
+          data = {
+            ...data,
+            datasets: getDatasets(data.datasets, serverData),
+          };
+          // console.log(data, serverData);
+          setChartData(data);
+        } else {
+          setChartData(null);
+        }
+      }
+    );
+  };
 
   React.useEffect(() => {
     if (
@@ -162,16 +215,44 @@ const LTV2CAC = () => {
         },
       });
     }
-  }, []);
+    if (props.chartInfo) {
+      setChartControl({
+        showToInvestor: props.chartInfo?.investor_view,
+        updateShowToInvestor: (value) => {
+          updateCollection(
+            "charts",
+            [
+              {
+                ...props.chartInfo,
+                investor_view: value,
+              },
+            ],
+            props.selectedStartup.accessor
+          )
+            .then((res) => {
+              getData();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+      });
+    }
+  }, [currentYear, props]);
 
   return (
     <div ref={chartRef}>
       <ChartComponent
         title="LTV : CAC Ratio"
         description="The Customer Lifetime Value to Customer Acquisition Cost (LTV : CAC) ratio measures the relationship between the lifetime value of a customer, and the cost of acquiring that customer. "
-        data={data}
+        data={chartData}
         options={options}
         type="bar"
+        currentYear={currentYear}
+        setCurrentYear={(year) => {
+          setCurrentYear(year);
+        }}
+        chartControl={chartControl}
       />
     </div>
   );

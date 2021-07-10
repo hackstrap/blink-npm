@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { Props, ReactNode } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   colors,
@@ -9,12 +9,14 @@ import {
   Grid,
 } from "@material-ui/core";
 import ChartComponent from "../../../ChartsComponents/ChartComponent";
-import TotalRevenueChart from "../../../ChartsWrapper/TotalRevenueChart/TotalRevenueChart";
-import MRRChart from "../../../ChartsWrapper/MRRChart/MRRChart";
-import GrossProfitMargin from "../../../ChartsWrapper/GrossProfitMargin/GrossProfitMargin";
-import CustomerChurnRate from "../../../ChartsWrapper/CustomerChurnRate/CustomerChurnRate";
-import LTV2CAC from "../../../ChartsWrapper/LTV2CAC/LTV2CAC";
-import MonthlyActiveUsers from "../../../ChartsWrapper/MonthlyActiveUsers/MonthlyActiveUsers";
+import TotalRevenueChart from "../../../ChartsWrapper/TotalRevenueChart";
+import MRRChart from "../../../ChartsWrapper/MRRChart";
+import GrossProfitMargin from "../../../ChartsWrapper/GrossProfitMargin";
+import CustomerChurnRate from "../../../ChartsWrapper/CustomerChurnRate";
+import LTV2CAC from "../../../ChartsWrapper/LTV2CAC";
+import MonthlyActiveUsers from "../../../ChartsWrapper/MonthlyActiveUsers";
+import { OptionInterface } from "../../../interfaces";
+import { fetchCollection } from "../../../fetch";
 
 const useStyles = makeStyles({
   page: {
@@ -22,9 +24,19 @@ const useStyles = makeStyles({
   },
 });
 
-const MetricsPage = () => {
+interface PropsInterface {
+  selectedStartup: OptionInterface;
+}
+
+const MetricsPage = (props: PropsInterface) => {
   const theme = useTheme();
   const classes = useStyles();
+  const [chartInfo, setChartInfo] =
+    React.useState<null | {
+      [key: string]: {
+        [key: string]: string | number | boolean;
+      };
+    }>(null);
 
   const chartsConfig = [
     {
@@ -41,39 +53,106 @@ const MetricsPage = () => {
     },
   ];
 
-  const renderCharts = (
-    config: { Header: string | ReactNode; accessor: string }[]
-  ) => {
-    return config.map((chart) => {
-      return (
-        <Grid item lg={6} xs={12}>
-          <TotalRevenueChart />
-        </Grid>
-      );
+  // const renderCharts = (
+  //   config: { Header: string | ReactNode; accessor: string }[]
+  // ) => {
+  //   return config.map((chart) => {
+  //     return (
+  //       <Grid item lg={6} xs={12}>
+  //         <TotalRevenueChart />
+  //       </Grid>
+  //     );
+  //   });
+  // };
+
+  const extractData = (data: any[]) => {
+    let obj = {};
+    data.forEach((item) => {
+      obj = {
+        ...obj,
+        [item.chart_name]: {
+          ...item,
+        },
+      };
     });
+    return obj;
   };
+
+  React.useEffect(() => {
+    fetchCollection("charts", undefined, props.selectedStartup.accessor).then(
+      (res) => {
+        const chartData = extractData(res.data);
+        setChartInfo(chartData);
+      }
+    );
+  }, []);
+
   return (
-    <Grid container spacing={4} className={classes.page}>
+    <div>
       {/* {renderCharts(chartsConfig)} */}
-      <Grid item lg={6} xs={12}>
-        <TotalRevenueChart />
+      <Grid container spacing={3} className={classes.page}>
+        {chartInfo?.total_revenue_chart?.investor_view ? (
+          <Grid item lg={6} xs={12}>
+            <TotalRevenueChart
+              // chartInfo={chartInfo?.total_revenue_chart}
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
+        {chartInfo?.monthly_recurring_revenue_chart?.investor_view ? (
+          <Grid item lg={6} xs={12}>
+            <MRRChart
+              // chartInfo={chartInfo?.monthly_recurring_revenue_chart}
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
+        {chartInfo?.gross_profit_margin_chart?.investor_view ? (
+          <Grid item lg={6} xs={12}>
+            <GrossProfitMargin
+              // chartInfo={chartInfo?.gross_profit_margin_chart}
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
+        {chartInfo?.customer_churn_rate_chart?.investor_view ? (
+          <Grid item lg={6} xs={12}>
+            <CustomerChurnRate
+              // chartInfo={chartInfo?.customer_churn_rate_chart}
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
+        {chartInfo?.monthly_active_users_chart?.investor_view ? (
+          <Grid item lg={6} xs={12}>
+            <MonthlyActiveUsers
+              // chartInfo={chartInfo?.monthly_active_users_chart}
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
+        {chartInfo?.ltv_to_cac_chart?.investor_view ? (
+          <Grid item lg={6} xs={12}>
+            <LTV2CAC
+              // chartInfo={chartInfo?.ltv_to_cac_chart}
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
       </Grid>
-      <Grid item lg={6} xs={12}>
-        <MRRChart />
-      </Grid>
-      <Grid item lg={6} xs={12}>
-        <GrossProfitMargin />
-      </Grid>
-      <Grid item lg={6} xs={12}>
-        <CustomerChurnRate />
-      </Grid>
-      <Grid item lg={6} xs={12}>
-        <MonthlyActiveUsers />
-      </Grid>
-      <Grid item lg={6} xs={12}>
-        <LTV2CAC />
-      </Grid>
-    </Grid>
+    </div>
   );
 };
 

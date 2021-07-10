@@ -1,9 +1,22 @@
 import React, { ReactNode, RefObject } from "react";
 import { NullLiteral } from "typescript";
-import ChartComponent from "../../ChartsComponents/ChartComponent";
+import ChartComponent from "../ChartsComponents/ChartComponent";
+import { fetchCollection, updateCollection } from "../fetch";
+import { extractChartData } from "./MRRChart";
 
-const TotalRevenueChart = () => {
-  const data = {
+const chartFields = [
+  {
+    Header: "Total Revenue Change %",
+    accessor: "total_revenue_gr",
+  },
+  {
+    Header: "Total Revenue",
+    accessor: "total_revenue",
+  },
+];
+
+const TotalRevenueChart = (props) => {
+  let data = {
     labels: [
       "Jan",
       "Feb",
@@ -47,7 +60,7 @@ const TotalRevenueChart = () => {
       },
     ],
   };
-  const [options, setOptions] = React.useState<any>({
+  const [options, setOptions] = React.useState({
     plugins: {
       legend: {
         display: true,
@@ -95,7 +108,7 @@ const TotalRevenueChart = () => {
         display: true,
         title: {
           display: true,
-          text: "Value",
+          text: "Total Revenue",
           color: "#000",
           font: {
             size: 12,
@@ -119,7 +132,7 @@ const TotalRevenueChart = () => {
         display: true,
         title: {
           display: true,
-          text: "Value",
+          text: "Total Revenue Change %",
           color: "#000",
           font: {
             size: 12,
@@ -129,13 +142,61 @@ const TotalRevenueChart = () => {
       },
     },
   });
+
   // const toJson = (data:object) => {
   //   return JSON.stringify(data)
   // }
 
-  const chartRef = React.useRef<HTMLDivElement>(null);
+  const [currentYear, setCurrentYear] = React.useState(
+    new Date().getFullYear().toString()
+  );
+
+  const chartRef = React.useRef(null);
+
+  const [chartControl, setChartControl] = React.useState(null);
+
+  const [chartData, setChartData] = React.useState(null);
+  const getDatasets = (dataset, serverData) => {
+    let currentData = [...dataset];
+    currentData[1] = {
+      ...currentData[1],
+      data: serverData["total_revenue"],
+      label: chartFields[1].Header,
+    };
+    currentData[0] = {
+      ...currentData[0],
+      data: serverData["total_revenue"],
+      label: chartFields[0].Header,
+    };
+    // currentData[2] = {
+    //   ...currentData[2],
+    //   data: serverData["total_new_mrr"],
+    //   label: chartsField[1].Header,
+    // };
+    return currentData;
+  };
+
+  const getData = () => {
+    fetchCollection("revenue", currentYear, props.selectedStartup.accessor)
+      .then((res) => {
+        const serverData = extractChartData(res.data, chartFields);
+        // console.log(serverData, res.data);
+        if (res.data.length) {
+          data = {
+            ...data,
+            datasets: getDatasets(data.datasets, serverData),
+          };
+          // console.log(data, res.data);
+          setChartData(data);
+        } else {
+          setChartData(null);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
 
   React.useEffect(() => {
+    getData();
     if (
       chartRef?.current?.clientWidth !== undefined &&
       chartRef?.current?.clientWidth < 500
@@ -169,15 +230,43 @@ const TotalRevenueChart = () => {
         },
       });
     }
-  }, []);
+    if (props.chartInfo) {
+      setChartControl({
+        showToInvestor: props.chartInfo?.investor_view,
+        updateShowToInvestor: (value) => {
+          updateCollection(
+            "charts",
+            [
+              {
+                ...props.chartInfo,
+                investor_view: value,
+              },
+            ],
+            props.selectedStartup.accessor
+          )
+            .then((res) => {
+              getData();
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        },
+      });
+    }
+  }, [currentYear, props]);
   return (
     <div ref={chartRef}>
       <ChartComponent
         title="Total Revenue"
         description="Total revenue, also known as gross revenue, is your total revenue from recurring (MRR) and non-recurring revenue streams."
         options={options}
-        data={data}
+        data={chartData}
         type="bar"
+        currentYear={currentYear}
+        setCurrentYear={(year) => {
+          setCurrentYear(year);
+        }}
+        chartControl={chartControl}
       />
     </div>
   );
