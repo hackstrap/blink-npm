@@ -188,8 +188,7 @@ const RevenuePage = (props: PropsInterface) => {
   const [currentYearUserTable, setCurrentYearUserTable] = useState<string>(
     new Date().getFullYear().toString()
   )
-
-  React.useEffect(() => {
+  const getRevenueData = () => {
     fetchCollection('revenue', currentYear, props.selectedStartup.accessor)
       .then((res) => {
         const frontendData = convertToFrontendSchema(
@@ -202,9 +201,9 @@ const RevenuePage = (props: PropsInterface) => {
       .catch((err) => {
         console.log(err)
       })
-  }, [currentYear])
+  }
 
-  React.useEffect(() => {
+  const getUserData = () => [
     fetchCollection(
       'users',
       currentYearUserTable,
@@ -221,6 +220,13 @@ const RevenuePage = (props: PropsInterface) => {
       .catch((err) => {
         console.log(err)
       })
+  ]
+  React.useEffect(() => {
+    getRevenueData()
+  }, [currentYear])
+
+  React.useEffect(() => {
+    getUserData()
   }, [currentYearUserTable])
 
   return (
@@ -249,6 +255,8 @@ const RevenuePage = (props: PropsInterface) => {
                 props.selectedStartup.accessor
               )
               updateCollection('revenue', data, props.selectedStartup.accessor)
+                .then((res) => getRevenueData())
+                .catch((err) => console.log(err))
             }}
           />
           <br />
@@ -267,6 +275,8 @@ const RevenuePage = (props: PropsInterface) => {
               props.selectedStartup.accessor
             )
             updateCollection('users', data, props.selectedStartup.accessor)
+              .then((res) => getUserData())
+              .catch((err) => console.log(err))
           }}
           currentYear={currentYearUserTable}
           setCurrentYear={(year: string) => {

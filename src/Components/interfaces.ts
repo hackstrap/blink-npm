@@ -1,5 +1,3 @@
-import React from 'react'
-
 export interface ActionInterface {
   type: string
   payload?: any

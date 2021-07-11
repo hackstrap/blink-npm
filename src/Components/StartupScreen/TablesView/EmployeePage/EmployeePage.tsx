@@ -160,7 +160,7 @@ const EmployeePage = (props: PropsInterface) => {
   // const [currentYearEmployeeTable, setCurrentYearEmployeeTable] =
   //   useState<string>(new Date().getFullYear().toString());
 
-  React.useEffect(() => {
+  const getData = () => {
     fetchCollection('employee', undefined, props.selectedStartup.accessor)
       .then((res) => {
         const frontendData = convertToFrontendSchema(
@@ -173,6 +173,9 @@ const EmployeePage = (props: PropsInterface) => {
       .catch((err) => {
         console.log(err)
       })
+  }
+  React.useEffect(() => {
+    getData()
   }, [])
   return (
     <div
@@ -200,6 +203,11 @@ const EmployeePage = (props: PropsInterface) => {
                 serverData,
                 props.selectedStartup.accessor
               )
+                .then((res) => {
+                  console.log(res.data)
+                  getData()
+                })
+                .catch((err) => console.log(err))
             }}
             // currentYear={currentYearEmployeeTable}
             // setCurrentYear={(year: string) => setCurrentYearEmployeeTable(year)}

@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 // import { Container } from "@material-ui/core";
-import ExpensesTable from "../../../TableComponents/ExpensesTable";
-import OpexExpensesTable from "../../../TableComponents/OpexExpensesTable";
-import { OptionInterface, TableDataInterface } from "../../../interfaces";
-import { fetchCollection, updateCollection } from "../../../fetch";
+import ExpensesTable from '../../../TableComponents/ExpensesTable'
+import OpexExpensesTable from '../../../TableComponents/OpexExpensesTable'
+import { OptionInterface, TableDataInterface } from '../../../interfaces'
+import { fetchCollection, updateCollection } from '../../../fetch'
 import {
   convertToFrontendSchema,
-  convertToBackendSchema,
-} from "../RevenuePage/RevenuePage";
+  convertToBackendSchema
+} from '../RevenuePage/RevenuePage'
 
 // const expensesData = {
 //   currency: 'INR',
@@ -19,57 +19,57 @@ import {
 // }
 
 const expenseTableFields = [
-  { Header: "", accessor: "" },
-  { Header: "Total COGS", accessor: "total_cogs" },
+  { Header: '', accessor: '' },
+  { Header: 'Total COGS', accessor: 'total_cogs' },
   {
-    Header: "Total Customer Support Expenses",
-    accessor: "total_customer_support_expenses",
+    Header: 'Total Customer Support Expenses',
+    accessor: 'total_customer_support_expenses'
   },
-  { Header: "Total Payroll - Support", accessor: "total_payroll_support" },
+  { Header: 'Total Payroll - Support', accessor: 'total_payroll_support' },
   {
-    Header: "Software & Tools - Support",
-    accessor: "software_and_tools_support",
-  },
-  {
-    Header: "Total Service Delivery Expenses",
-    accessor: "total_service_delivery_expenses",
+    Header: 'Software & Tools - Support',
+    accessor: 'software_and_tools_support'
   },
   {
-    Header: "Hosting - Service Delivery",
-    accessor: "hosting_service_delivery",
+    Header: 'Total Service Delivery Expenses',
+    accessor: 'total_service_delivery_expenses'
   },
   {
-    Header: "Total Cost of Good Manufactured",
-    accessor: "total_cost_of_goods_manufactured",
+    Header: 'Hosting - Service Delivery',
+    accessor: 'hosting_service_delivery'
   },
-  { Header: "Direct Material Costs", accessor: "direct_material_costs" },
-  { Header: "Direct Labor Costs", accessor: "direct_labor_costs" },
-  { Header: "Manufacturing Overhead", accessor: "manufacturing_overhead" },
-  { Header: "Net WIP Inventory", accessor: "net_wip_inventory" },
   {
-    Header: "Net Finished Goods Inventory",
-    accessor: "net_finished_goods_inventory",
+    Header: 'Total Cost of Good Manufactured',
+    accessor: 'total_cost_of_goods_manufactured'
   },
-  { Header: "Total Other COGS", accessor: "total_other_cogs" },
-];
+  { Header: 'Direct Material Costs', accessor: 'direct_material_costs' },
+  { Header: 'Direct Labor Costs', accessor: 'direct_labor_costs' },
+  { Header: 'Manufacturing Overhead', accessor: 'manufacturing_overhead' },
+  { Header: 'Net WIP Inventory', accessor: 'net_wip_inventory' },
+  {
+    Header: 'Net Finished Goods Inventory',
+    accessor: 'net_finished_goods_inventory'
+  },
+  { Header: 'Total Other COGS', accessor: 'total_other_cogs' }
+]
 
 const opexTableFields = [
-  { Header: "", accessor: "" },
-  { Header: "Total OPEX Expenses", accessor: "total_opex_expenses" },
+  { Header: '', accessor: '' },
+  { Header: 'Total OPEX Expenses', accessor: 'total_opex_expenses' },
   {
-    Header: "Total General And Administrative Expenses",
-    accessor: "total_general_and_administrative_expenses",
+    Header: 'Total General And Administrative Expenses',
+    accessor: 'total_general_and_administrative_expenses'
   },
   {
-    Header: "Total Sales and Marketing Expenses",
-    accessor: "total_sales_and_marketing_expenses",
+    Header: 'Total Sales and Marketing Expenses',
+    accessor: 'total_sales_and_marketing_expenses'
   },
   {
-    Header: " Total Research And Development Expenses",
-    accessor: "total_research_and_development_expenses",
+    Header: ' Total Research And Development Expenses',
+    accessor: 'total_research_and_development_expenses'
   },
-  { Header: "Total Other Expenses", accessor: "total_other_expenses" },
-];
+  { Header: 'Total Other Expenses', accessor: 'total_other_expenses' }
+]
 
 // const opexExpesesData = {
 //   currency: 'INR',
@@ -81,24 +81,24 @@ const opexTableFields = [
 // }
 
 interface PropsInterface {
-  selectedStartup: OptionInterface;
+  selectedStartup: OptionInterface
 }
 
 const ExpensesPage = (props: PropsInterface) => {
   const [expenseTableData, setExpenseTableData] =
-    useState<TableDataInterface | null>(null);
-  const [opexTableData, setOpexTableData] =
-    useState<TableDataInterface | null>(null);
+    useState<TableDataInterface | null>(null)
+  const [opexTableData, setOpexTableData] = useState<TableDataInterface | null>(
+    null
+  )
   const [currentYearExpenseTable, setCurrentYearEpenseTable] = useState<string>(
     new Date().getFullYear().toString()
-  );
+  )
   const [currentYearOpexTable, setCurrentYearOpexTable] = useState<string>(
     new Date().getFullYear().toString()
-  );
-
-  React.useEffect(() => {
+  )
+  const getData1 = () => {
     fetchCollection(
-      "expense",
+      'expense',
       currentYearExpenseTable,
       props.selectedStartup.accessor
     )
@@ -107,17 +107,17 @@ const ExpensesPage = (props: PropsInterface) => {
           res.data,
           expenseTableFields,
           currentYearExpenseTable
-        );
-        setExpenseTableData(frontendData);
+        )
+        setExpenseTableData(frontendData)
       })
       .catch((err) => {
-        console.log(err);
-      });
-  }, [currentYearExpenseTable]);
+        console.log(err)
+      })
+  }
 
-  React.useEffect(() => {
+  const getData2 = () => {
     fetchCollection(
-      "opex",
+      'opex',
       currentYearOpexTable,
       props.selectedStartup.accessor
     )
@@ -126,21 +126,28 @@ const ExpensesPage = (props: PropsInterface) => {
           res.data,
           opexTableFields,
           currentYearOpexTable
-        );
-        setOpexTableData(frontendData);
+        )
+        setOpexTableData(frontendData)
       })
       .catch((err) => {
-        console.log(err);
-      });
-  }, [currentYearOpexTable]);
+        console.log(err)
+      })
+  }
+  React.useEffect(() => {
+    getData1()
+  }, [currentYearExpenseTable])
+
+  React.useEffect(() => {
+    getData2()
+  }, [currentYearOpexTable])
   return (
     <div
       style={{
-        width: "100%",
-        display: "flex",
-        marginTop: "64px",
-        flexDirection: "column",
-        gap: "64px",
+        width: '100%',
+        display: 'flex',
+        marginTop: '64px',
+        flexDirection: 'column',
+        gap: '64px'
       }}
     >
       {expenseTableData ? (
@@ -153,12 +160,19 @@ const ExpensesPage = (props: PropsInterface) => {
                 expenseTableFields,
                 currentYearExpenseTable,
                 props.selectedStartup.accessor
-              );
+              )
               updateCollection(
-                "expense",
+                'expense',
                 serverData,
                 props.selectedStartup.accessor
-              );
+              )
+                .then((res) => {
+                  console.log(res.data)
+                  getData1()
+                })
+                .catch((res) => {
+                  console.log(res)
+                })
             }}
             currentYear={currentYearExpenseTable}
             setCurrentYear={(year: string) => setCurrentYearEpenseTable(year)}
@@ -177,12 +191,17 @@ const ExpensesPage = (props: PropsInterface) => {
               opexTableFields,
               currentYearOpexTable,
               props.selectedStartup.accessor
-            );
+            )
             updateCollection(
-              "expense",
+              'expense',
               serverData,
               props.selectedStartup.accessor
-            );
+            )
+              .then((res) => {
+                console.log(res.data)
+                getData2()
+              })
+              .catch((err) => console.log(err))
           }}
           currentYear={currentYearOpexTable}
           setCurrentYear={(year: string) => setCurrentYearOpexTable(year)}
@@ -191,10 +210,10 @@ const ExpensesPage = (props: PropsInterface) => {
         <div>No Data Avaliable</div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default ExpensesPage;
+export default ExpensesPage
 
 // const serverData = {
 //   currency: "INR",
