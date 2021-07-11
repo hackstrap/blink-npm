@@ -23,6 +23,14 @@ npm install next-remove-imports
 
 This will remove all .less/.css/.scss/.sass/.styl imports from all packages in node_modules.
 
+```javascript
+// add this piece of code in next.config.js file
+const removeImports = require('next-remove-imports')({
+  options: {}
+})
+module.exports = removeImports()
+```
+
 <br/>
 
 ```bash
