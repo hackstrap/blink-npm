@@ -132,10 +132,12 @@ const ProfileSettings = (props: PropsInterface) => {
       "investor",
       undefined,
       props.investorInfo.accessor
-    ).then((res) => {
-      console.log(res.data);
-      setInvestorDetails(res.data[0]);
-    });
+    )
+      .then((res) => {
+        console.log(res.data);
+        setInvestorDetails(res.data[0]);
+      })
+      .catch((err) => console.log(err));
   }, [props]);
   return (
     <div className={classes.mainConatiner}>

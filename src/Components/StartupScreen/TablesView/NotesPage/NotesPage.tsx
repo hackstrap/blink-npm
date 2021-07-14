@@ -94,25 +94,27 @@ const NotesPage = (props: PropsInterface) => {
       "notes",
       currentYear,
       props.selectedStartup.accessor
-    ).then((res) => {
-      const note = extractNote(res.data, currentMonth);
-      if (note.length) {
-        setnoteData(note[0]);
-      } else {
-        console.log("note not avaliable, init empty note");
-        setnoteData({
-          note_name: "Investor Update",
-          month: new Date().getMonth() + 1,
-          note_data: "<p>Hello</p>",
-          email_status: false,
-          investor_view: false,
-          last_emailed: "",
-          last_updated: "",
-          year: 2021,
-          startup_id: "startup-1slug",
-        });
-      }
-    });
+    )
+      .then((res) => {
+        const note = extractNote(res.data, currentMonth);
+        if (note.length) {
+          setnoteData(note[0]);
+        } else {
+          console.log("note not avaliable, init empty note");
+          setnoteData({
+            note_name: "Investor Update",
+            month: new Date().getMonth() + 1,
+            note_data: "<p>Hello</p>",
+            email_status: false,
+            investor_view: false,
+            last_emailed: "",
+            last_updated: "",
+            year: 2021,
+            startup_id: "startup-1slug",
+          });
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   React.useEffect(() => {

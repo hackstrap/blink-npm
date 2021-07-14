@@ -134,10 +134,12 @@ const InvestorScreen = () => {
       "investment",
       "",
       "investor-1slug"
-    ).then((res) => {
-      let options = extractStartupsInvested(res.data);
-      setStartupOptions(options);
-    });
+    )
+      .then((res) => {
+        let options = extractStartupsInvested(res.data);
+        setStartupOptions(options);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   // const startupOptions = [

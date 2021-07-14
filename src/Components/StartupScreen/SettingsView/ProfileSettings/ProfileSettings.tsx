@@ -156,9 +156,11 @@ const ProfileSettings = (props: PropsInterface) => {
       "startup",
       undefined,
       props.selectedStartup.accessor
-    ).then((res) => {
-      setStartupInfo(res.data[0]);
-    });
+    )
+      .then((res) => {
+        setStartupInfo(res.data[0]);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   const monthsArray = [

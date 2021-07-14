@@ -97,19 +97,21 @@ const GrossProfitMargin = (props) => {
       "revenue",
       currentYear,
       props.selectedStartup.accessor
-    ).then((res) => {
-      const serverData = extractChartData(res.data, chartFields);
-      if (res.data.length) {
-        data = {
-          ...data,
-          datasets: getDatasets(data.datasets, serverData),
-        };
-        // console.log(data, serverData);
-        setChartData(data);
-      } else {
-        setChartData(null);
-      }
-    });
+    )
+      .then((res) => {
+        const serverData = extractChartData(res.data, chartFields);
+        if (res.data.length) {
+          data = {
+            ...data,
+            datasets: getDatasets(data.datasets, serverData),
+          };
+          // console.log(data, serverData);
+          setChartData(data);
+        } else {
+          setChartData(null);
+        }
+      })
+      .catch((err) => console.log(err));
   };
   React.useEffect(() => {
     getData();

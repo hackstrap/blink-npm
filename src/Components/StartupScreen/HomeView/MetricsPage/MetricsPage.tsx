@@ -93,10 +93,12 @@ const MetricsPage = (props: PropsInterface) => {
       "charts",
       undefined,
       props.selectedStartup.accessor
-    ).then((res) => {
-      const chartData = extractData(res.data);
-      setChartInfo(chartData);
-    });
+    )
+      .then((res) => {
+        const chartData = extractData(res.data);
+        setChartInfo(chartData);
+      })
+      .catch((err) => console.log(err));
   }, []);
   return (
     <div>

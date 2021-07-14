@@ -59,11 +59,10 @@ class Example extends Component {
   render() {
     return (
       <BlinkApp
-        userInfo={authInfo}
         screen={'startupScreen'}
         view={'homeView'}
         page={'metrics'}
-        apiRoute={'api_route'}
+        apiRoute={'https://demo-organization.com/'}
         token={'token_value'}
       />
     )
@@ -75,9 +74,6 @@ class Example extends Component {
 
 1. All the props passed here are stored in a global Object with the help of context API and can be accessed anywhere in the app.
 2. **screen**,**view**,**page** props are used for in app navigation. Pass the correct values to load the required page.
-3. **userInfo** - We can pass all the authentication related data here.
-
-> For configuring the endpoint route create a .env file and pass the starting path in REACT_APP_BLINK_ENDPOINT variable
 
 ## License
 
