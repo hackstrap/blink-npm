@@ -15,7 +15,7 @@ import {
   withStyles,
   Tooltip,
 } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import InvestorTable from "../../../TableComponents/InvestorTable";
 import {
   investorDetailsTableData,
@@ -23,6 +23,7 @@ import {
 } from "../../../../RevenueData";
 import InvestorDetailsTable from "../../../TableComponents/InvestorDetailsTable";
 import { fetchCollection, fetchInvestorInfo } from "../../../fetch";
+import { globalContext } from "../../../../AppContext";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -91,6 +92,7 @@ interface PropsInterface {
 }
 
 const ProfileSettings = (props: PropsInterface) => {
+  const appContext = useContext(globalContext);
   const theme = useTheme();
   const classes = useStyles(theme);
   const CssTextField = withStyles({
@@ -124,12 +126,16 @@ const ProfileSettings = (props: PropsInterface) => {
     });
 
   React.useEffect(() => {
-    fetchInvestorInfo("investor", undefined, props.investorInfo.accessor).then(
-      (res) => {
-        console.log(res.data);
-        setInvestorDetails(res.data[0]);
-      }
-    );
+    fetchInvestorInfo(
+      appContext?.apiRoute,
+      appContext?.token,
+      "investor",
+      undefined,
+      props.investorInfo.accessor
+    ).then((res) => {
+      console.log(res.data);
+      setInvestorDetails(res.data[0]);
+    });
   }, [props]);
   return (
     <div className={classes.mainConatiner}>

@@ -1,86 +1,88 @@
-import React, { ReactNode, RefObject } from 'react'
-import ChartComponent from '../ChartsComponents/ChartComponent'
-import { fetchCollection, updateCollection } from '../fetch'
-import { extractChartData } from './MRRChart'
+import React, { ReactNode, RefObject, useContext } from "react";
+import { globalContext } from "../../AppContext";
+import ChartComponent from "../ChartsComponents/ChartComponent";
+import { fetchCollection, updateCollection } from "../fetch";
+import { extractChartData } from "./MRRChart";
 
 const chartFields = [
   {
-    Header: 'Total Revenue Change %',
-    accessor: 'total_revenue_gr'
+    Header: "Total Revenue Change %",
+    accessor: "total_revenue_gr",
   },
   {
-    Header: 'Total Revenue',
-    accessor: 'total_revenue'
-  }
-]
+    Header: "Total Revenue",
+    accessor: "total_revenue",
+  },
+];
 
 const TotalRevenueChart = (props) => {
+  const appContext = useContext(globalContext);
   let data = {
     labels: [
-      'Jan',
-      'Feb',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'Aug',
-      'Sept',
-      'Oct',
-      'Nov',
-      'Dec'
+      "Jan",
+      "Feb",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "Aug",
+      "Sept",
+      "Oct",
+      "Nov",
+      "Dec",
     ],
     datasets: [
       {
-        axis: 'y1',
-        type: 'line',
-        label: 'My Second Dataset',
+        axis: "y1",
+        type: "line",
+        label: "My Second Dataset",
         data: [25, 75, 80, 45, 56, 75, 60, 80, 45, 56, 75, 60, 90],
         fill: false,
-        backgroundColor: ['#000'],
-        borderColor: ['#000'],
+        backgroundColor: ["#000"],
+        borderColor: ["#000"],
         borderWidth: 1,
         pointRadius: 4,
         pointBorderWidth: 3,
-        pointBackgroundColor: '#fff'
+        pointBackgroundColor: "#fff",
       },
       {
-        axis: 'y',
-        label: 'My First Dataset',
+        axis: "y",
+        label: "My First Dataset",
         data: [25, 25, 75, 80, 45, 56, 75, 60, 75, 80, 45, 56, 75, 60],
         fill: false,
-        backgroundColor: ['#0066EB'],
-        borderColor: ['#0066EB'],
+        backgroundColor: ["#0066EB"],
+        borderColor: ["#0066EB"],
         borderWidth: 1,
         pointRadius: 4,
         pointBorderWidth: 3,
-        pointBackgroundColor: '#fff',
-        barPercentage: 0.5
-      }
-    ]
-  }
+        pointBackgroundColor: "#fff",
+        barPercentage: 0.5,
+      },
+    ],
+  };
   const [options, setOptions] = React.useState({
     plugins: {
       legend: {
         display: true,
-        position: 'bottom',
+        position: "bottom",
         labels: {
-          padding: 25
-        }
-      }
+          padding: 25,
+        },
+      },
     },
     scales: {
       x: {
         ticks: {
           font: {
-            size: 12
-          }
+            size: 12,
+          },
         },
         grid: {
           display: false,
-          borderWidth: 3
+          borderWidth: 3,
         },
-        display: true
+        display: true,
         // title: {
         //   display: true,
         //   text: "Value",
@@ -95,52 +97,52 @@ const TotalRevenueChart = (props) => {
         grid: {
           borderDashOffset: 2,
           borderWidth: 5,
-          borderDash: [15]
+          borderDash: [15],
         },
         ticks: {
           count: 4,
           // stepSize: 20,
           font: {
-            size: 12
-          }
+            size: 12,
+          },
         },
         display: true,
         title: {
           display: true,
-          text: 'Total Revenue',
-          color: '#000',
+          text: "Total Revenue",
+          color: "#000",
           font: {
             size: 12,
-            weight: 'bold'
-          }
-        }
+            weight: "bold",
+          },
+        },
       },
       y1: {
         ticks: {
           font: {
-            size: 12
+            size: 12,
           },
-          count: 4
+          count: 4,
           // stepSize: 10,
         },
         grid: {
           display: false,
-          borderWidth: 5
+          borderWidth: 5,
         },
-        position: 'right',
+        position: "right",
         display: true,
         title: {
           display: true,
-          text: 'Total Revenue Change %',
-          color: '#000',
+          text: "Total Revenue Change %",
+          color: "#000",
           font: {
             size: 12,
-            weight: 'bold'
-          }
-        }
-      }
-    }
-  })
+            weight: "bold",
+          },
+        },
+      },
+    },
+  });
 
   // const toJson = (data:object) => {
   //   return JSON.stringify(data)
@@ -148,54 +150,58 @@ const TotalRevenueChart = (props) => {
 
   const [currentYear, setCurrentYear] = React.useState(
     new Date().getFullYear().toString()
-  )
+  );
 
-  const chartRef = React.useRef(null)
+  const chartRef = React.useRef(null);
 
-  const [chartControl, setChartControl] = React.useState(null)
+  const [chartControl, setChartControl] = React.useState(null);
 
-  const [chartData, setChartData] = React.useState(null)
+  const [chartData, setChartData] = React.useState(null);
   const getDatasets = (dataset, serverData) => {
-    let currentData = [...dataset]
+    let currentData = [...dataset];
     currentData[1] = {
       ...currentData[1],
-      data: serverData['total_revenue'],
-      label: chartFields[1].Header
-    }
+      data: serverData["total_revenue"],
+      label: chartFields[1].Header,
+    };
     currentData[0] = {
       ...currentData[0],
-      data: serverData['total_revenue'],
-      label: chartFields[0].Header
-    }
+      data: serverData["total_revenue"],
+      label: chartFields[0].Header,
+    };
     // currentData[2] = {
     //   ...currentData[2],
     //   data: serverData["total_new_mrr"],
     //   label: chartsField[1].Header,
     // };
-    return currentData
-  }
+    return currentData;
+  };
 
   const getData = () => {
-    fetchCollection('revenue', currentYear, props.selectedStartup.accessor)
+    fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "revenue",
+      currentYear,
+      props.selectedStartup.accessor
+    )
       .then((res) => {
-        const serverData = extractChartData(res.data, chartFields)
-        // console.log(serverData, res.data);
+        const serverData = extractChartData(res.data, chartFields);
         if (res.data.length) {
           data = {
             ...data,
-            datasets: getDatasets(data.datasets, serverData)
-          }
-          // console.log(data, res.data);
-          setChartData(data)
+            datasets: getDatasets(data.datasets, serverData),
+          };
+          setChartData(data);
         } else {
-          setChartData(null)
+          setChartData(null);
         }
       })
-      .catch((err) => console.log(err))
-  }
+      .catch((err) => console.log(err));
+  };
 
   React.useEffect(() => {
-    getData()
+    getData();
     if (
       chartRef?.current?.clientWidth !== undefined &&
       chartRef?.current?.clientWidth < 500
@@ -205,70 +211,72 @@ const TotalRevenueChart = (props) => {
         plugins: {
           legend: {
             display: true,
-            position: 'bottom',
+            position: "bottom",
             labels: {
-              padding: 10
-            }
-          }
+              padding: 10,
+            },
+          },
         },
         scales: {
           ...options.scales,
           y: {
             ...options.scales.y,
             title: {
-              display: false
-            }
+              display: false,
+            },
           },
           y1: {
             ...options.scales.y,
-            position: 'right',
+            position: "right",
             title: {
-              display: false
-            }
-          }
-        }
-      })
+              display: false,
+            },
+          },
+        },
+      });
     }
     if (props.chartInfo) {
       setChartControl({
         showToInvestor: props.chartInfo?.investor_view,
         updateShowToInvestor: (value) => {
           updateCollection(
-            'charts',
+            appContext?.apiRoute,
+            appContext?.token,
+            "charts",
             [
               {
                 ...props.chartInfo,
-                investor_view: value
-              }
+                investor_view: value,
+              },
             ],
             props.selectedStartup.accessor
           )
             .then((res) => {
-              getData()
+              getData();
             })
             .catch((err) => {
-              console.log(err)
-            })
-        }
-      })
+              console.log(err);
+            });
+        },
+      });
     }
-  }, [currentYear, props])
+  }, [currentYear, props]);
   return (
     <div ref={chartRef}>
       <ChartComponent
-        title='Total Revenue'
-        description='Total revenue, also known as gross revenue, is your total revenue from recurring (MRR) and non-recurring revenue streams.'
+        title="Total Revenue"
+        description="Total revenue, also known as gross revenue, is your total revenue from recurring (MRR) and non-recurring revenue streams."
         options={options}
         data={chartData}
-        type='bar'
+        type="bar"
         currentYear={currentYear}
         setCurrentYear={(year) => {
-          setCurrentYear(year)
+          setCurrentYear(year);
         }}
         chartControl={chartControl}
       />
     </div>
-  )
-}
+  );
+};
 
-export default TotalRevenueChart
+export default TotalRevenueChart;

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { globalContext } from "../../AppContext";
 import LineChartComponent from "../ChartsComponents/LineChart/LineChart";
 import { fetchCollection, updateCollection } from "../fetch";
 import { extractChartData } from "./MRRChart";
@@ -8,6 +9,7 @@ const chartFields = [
 ];
 
 const GrossProfitMargin = (props) => {
+  const appContext = useContext(globalContext);
   let data = {
     labels: [
       "Jan",
@@ -90,6 +92,8 @@ const GrossProfitMargin = (props) => {
   };
   const getData = () => {
     fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
       "revenue",
       currentYear,
       props.selectedStartup.accessor
@@ -115,6 +119,8 @@ const GrossProfitMargin = (props) => {
         // showToggleBtn : props.chartInfo?.investor_view ? true
         updateShowToInvestor: (value) => {
           updateCollection(
+            appContext?.apiRoute,
+            appContext?.token,
             "charts",
             [
               {
@@ -135,7 +141,6 @@ const GrossProfitMargin = (props) => {
     }
   }, [currentYear, props]);
 
-  // console.log(data);
   return (
     <div>
       <LineChartComponent

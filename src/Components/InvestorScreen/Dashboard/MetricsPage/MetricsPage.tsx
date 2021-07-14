@@ -1,4 +1,4 @@
-import React, { Props, ReactNode } from "react";
+import React, { Props, ReactNode, useContext } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   colors,
@@ -17,6 +17,7 @@ import LTV2CAC from "../../../ChartsWrapper/LTV2CAC";
 import MonthlyActiveUsers from "../../../ChartsWrapper/MonthlyActiveUsers";
 import { OptionInterface } from "../../../interfaces";
 import { fetchCollection } from "../../../fetch";
+import { globalContext } from "../../../../AppContext";
 
 const useStyles = makeStyles({
   page: {
@@ -29,6 +30,7 @@ interface PropsInterface {
 }
 
 const MetricsPage = (props: PropsInterface) => {
+  const appContext = useContext(globalContext);
   const theme = useTheme();
   const classes = useStyles();
   const [chartInfo, setChartInfo] =
@@ -79,12 +81,16 @@ const MetricsPage = (props: PropsInterface) => {
   };
 
   React.useEffect(() => {
-    fetchCollection("charts", undefined, props.selectedStartup.accessor).then(
-      (res) => {
-        const chartData = extractData(res.data);
-        setChartInfo(chartData);
-      }
-    );
+    fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "charts",
+      undefined,
+      props.selectedStartup.accessor
+    ).then((res) => {
+      const chartData = extractData(res.data);
+      setChartInfo(chartData);
+    });
   }, []);
 
   return (

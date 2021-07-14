@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { globalContext } from "../../AppContext";
 import LineChartComponent from "../ChartsComponents/LineChart/LineChart";
 import { fetchCollection, updateCollection } from "../fetch";
 import { extractChartData } from "./MRRChart";
@@ -8,6 +9,7 @@ const chartFields = [
 ];
 
 const CustomerChurnRate = (props) => {
+  const appContext = useContext(globalContext);
   let data = {
     labels: [
       "Jan",
@@ -90,22 +92,24 @@ const CustomerChurnRate = (props) => {
   };
 
   const getData = () => {
-    fetchCollection("users", currentYear, props.selectedStartup.accessor).then(
-      (res) => {
-        const serverData = extractChartData(res.data, chartFields);
-        console.log(res.data, serverData);
-        if (res.data.length) {
-          data = {
-            ...data,
-            datasets: getDatasets(data.datasets, serverData),
-          };
-          // console.log(data, serverData);
-          setChartData(data);
-        } else {
-          setChartData(null);
-        }
+    fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "users",
+      currentYear,
+      props.selectedStartup.accessor
+    ).then((res) => {
+      const serverData = extractChartData(res.data, chartFields);
+      if (res.data.length) {
+        data = {
+          ...data,
+          datasets: getDatasets(data.datasets, serverData),
+        };
+        setChartData(data);
+      } else {
+        setChartData(null);
       }
-    );
+    });
   };
 
   React.useEffect(() => {
@@ -115,6 +119,8 @@ const CustomerChurnRate = (props) => {
         showToInvestor: props.chartInfo?.investor_view,
         updateShowToInvestor: (value) => {
           updateCollection(
+            appContext?.apiRoute,
+            appContext?.token,
             "charts",
             [
               {

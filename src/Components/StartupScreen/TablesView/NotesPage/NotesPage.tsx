@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react'
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import React, { ReactNode, useContext } from "react";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import {
   colors,
   Theme,
@@ -7,11 +7,12 @@ import {
   Typography,
   Button,
   Grid,
-  CircularProgress
-} from '@material-ui/core'
-import NotesComponent from './NotesComponent/NotesComponent'
-import { fetchCollection, updateCollection } from '../../../fetch'
-import { NoteDataInterface, OptionInterface } from '../../../interfaces'
+  CircularProgress,
+} from "@material-ui/core";
+import NotesComponent from "./NotesComponent/NotesComponent";
+import { fetchCollection, updateCollection } from "../../../fetch";
+import { NoteDataInterface, OptionInterface } from "../../../interfaces";
+import { globalContext } from "../../../../AppContext";
 
 const defaultText = `May 2021 Investor Updates
 In this section, startups can share updates regaring the growth, sales, new partnerships, hires, and the other things going on at the company.
@@ -33,91 +34,97 @@ Write about full-time hires updates.
 Write about ESPOs Update.
 
 Other Updates/Conclusion
-Over all the summary for the month in brief and any points to share can be done as a conclusion in this paragraph. `
+Over all the summary for the month in brief and any points to share can be done as a conclusion in this paragraph. `;
 
 export const extractNote = (
   data: NoteDataInterface[],
   currentMonth: string
 ) => {
   const note = data.filter((data) => {
-    if (monthsArray[data.month - 1] === currentMonth) return true
-    else return false
-  })
-  return note
-}
+    if (monthsArray[data.month - 1] === currentMonth) return true;
+    else return false;
+  });
+  return note;
+};
 
 const useStyles = makeStyles({
   page: {
-    marginTop: '2rem',
-    width: '100%'
-  }
-})
+    marginTop: "2rem",
+    width: "100%",
+  },
+});
 
 const monthsArray = [
-  'janurary',
-  'february',
-  'march',
-  'april',
-  'may',
-  'june',
-  'july',
-  'august',
-  'september',
-  'october',
-  'november',
-  'december'
-]
+  "janurary",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
 
 interface PropsInterface {
-  selectedStartup: OptionInterface
+  selectedStartup: OptionInterface;
 }
 
 const NotesPage = (props: PropsInterface) => {
-  const theme = useTheme()
-  const classes = useStyles()
+  const appContext = useContext(globalContext);
+  const theme = useTheme();
+  const classes = useStyles();
   const [currentYear, setCurrentYear] = React.useState(
     new Date().getFullYear().toString()
-  )
+  );
   const [currentMonth, setCurrentMonth] = React.useState(
     monthsArray[new Date().getMonth()]
-  )
+  );
 
-  const [noteData, setnoteData] = React.useState<NoteDataInterface | null>(null)
+  const [noteData, setnoteData] =
+    React.useState<NoteDataInterface | null>(null);
 
   const getData = () => {
-    fetchCollection('notes', currentYear, props.selectedStartup.accessor).then(
-      (res) => {
-        const note = extractNote(res.data, currentMonth)
-        if (note.length) {
-          setnoteData(note[0])
-        } else {
-          console.log('note not avaliable, init empty note')
-          setnoteData({
-            note_name: 'Investor Update',
-            month: new Date().getMonth() + 1,
-            note_data: '<p>Hello</p>',
-            email_status: false,
-            investor_view: false,
-            last_emailed: '',
-            last_updated: '',
-            year: 2021,
-            startup_id: 'startup-1slug'
-          })
-        }
+    fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "notes",
+      currentYear,
+      props.selectedStartup.accessor
+    ).then((res) => {
+      const note = extractNote(res.data, currentMonth);
+      if (note.length) {
+        setnoteData(note[0]);
+      } else {
+        console.log("note not avaliable, init empty note");
+        setnoteData({
+          note_name: "Investor Update",
+          month: new Date().getMonth() + 1,
+          note_data: "<p>Hello</p>",
+          email_status: false,
+          investor_view: false,
+          last_emailed: "",
+          last_updated: "",
+          year: 2021,
+          startup_id: "startup-1slug",
+        });
       }
-    )
-  }
+    });
+  };
 
   React.useEffect(() => {
-    getData()
-  }, [currentYear, currentMonth])
+    getData();
+  }, [currentYear, currentMonth]);
 
   const notesConfig = [
     {
-      Header: 'Investor Update',
-      accessor: 'Hello'
-    }
-  ]
+      Header: "Investor Update",
+      accessor: "Hello",
+    },
+  ];
 
   // const renderNotes = (config: { Header: string; accessor: string }[]) => {
   //   return config.map((chart, i) => {
@@ -137,20 +144,26 @@ const NotesPage = (props: PropsInterface) => {
   //   });
   // };
   const updateData = (noteData: NoteDataInterface) => {
-    let num
+    let num;
     monthsArray.find((m, i, j) => {
-      if (m === currentMonth) num = i + 1
-    })
+      if (m === currentMonth) num = i + 1;
+    });
     let data = {
       ...noteData,
-      month: num
-    }
-    updateCollection('notes', [data], props.selectedStartup.accessor)
+      month: num,
+    };
+    updateCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "notes",
+      [data],
+      props.selectedStartup.accessor
+    )
       .then((res) => {
-        getData()
+        getData();
       })
-      .catch((err) => console.log(err))
-  }
+      .catch((err) => console.log(err));
+  };
   return (
     <div className={classes.page}>
       <Grid container spacing={4}>
@@ -171,7 +184,7 @@ const NotesPage = (props: PropsInterface) => {
         </Grid>
       </Grid>
     </div>
-  )
-}
+  );
+};
 
-export default NotesPage
+export default NotesPage;

@@ -86,6 +86,7 @@ const HomeView = () => {
         );
     }
   };
+
   return (
     <div className={classes.screen}>
       <div className={classes.introductionContainer}>
@@ -103,7 +104,7 @@ const HomeView = () => {
             <Button
               variant="contained"
               className={
-                appContext?.currentPage === "metrics"
+                appContext?.currentPage !== "notes"
                   ? classes.btnStyleActive
                   : classes.btnStyleInactive
               }
@@ -114,7 +115,7 @@ const HomeView = () => {
             <Button
               variant="contained"
               className={
-                appContext?.currentPage !== "metrics"
+                appContext?.currentPage === "notes"
                   ? classes.btnStyleActive
                   : classes.btnStyleInactive
               }

@@ -5,7 +5,13 @@ import 'blink-npm/dist/index.css'
 
 const App = () => {
   return (
-    <BlinkApp screen={'startupScreen'} view={'homeView'} page={'metrics'} />
+    <BlinkApp
+      screen={'startupScreen'}
+      view={'homeView'}
+      page={'metrics'}
+      apiRoute={''}
+      token={''}
+    />
   )
 }
 

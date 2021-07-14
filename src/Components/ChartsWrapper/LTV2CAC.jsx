@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { globalContext } from "../../AppContext";
 import ChartComponent from "../ChartsComponents/ChartComponent";
 import { fetchCollection, updateCollection } from "../fetch";
 import { extractChartData } from "./MRRChart";
@@ -10,6 +11,7 @@ const chartFields = [
 ];
 
 const LTV2CAC = (props) => {
+  const appContext = useContext(globalContext);
   let data = {
     labels: [
       "Jan",
@@ -180,21 +182,25 @@ const LTV2CAC = (props) => {
   };
 
   const getData = () => {
-    fetchCollection("users", currentYear, props.selectedStartup.accessor).then(
-      (res) => {
-        const serverData = extractChartData(res.data, chartFields);
-        if (res.data.length) {
-          data = {
-            ...data,
-            datasets: getDatasets(data.datasets, serverData),
-          };
-          // console.log(data, serverData);
-          setChartData(data);
-        } else {
-          setChartData(null);
-        }
+    fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "users",
+      currentYear,
+      props.selectedStartup.accessor
+    ).then((res) => {
+      const serverData = extractChartData(res.data, chartFields);
+      if (res.data.length) {
+        data = {
+          ...data,
+          datasets: getDatasets(data.datasets, serverData),
+        };
+        // console.log(data, serverData);
+        setChartData(data);
+      } else {
+        setChartData(null);
       }
-    );
+    });
   };
 
   React.useEffect(() => {
@@ -220,6 +226,8 @@ const LTV2CAC = (props) => {
         showToInvestor: props.chartInfo?.investor_view,
         updateShowToInvestor: (value) => {
           updateCollection(
+            appContext?.apiRoute,
+            appContext?.token,
             "charts",
             [
               {

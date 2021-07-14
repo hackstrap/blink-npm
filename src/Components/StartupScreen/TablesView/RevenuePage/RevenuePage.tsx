@@ -1,87 +1,88 @@
-import React, { useState } from 'react'
-import RevenueTable from '../../../TableComponents/RevenueTable'
-import { testData, usersTableData } from '../../../../RevenueData'
-import { CircularProgress, Container } from '@material-ui/core'
-import UsersTable from '../../../TableComponents/UsersTable'
-import { fetchCollection, updateCollection } from '../../../fetch'
+import React, { useContext, useState } from "react";
+import RevenueTable from "../../../TableComponents/RevenueTable";
+import { testData, usersTableData } from "../../../../RevenueData";
+import { CircularProgress, Container } from "@material-ui/core";
+import UsersTable from "../../../TableComponents/UsersTable";
+import { fetchCollection, updateCollection } from "../../../fetch";
 import {
   TableDataInterface,
   YearDataInterface,
-  OptionInterface
-} from '../../../interfaces'
+  OptionInterface,
+} from "../../../interfaces";
+import { globalContext } from "../../../../AppContext";
 export const fields = [
   {
-    Header: '',
-    accessor: ''
+    Header: "",
+    accessor: "",
   },
   {
-    Header: 'Total Revenue',
-    accessor: 'total_revenue'
+    Header: "Total Revenue",
+    accessor: "total_revenue",
   },
   {
-    Header: 'Total MRR',
-    accessor: 'total_mrr'
+    Header: "Total MRR",
+    accessor: "total_mrr",
   },
   {
-    Header: 'Total New MRR',
-    accessor: 'total_new_mrr'
+    Header: "Total New MRR",
+    accessor: "total_new_mrr",
   },
   {
-    Header: 'Total Non-Recurring Revenue',
-    accessor: 'total_non_recurring_revenue'
-  }
-]
+    Header: "Total Non-Recurring Revenue",
+    accessor: "total_non_recurring_revenue",
+  },
+];
 
 export const userTableFields = [
-  { Header: '', accessor: '' },
+  { Header: "", accessor: "" },
   {
-    Header: 'Total Monthly Active Users',
-    accessor: 'total_monthly_active_users'
+    Header: "Total Monthly Active Users",
+    accessor: "total_monthly_active_users",
   },
-  { Header: 'Total Customer', accessor: 'total_customers' },
+  { Header: "Total Customer", accessor: "total_customers" },
   // { Header: "Total new MMR", accessor: "totalNewMMR" },
   // { Header: "Total New Customers", accessor: "totalNewCustomers" },
   // { Header: "ARPC -Total New Customers", accessor: "arpc_totalNewCustomers" },
   {
-    Header: 'Total Customers at the beginning of Month',
-    accessor: 'total_customers_at_beginning_of_month'
+    Header: "Total Customers at the beginning of Month",
+    accessor: "total_customers_at_beginning_of_month",
   },
   {
-    Header: 'Total New Customers Acquired',
-    accessor: 'total_new_customers_acquired'
+    Header: "Total New Customers Acquired",
+    accessor: "total_new_customers_acquired",
   },
   {
-    Header: 'Total New Customers Churned',
-    accessor: 'total_customers_churned'
-  }
+    Header: "Total New Customers Churned",
+    accessor: "total_customers_churned",
+  },
   // {
   //   Header: "Average Revenue Per Account",
   //   accessor: "averageRevenuePerAccount",
   // },
-]
+];
 
 export const createEmptyData = (year: string, fields: OptionInterface[]) => {
   const initYearData = () => {
-    let data: (string | number)[][] = []
+    let data: (string | number)[][] = [];
     for (let i = 0; i < 12; i++) {
       data[i] = fields.map((field, j) => {
         if (j === 0) {
-          return monthsArray[i]
+          return monthsArray[i];
         } else {
-          return 0
+          return 0;
         }
-      })
+      });
     }
-    return data
-  }
+    return data;
+  };
   return {
-    currency: 'INR',
+    currency: "INR",
     fields,
     data: {
-      [year]: initYearData()
-    }
-  }
-}
+      [year]: initYearData(),
+    },
+  };
+};
 
 export const convertToFrontendSchema = (
   data: object[],
@@ -92,31 +93,31 @@ export const convertToFrontendSchema = (
   const convertedData: any = {
     fields,
     data: {
-      [year]: []
+      [year]: [],
     },
-    currency: 'INR'
-  }
+    currency: "INR",
+  };
 
   if (data.length == 0) {
-    return createEmptyData(year, fields)
+    return createEmptyData(year, fields);
   } else {
     convertedData.data[year] = data.map((monthData: any) => {
-      let arr: (string | number)[] = []
+      let arr: (string | number)[] = [];
       fields.forEach((field, i) => {
         if (monthData[field.accessor]) {
-          arr.push(monthData[field.accessor])
+          arr.push(monthData[field.accessor]);
         } else if (i === 0) {
-          arr.push(monthsArray[monthData['month'] - 1])
+          arr.push(monthsArray[monthData["month"] - 1]);
         } else {
-          arr.push(0)
+          arr.push(0);
         }
-      })
-      arr.push(monthData._id)
-      return arr
-    })
-    return convertedData
+      });
+      arr.push(monthData._id);
+      return arr;
+    });
+    return convertedData;
   }
-}
+};
 
 export const convertToBackendSchema = (
   data: TableDataInterface,
@@ -126,86 +127,95 @@ export const convertToBackendSchema = (
 ) => {
   // fields should be strictly according to sequence of table rows
   let serverData = data.data[year].map((monthData, monthIndex) => {
-    let obj = {}
+    let obj = {};
     data.fields.forEach((field, i) => {
       if (i !== 0) {
         // because we want to ignore 1st field
         obj = {
           ...obj,
-          [field.accessor]: monthData[i]
-        }
+          [field.accessor]: monthData[i],
+        };
       }
-    })
+    });
     // Adding the id
     if (monthData[fields.length]) {
       obj = {
         ...obj,
         // as ID will be the last one in array
-        _id: monthData[fields.length]
-      }
+        _id: monthData[fields.length],
+      };
     } else {
       obj = {
         ...obj,
         month: monthIndex + 1,
         year: parseInt(year),
-        startup_id: startupId
-      }
+        startup_id: startupId,
+      };
     }
 
-    return obj
-  })
-  return serverData
-}
+    return obj;
+  });
+  return serverData;
+};
 
 const monthsArray = [
-  'janurary',
-  'february',
-  'march',
-  'april',
-  'may',
-  'june',
-  'july',
-  'august',
-  'september',
-  'october',
-  'november',
-  'december'
-]
+  "janurary",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
 
 interface PropsInterface {
-  selectedStartup: OptionInterface
+  selectedStartup: OptionInterface;
 }
 
 const RevenuePage = (props: PropsInterface) => {
+  const appContext = useContext(globalContext);
   const [revenueTableData, setRevenueTableData] =
-    useState<TableDataInterface | null>(null)
+    useState<TableDataInterface | null>(null);
   const [usersTableData, setUsersTableData] =
-    useState<TableDataInterface | null>(null)
+    useState<TableDataInterface | null>(null);
   // const [rawRevenueData, setRawRevenueData] = useState<object[] | null>(null);
   const [currentYear, setCurrentYear] = useState<string>(
     new Date().getFullYear().toString()
-  )
+  );
   const [currentYearUserTable, setCurrentYearUserTable] = useState<string>(
     new Date().getFullYear().toString()
-  )
+  );
   const getRevenueData = () => {
-    fetchCollection('revenue', currentYear, props.selectedStartup.accessor)
+    fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "revenue",
+      currentYear,
+      props.selectedStartup.accessor
+    )
       .then((res) => {
         const frontendData = convertToFrontendSchema(
           res.data,
           fields,
           currentYear
-        )
-        setRevenueTableData(frontendData)
+        );
+        setRevenueTableData(frontendData);
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        console.log(err);
+      });
+  };
 
   const getUserData = () => [
     fetchCollection(
-      'users',
+      appContext?.apiRoute,
+      appContext?.token,
+      "users",
       currentYearUserTable,
       props.selectedStartup.accessor
     )
@@ -214,29 +224,29 @@ const RevenuePage = (props: PropsInterface) => {
           res.data,
           userTableFields,
           currentYearUserTable
-        )
-        setUsersTableData(frontendData)
+        );
+        setUsersTableData(frontendData);
       })
       .catch((err) => {
-        console.log(err)
-      })
-  ]
+        console.log(err);
+      }),
+  ];
   React.useEffect(() => {
-    getRevenueData()
-  }, [currentYear])
+    getRevenueData();
+  }, [currentYear]);
 
   React.useEffect(() => {
-    getUserData()
-  }, [currentYearUserTable])
+    getUserData();
+  }, [currentYearUserTable]);
 
   return (
     <div
       style={{
-        width: '100%',
-        display: 'flex',
-        marginTop: '64px',
-        flexDirection: 'column',
-        gap: '64px'
+        width: "100%",
+        display: "flex",
+        marginTop: "64px",
+        flexDirection: "column",
+        gap: "64px",
       }}
     >
       {revenueTableData ? (
@@ -245,7 +255,7 @@ const RevenuePage = (props: PropsInterface) => {
             data={revenueTableData}
             currentYear={currentYear}
             setCurrentYear={(year: string) => {
-              setCurrentYear(year)
+              setCurrentYear(year);
             }}
             changeHandler={(value) => {
               const data = convertToBackendSchema(
@@ -253,10 +263,16 @@ const RevenuePage = (props: PropsInterface) => {
                 fields,
                 currentYear,
                 props.selectedStartup.accessor
+              );
+              updateCollection(
+                appContext?.apiRoute,
+                appContext?.token,
+                "revenue",
+                data,
+                props.selectedStartup.accessor
               )
-              updateCollection('revenue', data, props.selectedStartup.accessor)
                 .then((res) => getRevenueData())
-                .catch((err) => console.log(err))
+                .catch((err) => console.log(err));
             }}
           />
           <br />
@@ -273,21 +289,27 @@ const RevenuePage = (props: PropsInterface) => {
               userTableFields,
               currentYearUserTable,
               props.selectedStartup.accessor
+            );
+            updateCollection(
+              appContext?.apiRoute,
+              appContext?.token,
+              "users",
+              data,
+              props.selectedStartup.accessor
             )
-            updateCollection('users', data, props.selectedStartup.accessor)
               .then((res) => getUserData())
-              .catch((err) => console.log(err))
+              .catch((err) => console.log(err));
           }}
           currentYear={currentYearUserTable}
           setCurrentYear={(year: string) => {
-            setCurrentYearUserTable(year)
+            setCurrentYearUserTable(year);
           }}
         />
       ) : (
         <CircularProgress />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default RevenuePage
+export default RevenuePage;

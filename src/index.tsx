@@ -9,11 +9,19 @@ interface Props {
   screen: string
   view: string
   page: string
+  apiRoute: string
+  token: string
 }
 
-export const BlinkApp = ({ screen, view, page }: Props) => {
+export const BlinkApp = ({ screen, view, page, apiRoute, token }: Props) => {
   return (
-    <AppContext screen={screen} view={view} page={page}>
+    <AppContext
+      screen={screen}
+      view={view}
+      page={page}
+      apiRoute={apiRoute}
+      token={token}
+    >
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <App />

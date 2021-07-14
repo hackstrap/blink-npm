@@ -63,6 +63,8 @@ class Example extends Component {
         screen={'startupScreen'}
         view={'homeView'}
         page={'metrics'}
+        apiRoute={'api_route'}
+        token={'token_value'}
       />
     )
   }

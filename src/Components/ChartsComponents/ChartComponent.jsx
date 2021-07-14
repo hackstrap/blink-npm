@@ -3,6 +3,8 @@ import styles from "./index.module.css";
 import { Chart, registerables } from "chart.js";
 import { saveAs } from "file-saver";
 import { toSvg, toPng } from "html-to-image";
+import annotationPlugin from "chartjs-plugin-annotation";
+
 import {
   Typography,
   Button,
@@ -15,6 +17,7 @@ import {
 } from "@material-ui/core";
 import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
 import { DateRange } from "react-date-range";
+Chart.register(annotationPlugin);
 
 Chart.register(...registerables);
 
