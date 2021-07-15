@@ -1,7 +1,8 @@
 import React, { createContext, useState } from 'react'
+import { OptionInterface } from './Components/interfaces'
 interface IProps {
   children: React.ReactNode
-  userInfo?: object
+  userInfo: OptionInterface
   screen?: string
   view?: string
   page?: string
@@ -12,6 +13,7 @@ interface IProps {
 interface ValueInterface {
   // auth: object | undefined;
   // setAuth: Function;
+  userInfo: OptionInterface | undefined
   setCurrentScreen: Function
   setCurrentView: Function
   setCurrentPage: Function
@@ -24,10 +26,10 @@ interface ValueInterface {
 export const globalContext = React.createContext<ValueInterface | null>(null)
 
 const AppContext = (props: IProps) => {
-  const [auth, setAuth] = useState<object | undefined>(props.userInfo)
-  // const [currentScreen, setCurrentScreen] = useState(
-  //   props?.view ? props.view : 'startupScreen'
-  // )
+  const [userInfo, setUserInfo] = useState<OptionInterface | undefined>(
+    props.userInfo
+  )
+
   const [currentScreen, setCurrentScreen] = React.useState<string | undefined>(
     props.screen
   )
@@ -52,8 +54,7 @@ const AppContext = (props: IProps) => {
   return (
     <globalContext.Provider
       value={{
-        // auth,
-        // setAuth,
+        userInfo,
         currentScreen,
         setCurrentScreen,
         currentView,

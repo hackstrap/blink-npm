@@ -24,7 +24,7 @@ export const fetchCollection = (
     `${
       apiRoute ? apiRoute : fallbackRoute
     }v1/${collection}?page=${page}&page_size=${page_size}&startup_id=${
-      startupId ? startupId : "startup-1slug"
+      startupId ? startupId : ""
     }${year ? `&year=${year}` : ""}${month ? "&month=" + month : ""}`,
     {
       headers: {
@@ -44,7 +44,7 @@ export const updateCollection = (
   return axios({
     method: "put",
     url: `${apiRoute ? apiRoute : fallbackRoute}v1/${collection}?startup_id=${
-      startupId ? startupId : "startup-1slug"
+      startupId ? startupId : ""
     }`,
     headers: {
       Authorization: token,
@@ -76,7 +76,7 @@ export const fetchInvestorInfo = (
     `${
       apiRoute ? apiRoute : fallbackRoute
     }v1/${collection}?page=${page}&page_size=${page_size}&investor_id=${
-      investor_id ? investor_id : "investor-1slug"
+      investor_id ? investor_id : ""
     }`,
     {
       headers: {

@@ -73,28 +73,28 @@ const TablesView = () => {
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
       case "revenue":
-        return (
-          <RevenuePage
-            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
-          />
+        return appContext?.userInfo ? (
+          <RevenuePage selectedStartup={appContext.userInfo} />
+        ) : (
+          <div></div>
         );
       case "expenses":
-        return (
-          <ExpensesPage
-            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
-          />
+        return appContext?.userInfo ? (
+          <ExpensesPage selectedStartup={appContext.userInfo} />
+        ) : (
+          <div></div>
         );
       case "employee":
-        return (
-          <EmployeePage
-            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
-          />
+        return appContext?.userInfo ? (
+          <EmployeePage selectedStartup={appContext.userInfo} />
+        ) : (
+          <div></div>
         );
       default:
-        return (
-          <NotesPage
-            selectedStartup={{ Header: "Startup 1", accessor: "startup-1slug" }}
-          />
+        return appContext?.userInfo ? (
+          <NotesPage selectedStartup={appContext.userInfo} />
+        ) : (
+          <div></div>
         );
     }
   };

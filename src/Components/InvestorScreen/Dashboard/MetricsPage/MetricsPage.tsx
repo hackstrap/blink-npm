@@ -93,7 +93,7 @@ const MetricsPage = (props: PropsInterface) => {
         setChartInfo(chartData);
       })
       .catch((err) => console.log(err));
-  }, []);
+  }, [props.selectedStartup]);
 
   return (
     <div>

@@ -102,15 +102,15 @@ const NotesPage = (props: PropsInterface) => {
         } else {
           console.log("note not avaliable, init empty note");
           setnoteData({
-            note_name: "Investor Update",
+            note_name: "No Data Avaliable",
             month: new Date().getMonth() + 1,
-            note_data: "<p>Hello</p>",
+            note_data: "<p>No Data Avaliable</p>",
             email_status: false,
             investor_view: false,
             last_emailed: "",
             last_updated: "",
             year: 2021,
-            startup_id: "startup-1slug",
+            startup_id: "",
           });
         }
       })
@@ -154,8 +154,9 @@ const NotesPage = (props: PropsInterface) => {
               currentMonth={currentMonth}
               setCurrentMonth={(month: string) => setCurrentMonth(month)}
               setNoteData={(val: NoteDataInterface) => setnoteData(val)}
-              noteData={noteData}
-              saveChangeHandler={(val: NoteDataInterface) => updateData(val)}
+              noteData={null}
+              saveChangeHandler={(val: NoteDataInterface) => {}}
+              preview={noteData}
             />
           ) : (
             <CircularProgress />

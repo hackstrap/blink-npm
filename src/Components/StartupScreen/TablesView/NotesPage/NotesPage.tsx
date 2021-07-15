@@ -110,7 +110,9 @@ const NotesPage = (props: PropsInterface) => {
             last_emailed: "",
             last_updated: "",
             year: 2021,
-            startup_id: "startup-1slug",
+            startup_id: appContext?.userInfo?.accessor
+              ? appContext?.userInfo?.accessor
+              : "",
           });
         }
       })
@@ -121,12 +123,12 @@ const NotesPage = (props: PropsInterface) => {
     getData();
   }, [currentYear, currentMonth]);
 
-  const notesConfig = [
-    {
-      Header: "Investor Update",
-      accessor: "Hello",
-    },
-  ];
+  // const notesConfig = [
+  //   {
+  //     Header: "Investor Update",
+  //     accessor: "Hello",
+  //   },
+  // ];
 
   // const renderNotes = (config: { Header: string; accessor: string }[]) => {
   //   return config.map((chart, i) => {
@@ -179,6 +181,7 @@ const NotesPage = (props: PropsInterface) => {
               setNoteData={(val: NoteDataInterface) => setnoteData(val)}
               noteData={noteData}
               saveChangeHandler={(val: NoteDataInterface) => updateData(val)}
+              preview={null}
             />
           ) : (
             <CircularProgress />

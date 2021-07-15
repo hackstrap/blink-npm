@@ -59,6 +59,7 @@ class Example extends Component {
   render() {
     return (
       <BlinkApp
+        userInfo={{ Header: 'startup_name', accessor: 'startup_id' }}
         screen={'startupScreen'}
         view={'homeView'}
         page={'metrics'}
@@ -74,6 +75,32 @@ class Example extends Component {
 
 1. All the props passed here are stored in a global Object with the help of context API and can be accessed anywhere in the app.
 2. **screen**,**view**,**page** props are used for in app navigation. Pass the correct values to load the required page.
+3. Pass name and id of startup/investor in the format shown above in **userInfo** props.
+
+## Overall Structure of BlinkApp
+
+Pass following values to **screen**,**view**,**page** props to load required pages accordingly
+
+### Screen => startupScreen:
+
+- #### View => home
+  - page => metrics
+  - page => notes
+- #### View => tables
+  - page => revenue
+  - page => expenses
+  - page => employee
+  - page => notes
+- #### View => settings
+  - page => profile
+
+### Screen => investorScreen
+
+- #### View => dashboard
+  - page => metrics
+  - page => notes
+- #### View => settings
+  - page => profile
 
 ## License
 

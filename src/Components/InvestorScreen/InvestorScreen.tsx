@@ -106,10 +106,10 @@ const InvestorScreen = () => {
   const renderCurrentView = (view: string | undefined) => {
     switch (view) {
       case "settings":
-        return (
-          <SettingsView
-            investorInfo={{ Header: "investor 1", accessor: "investor-1slug" }}
-          />
+        return appContext?.userInfo ? (
+          <SettingsView investorInfo={appContext?.userInfo} />
+        ) : (
+          <div></div>
         );
       // case "portfolio":
       //   return <Portfolio />;
@@ -133,7 +133,7 @@ const InvestorScreen = () => {
       appContext?.token,
       "investment",
       "",
-      "investor-1slug"
+      appContext?.userInfo?.accessor
     )
       .then((res) => {
         let options = extractStartupsInvested(res.data);

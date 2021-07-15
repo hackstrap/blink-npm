@@ -6,6 +6,10 @@ import { CssBaseline, ThemeProvider } from '@material-ui/core'
 import { defaultTheme as theme } from './theme'
 
 interface Props {
+  userInfo: {
+    Header: string
+    accessor: string
+  }
   screen: string
   view: string
   page: string
@@ -13,9 +17,17 @@ interface Props {
   token: string
 }
 
-export const BlinkApp = ({ screen, view, page, apiRoute, token }: Props) => {
+export const BlinkApp = ({
+  userInfo,
+  screen,
+  view,
+  page,
+  apiRoute,
+  token
+}: Props) => {
   return (
     <AppContext
+      userInfo={userInfo}
       screen={screen}
       view={view}
       page={page}
