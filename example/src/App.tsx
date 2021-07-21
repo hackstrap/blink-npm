@@ -9,7 +9,7 @@ const App = () => {
   return (
     <BlinkApp
       userInfo={{ Header: 'Startup 1', accessor: 'startup-1slug' }}
-      screen={'startupScreen'}
+      screen={'investorScreen'}
       view={'homeView'}
       page={'metrics'}
       apiRoute={mainRoute}
