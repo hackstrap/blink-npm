@@ -1,14 +1,11 @@
 import React, { useContext, useState } from "react";
 // import { Container } from "@material-ui/core";
-import ExpensesTable from "../../../TableComponents/ExpensesTable";
-import OpexExpensesTable from "../../../TableComponents/OpexExpensesTable";
-import { OptionInterface, TableDataInterface } from "../../../interfaces";
-import { fetchCollection, updateCollection } from "../../../fetch";
-import {
-  convertToFrontendSchema,
-  convertToBackendSchema,
-} from "../RevenuePage/RevenuePage";
-import { globalContext } from "../../../../AppContext";
+import ExpensesTable from "../../TableComponents/ExpensesTable";
+import OpexExpensesTable from "../../TableComponents/OpexExpensesTable";
+import { OptionInterface, TableDataInterface } from "../../interfaces";
+import { fetchCollection, updateCollection } from "../../fetch";
+import { convertToFrontendSchema, convertToBackendSchema } from "./RevenuePage";
+import { globalContext } from "../../../AppContext";
 
 // const expensesData = {
 //   currency: 'INR',
@@ -89,8 +86,9 @@ const ExpensesPage = (props: PropsInterface) => {
   const appContext = useContext(globalContext);
   const [expenseTableData, setExpenseTableData] =
     useState<TableDataInterface | null>(null);
-  const [opexTableData, setOpexTableData] =
-    useState<TableDataInterface | null>(null);
+  const [opexTableData, setOpexTableData] = useState<TableDataInterface | null>(
+    null
+  );
   const [currentYearExpenseTable, setCurrentYearEpenseTable] = useState<string>(
     new Date().getFullYear().toString()
   );

@@ -9,7 +9,7 @@ import {
   Grid,
   CircularProgress,
 } from "@material-ui/core";
-import NotesComponent from "./NotesComponent/NotesComponent";
+import NotesComponent from "../../../StartupScreen/TablesView/NotesPage/NotesComponent/NotesComponent";
 import { fetchCollection, updateCollection } from "../../../fetch";
 import { NoteDataInterface, OptionInterface } from "../../../interfaces";
 import { globalContext } from "../../../../AppContext";
@@ -84,8 +84,9 @@ const NotesPage = (props: PropsInterface) => {
     monthsArray[new Date().getMonth()]
   );
 
-  const [noteData, setnoteData] =
-    React.useState<NoteDataInterface | null>(null);
+  const [noteData, setnoteData] = React.useState<NoteDataInterface | null>(
+    null
+  );
 
   const getData = () => {
     fetchCollection(
@@ -102,17 +103,20 @@ const NotesPage = (props: PropsInterface) => {
         } else {
           console.log("note not avaliable, init empty note");
           setnoteData({
-            note_name: "Investor Update",
+            note_name: "Investor Data",
             month: new Date().getMonth() + 1,
-            note_data: "<p>Hello</p>",
+            note_data: [
+              {
+                type: "paragraph",
+                children: [{ text: "No Data Avaliable" }],
+              },
+            ],
             email_status: false,
             investor_view: false,
             last_emailed: "",
             last_updated: "",
             year: 2021,
-            startup_id: appContext?.userInfo?.accessor
-              ? appContext?.userInfo?.accessor
-              : "",
+            startup_id: props.selectedStartup.accessor,
           });
         }
       })
@@ -121,32 +125,15 @@ const NotesPage = (props: PropsInterface) => {
 
   React.useEffect(() => {
     getData();
-  }, [currentYear, currentMonth]);
+  }, [currentYear, currentMonth, props.selectedStartup]);
 
-  // const notesConfig = [
-  //   {
-  //     Header: "Investor Update",
-  //     accessor: "Hello",
-  //   },
-  // ];
+  const notesConfig = [
+    {
+      Header: "Investor Update",
+      accessor: "Hello",
+    },
+  ];
 
-  // const renderNotes = (config: { Header: string; accessor: string }[]) => {
-  //   return config.map((chart, i) => {
-  //     return (
-  //       <Grid item xs={12} key={i}>
-  //         <NotesComponent
-  //           title={chart.Header}
-  //           defaultValue={defaultText}
-  //           currentYear={currentYear}
-  //           setCurrentYear={(year: string) => setCurrentYear(year)}
-  //           currentMonth={currentMonth}
-  //           setCurrentMonth={(month: string) => setCurrentMonth(month)}
-  //         />
-  //         {/* <Note2 /> */}
-  //       </Grid>
-  //     );
-  //   });
-  // };
   const updateData = (noteData: NoteDataInterface) => {
     let num;
     monthsArray.find((m, i, j) => {
@@ -156,13 +143,7 @@ const NotesPage = (props: PropsInterface) => {
       ...noteData,
       month: num,
     };
-    updateCollection(
-      appContext?.apiRoute,
-      appContext?.token,
-      "notes",
-      [data],
-      props.selectedStartup.accessor
-    )
+    updateCollection(appContext?.apiRoute, appContext?.token, "notes", [data])
       .then((res) => {
         getData();
       })
@@ -180,8 +161,10 @@ const NotesPage = (props: PropsInterface) => {
               setCurrentMonth={(month: string) => setCurrentMonth(month)}
               setNoteData={(val: NoteDataInterface) => setnoteData(val)}
               noteData={noteData}
-              saveChangeHandler={(val: NoteDataInterface) => updateData(val)}
-              preview={null}
+              saveChangeHandler={(val: NoteDataInterface) => {
+                updateData(val);
+              }}
+              preview={false}
             />
           ) : (
             <CircularProgress />

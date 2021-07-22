@@ -8,10 +8,10 @@ import {
   Button,
   ButtonGroup,
 } from "@material-ui/core";
-import ProfileSettings from "./ProfileSettings/ProfileSettings";
-import DashboardPage from "./DashboardPage/DashboardPage";
-import ContactsPage from "./ContactsPage/ContactsPage";
-import DatabasePage from "./DatabasePage/DatabasePage";
+import ProfileSettings from "./ProfileSettings";
+import DashboardPage from "./DashboardPage";
+import ContactsPage from "./ContactsPage";
+import DatabasePage from "./DatabasePage";
 import { globalContext } from "../../../AppContext";
 
 const useStyles = makeStyles((theme: Theme) => {

@@ -111,8 +111,8 @@ const InvestorScreen = () => {
         ) : (
           <div></div>
         );
-      // case "portfolio":
-      //   return <Portfolio />;
+      case "portfolio":
+        return appContext?.userInfo ? <Portfolio /> : <div></div>;
       default:
         return (
           <Dashboard
@@ -154,9 +154,9 @@ const InvestorScreen = () => {
   return (
     <Container maxWidth="lg" className={classes.screen}>
       <div className={classes.navigationBtnContainer}>
-        {/* <Button onClick={() => setCurrentView("portfolio")}>
+        <Button onClick={() => appContext?.setCurrentView("portfolio")}>
           <HomeOutlinedIcon />
-        </Button> */}
+        </Button>
         <Button
           onClick={() => {
             appContext?.setCurrentView("dashboard");

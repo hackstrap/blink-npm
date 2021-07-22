@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
-import RevenueTable from "../../../TableComponents/RevenueTable";
-import { testData, usersTableData } from "../../../../RevenueData";
+import RevenueTable from "../../TableComponents/RevenueTable";
+import { testData, usersTableData } from "../../../RevenueData";
 import { CircularProgress, Container } from "@material-ui/core";
-import UsersTable from "../../../TableComponents/UsersTable";
-import { fetchCollection, updateCollection } from "../../../fetch";
+import UsersTable from "../../TableComponents/UsersTable";
+import { fetchCollection, updateCollection } from "../../fetch";
 import {
   TableDataInterface,
   YearDataInterface,
   OptionInterface,
-} from "../../../interfaces";
-import { globalContext } from "../../../../AppContext";
+} from "../../interfaces";
+import { globalContext } from "../../../AppContext";
 export const fields = [
   {
     Header: "",

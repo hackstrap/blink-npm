@@ -9,7 +9,7 @@ import {
   ButtonGroup,
 } from "@material-ui/core";
 
-import MetricsPage from "./MetricsPage/MetricsPage";
+import MetricsPage from "./MetricsPage";
 import NotesPage from "../TablesView/NotesPage/NotesPage";
 import { globalContext } from "../../../AppContext";
 

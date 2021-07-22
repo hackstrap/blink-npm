@@ -8,16 +8,16 @@ import {
   Button,
   Grid,
 } from "@material-ui/core";
-import ChartComponent from "../../../ChartsComponents/ChartComponent";
-import TotalRevenueChart from "../../../ChartsWrapper/TotalRevenueChart";
-import MRRChart from "../../../ChartsWrapper/MRRChart";
-import GrossProfitMargin from "../../../ChartsWrapper/GrossProfitMargin";
-import CustomerChurnRate from "../../../ChartsWrapper/CustomerChurnRate";
-import LTV2CAC from "../../../ChartsWrapper/LTV2CAC";
-import MonthlyActiveUsers from "../../../ChartsWrapper/MonthlyActiveUsers";
-import { OptionInterface } from "../../../interfaces";
-import { fetchCollection } from "../../../fetch";
-import { globalContext } from "../../../../AppContext";
+import ChartComponent from "../../ChartsComponents/ChartComponent";
+import TotalRevenueChart from "../../ChartsWrapper/TotalRevenueChart";
+import MRRChart from "../../ChartsWrapper/MRRChart";
+import GrossProfitMargin from "../../ChartsWrapper/GrossProfitMargin";
+import CustomerChurnRate from "../../ChartsWrapper/CustomerChurnRate";
+import LTV2CAC from "../../ChartsWrapper/LTV2CAC";
+import MonthlyActiveUsers from "../../ChartsWrapper/MonthlyActiveUsers";
+import { OptionInterface } from "../../interfaces";
+import { fetchCollection } from "../../fetch";
+import { globalContext } from "../../../AppContext";
 
 const useStyles = makeStyles({
   page: {
@@ -33,12 +33,11 @@ const MetricsPage = (props: PropsInterface) => {
   const appContext = useContext(globalContext);
   const theme = useTheme();
   const classes = useStyles();
-  const [chartInfo, setChartInfo] =
-    React.useState<null | {
-      [key: string]: {
-        [key: string]: string | number | boolean;
-      };
-    }>(null);
+  const [chartInfo, setChartInfo] = React.useState<null | {
+    [key: string]: {
+      [key: string]: string | number | boolean;
+    };
+  }>(null);
 
   const chartsConfig = [
     {

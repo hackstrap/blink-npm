@@ -10,9 +10,9 @@ import {
 } from "@material-ui/core";
 
 import NotesPage from "./NotesPage/NotesPage";
-import RevenuePage from "./RevenuePage/RevenuePage";
-import ExpensesPage from "./ExpensesPage/ExpensesPage";
-import EmployeePage from "./EmployeePage/EmployeePage";
+import RevenuePage from "./RevenuePage";
+import ExpensesPage from "./ExpensesPage";
+import EmployeePage from "./EmployeePage";
 import { globalContext } from "../../../AppContext";
 
 const useStyles = makeStyles((theme: Theme) => {

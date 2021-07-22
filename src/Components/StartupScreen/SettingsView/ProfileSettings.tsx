@@ -18,14 +18,14 @@ import {
   Button,
 } from "@material-ui/core";
 import React, { useState, useEffect, useContext } from "react";
-import InvestorTable from "../../../TableComponents/InvestorTable";
+import InvestorTable from "../../TableComponents/InvestorTable";
 import {
   investorDetailsTableData,
   investorTableData,
-} from "../../../../RevenueData";
-import InvestorDetailsTable from "../../../TableComponents/InvestorDetailsTable";
-import { fetchCollection, updateCollection } from "../../../fetch";
-import { globalContext } from "../../../../AppContext";
+} from "../../../RevenueData";
+import InvestorDetailsTable from "../../TableComponents/InvestorDetailsTable";
+import { fetchCollection, updateCollection } from "../../fetch";
+import { globalContext } from "../../../AppContext";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {

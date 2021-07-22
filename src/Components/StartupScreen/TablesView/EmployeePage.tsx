@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
-import OpexExpensesTable from "../../../TableComponents/OpexExpensesTable";
-import { OptionInterface } from "../../../interfaces";
-import { fetchCollection, updateCollection } from "../../../fetch";
+import OpexExpensesTable from "../../TableComponents/OpexExpensesTable";
+import { OptionInterface } from "../../interfaces";
+import { fetchCollection, updateCollection } from "../../fetch";
 // import {
 //   convertToFrontendSchema,
 //   convertToBackendSchema,
 // } from "../RevenuePage/RevenuePage";
-import EmployeeTable from "../../../TableComponents/EmployeeTable";
-import { globalContext } from "../../../../AppContext";
+import EmployeeTable from "../../TableComponents/EmployeeTable";
+import { globalContext } from "../../../AppContext";
 
 interface PropsInterface {
   selectedStartup: OptionInterface;

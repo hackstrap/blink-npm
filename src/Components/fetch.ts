@@ -11,7 +11,7 @@ const startupId = "startup-1slug";
 const page = 0;
 const page_size = 12;
 
-// If token or api route not present just pass an empty string
+// If token or api route not present just pass an empty string while calling function
 export const fetchCollection = (
   apiRoute: string | undefined,
   token: string | undefined,

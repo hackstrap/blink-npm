@@ -1,20 +1,34 @@
+// @refresh reset
 import {
   Button,
   capitalize,
+  Divider,
   FormControl,
+  Grid,
   InputLabel,
+  Link,
   makeStyles,
   Select,
   Typography,
   useTheme
 } from '@material-ui/core'
 import React, { useCallback, useMemo, useState } from 'react'
-import { Editable, withReact, useSlate, Slate } from 'slate-react'
+import isHotkey from 'is-hotkey'
+import {
+  Editable,
+  withReact,
+  useSlate,
+  Slate,
+  useSlateStatic,
+  useSelected,
+  useFocused
+} from 'slate-react'
 import {
   Editor,
   Transforms,
   createEditor,
   Descendant,
+  Range,
   Element as SlateElement
 } from 'slate'
 import styles from './index.module.css'
@@ -28,10 +42,14 @@ import Looks3Icon from '@material-ui/icons/Looks3'
 import Looks4Icon from '@material-ui/icons/Looks4'
 import Looks5Icon from '@material-ui/icons/Looks5'
 import FormatQuoteIcon from '@material-ui/icons/FormatQuote'
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted'
-import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
+import { withHistory } from 'slate-history'
 import FormatListNumbered from '@material-ui/icons/FormatListNumbered'
 import { FormatListBulleted } from '@material-ui/icons'
+import imageExtensions from 'image-extensions'
+import isUrl from 'is-url'
+import ImageIcon from '@material-ui/icons/Image'
+import LinkIcon from '@material-ui/icons/Link'
+import LinkOffIcon from '@material-ui/icons/LinkOff'
 
 // import { Button, Icon, Toolbar } from "../components";
 
@@ -62,6 +80,31 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.down('sm')]: {
         width: '100%'
       }
+    },
+    galleryContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'absolute',
+      borderRadius: '20px',
+      background: 'white',
+      padding: '24px',
+      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.05);',
+      zIndex: '2'
+    },
+    galleryItem: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: '12px',
+      marginTop: '12px'
+    },
+    image: {
+      width: '100px',
+      marginRight: 15
+    },
+    divider: {
+      marginTop: '10px',
+      marginBottom: '10px'
     }
   }
 })
@@ -76,6 +119,7 @@ const NotesComponent = ({
   saveChangeHandler,
   preview
 }) => {
+  console.log(noteData)
   const theme = useTheme()
   const classes = useStyles(theme)
   const [showYearConfig, setShowYearConfig] = React.useState(false)
@@ -112,72 +156,46 @@ const NotesComponent = ({
   const renderElement = useCallback((props) => <Element {...props} />, [])
   const renderLeaf = useCallback((props) => <Leaf {...props} />, [])
 
-  const editor = useMemo(() => withReact(createEditor()), [])
-  const [value, setValue] = useState([
-    {
-      type: 'paragraph',
-      children: [{ text: 'A line of text in a paragraph.' }]
-    }
-  ])
+  const editorRef = React.useRef()
+  let editor = editorRef.current
 
-  const noteRef = React.useRef()
+  React.useEffect(() => {
+    if (!editorRef.current)
+      editorRef.current = withImages(withHistory(withReact(createEditor())), [])
+    setValue(noteData)
+  }, [noteData])
 
-  // React.useEffect(() => {}, [noteData.note_data]);
+  const [value, setValue] = useState(noteData)
 
-  const handleChange = (value) => {
-    setNoteData({
-      ...noteData,
-      note_data: value
-    })
-    setShowSaveChange(true)
+  // const handleChange = (value) => {
+  //   setNoteData({
+  //     ...noteData,
+  //     note_data: value,
+  //   });
+  //   setShowSaveChange(true);
+  // };
+
+  function copyToClipboard(text) {
+    const el = document.createElement('textarea')
+    el.value = text
+    el.setAttribute('readonly', 'readonly')
+    el.style.position = 'absolute'
+    el.style.left = '-9999px'
+    document.body.appendChild(el)
+    el.select()
+    document.execCommand('copy')
+    document.body.removeChild(el)
   }
+
+  React.useEffect(() => {
+    setShowSaveChange(true)
+  }, [value])
 
   const [showGallery, setShowImageGallery] = useState(false)
 
   const [showMonthConfig, setShowMonthConfig] = useState(false)
 
   const [showSaveChange, setShowSaveChange] = useState(false)
-
-  const addImage = {
-    name: 'addImage',
-    keyCommand: 'addImage',
-    buttonProps: { 'aria-label': 'Add Image' },
-    icon: (
-      <svg width='12' height='12' viewBox='0 0 520 520'>
-        <path
-          fill='currentColor'
-          d='M15.7083333,468 C7.03242448,468 0,462.030833 0,454.666667 L0,421.333333 C0,413.969167 7.03242448,408 15.7083333,408 L361.291667,408 C369.967576,408 377,413.969167 377,421.333333 L377,454.666667 C377,462.030833 369.967576,468 361.291667,468 L15.7083333,468 Z M21.6666667,366 C9.69989583,366 0,359.831861 0,352.222222 L0,317.777778 C0,310.168139 9.69989583,304 21.6666667,304 L498.333333,304 C510.300104,304 520,310.168139 520,317.777778 L520,352.222222 C520,359.831861 510.300104,366 498.333333,366 L21.6666667,366 Z M136.835938,64 L136.835937,126 L107.25,126 L107.25,251 L40.75,251 L40.75,126 L-5.68434189e-14,126 L-5.68434189e-14,64 L136.835938,64 Z M212,64 L212,251 L161.648438,251 L161.648438,64 L212,64 Z M378,64 L378,126 L343.25,126 L343.25,251 L281.75,251 L281.75,126 L238,126 L238,64 L378,64 Z M449.047619,189.550781 L520,189.550781 L520,251 L405,251 L405,64 L449.047619,64 L449.047619,189.550781 Z'
-        />
-      </svg>
-    ),
-    execute: (state, api) => {
-      let modifyText = `${state.selectedText}\n`
-      if (!state.selectedText) {
-        modifyText = `![](https://d2gdtie5ivbdow.cloudfront.net/media/images/chart_js_cover_js_visualization.png)`
-      }
-      api.replaceSelection(modifyText)
-    }
-  }
-
-  const addChart = {
-    name: 'addChart',
-    keyCommand: 'addChart',
-    buttonProps: { 'aria-label': 'Add Image' },
-    icon: <div>Add Chart</div>,
-    execute: (state, api) => {
-      let modifyText = `${state.selectedText}\n`
-      if (!state.selectedText) {
-        modifyText = `![](https://d2gdtie5ivbdow.cloudfront.net/media/images/chart_js_cover_js_visualization.png)`
-      }
-      api.replaceSelection(modifyText)
-    }
-  }
-
-  // React.useEffect(()=>{
-  //   loginForImageBucket().then(res=>{
-  //     clg(res)
-  //   })
-  // },[])
 
   const renderYearOptions = () => {
     let years = []
@@ -209,11 +227,11 @@ const NotesComponent = ({
         <div className={styles.notesHeading}>
           {noteData?.note_name ? noteData.note_name : 'Investor Data'}
         </div>
-        {showSaveChange ? (
+        {showSaveChange && !preview ? (
           <Button
             variant='outlined'
             onClick={() => {
-              saveChangeHandler(noteData)
+              saveChangeHandler(value)
               setShowSaveChange(false)
             }}
           >
@@ -222,23 +240,78 @@ const NotesComponent = ({
         ) : (
           <div></div>
         )}
+        {!preview && (
+          <div>
+            <Button
+              variant='outlined'
+              onClick={() => {
+                setShowImageGallery(!showGallery)
+              }}
+            >
+              Select Image
+            </Button>
+            {showGallery && !preview ? (
+              <div
+                className={classes.galleryContainer}
+                onMouseLeave={(e) => {
+                  setShowImageGallery(false)
+                }}
+              >
+                <div className={classes.galleryItem}>
+                  <img
+                    className={classes.image}
+                    src='https://d2gdtie5ivbdow.cloudfront.net/media/images/chart_js_cover_js_visualization.png'
+                    alt=''
+                  />
+                  <Typography>Revenue Chart</Typography>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    size='small'
+                    style={{ marginLeft: '15px' }}
+                    onClick={(e) => {
+                      // copy to clipboard
+                      e.preventDefault()
+                      copyToClipboard(
+                        'https://easybase.io/assets/images/posts_images/5-great-react-libraries-1.png'
+                      )
+                    }}
+                  >
+                    Copy Link
+                  </Button>
+                </div>
+                <Divider className={classes.divide} />
+                <div className={classes.galleryItem}>
+                  <img
+                    className={classes.image}
+                    src='https://d2gdtie5ivbdow.cloudfront.net/media/images/chart_js_cover_js_visualization.png'
+                    alt=''
+                  />
+                  <Typography>Revenue Chart</Typography>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    size='small'
+                    style={{ marginLeft: '15px' }}
+                    onClick={(e) => {
+                      // copy to clipboard
+                      e.preventDefault()
+                      copyToClipboard(
+                        'https://easybase.io/assets/images/posts_images/5-great-react-libraries-1.png'
+                      )
+                    }}
+                  >
+                    Copy Link
+                  </Button>
+                </div>
+                <Divider className={classes.divide} />
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        )}
 
-        <div>
-          {showGallery ? (
-            <div className={classes.galleryContainer}>
-              <img
-                src='https://d2gdtie5ivbdow.cloudfront.net/media/images/chart_js_cover_js_visualization.png'
-                alt=''
-              />
-              <img
-                src='https://d2gdtie5ivbdow.cloudfront.net/media/images/chart_js_cover_js_visualization.png'
-                alt=''
-              />
-            </div>
-          ) : (
-            <div></div>
-          )}
-        </div>
         <div>
           <Button
             onClick={(e) => {
@@ -289,35 +362,52 @@ const NotesComponent = ({
         </Button>
       </div>
 
-      <div>
-        <Slate
-          editor={editor}
-          value={value}
-          onChange={(newValue) => {
-            console.log(newValue)
-            setValue(newValue)
-          }}
-        >
-          <Toolbar>
-            <MarkButton format='bold' icon={<FormatBoldIcon />} />
-            <MarkButton format='italic' icon={<FormatItalicIcon />} />
-            <MarkButton format='underline' icon={<FormatUnderlinedIcon />} />
-            <MarkButton format='code' icon='code' />
-            <BlockButton format='heading-one' icon={<LooksOneIcon />} />
-            <BlockButton format='heading-two' icon={<LooksTwoIcon />} />
-            <BlockButton format='heading-three' icon={<Looks3Icon />} />
-            <BlockButton format='block-quote' icon={<FormatQuoteIcon />} />
-            <BlockButton format='numbered-list' icon={<FormatListNumbered />} />
-            <BlockButton format='bulleted-list' icon={<FormatListBulleted />} />
-          </Toolbar>
-          <Editable
-            renderElement={renderElement}
-            renderLeaf={renderLeaf}
-            placeholder='Enter some rich text…'
-            spellCheck
-            autoFocus
-          />
-        </Slate>
+      <div className={classes.slateEditor}>
+        {editor && noteData ? (
+          <Slate
+            editor={editor}
+            value={value?.note_data}
+            onChange={(newValue) => {
+              console.log(newValue)
+              setValue({
+                ...value,
+                note_data: newValue
+              })
+            }}
+          >
+            <Toolbar>
+              <MarkButton format='bold' icon={<FormatBoldIcon />} />
+              <MarkButton format='italic' icon={<FormatItalicIcon />} />
+              <MarkButton format='underline' icon={<FormatUnderlinedIcon />} />
+              <MarkButton format='code' icon='code' />
+              <BlockButton format='heading-one' icon={<LooksOneIcon />} />
+              <BlockButton format='heading-two' icon={<LooksTwoIcon />} />
+              <BlockButton format='heading-three' icon={<Looks3Icon />} />
+              <BlockButton format='block-quote' icon={<FormatQuoteIcon />} />
+              <BlockButton
+                format='numbered-list'
+                icon={<FormatListNumbered />}
+              />
+              <BlockButton
+                format='bulleted-list'
+                icon={<FormatListBulleted />}
+              />
+              <InsertImageButton format='image' />
+              <LinkButton />
+              <RemoveLinkButton />
+            </Toolbar>
+            <Editable
+              renderElement={renderElement}
+              renderLeaf={renderLeaf}
+              placeholder='Enter some rich text…'
+              spellCheck
+              autoFocus
+              readOnly={preview ? true : false}
+            />
+          </Slate>
+        ) : (
+          <div></div>
+        )}
       </div>
     </div>
   )
@@ -371,10 +461,25 @@ const isMarkActive = (editor, format) => {
   return marks ? marks[format] === true : false
 }
 
-const Element = ({ attributes, children, element }) => {
+const Element = (props) => {
+  let { attributes, children, element } = props
   switch (element.type) {
     case 'block-quote':
-      return <blockquote {...attributes}>{children}</blockquote>
+      return (
+        <blockquote
+          {...attributes}
+          style={{
+            borderLeft: '2px solid #ddd',
+            marginLeft: 0,
+            marginRight: 0,
+            paddingLeft: 10,
+            color: '#aaa',
+            fontStyle: 'italic'
+          }}
+        >
+          {children}
+        </blockquote>
+      )
     case 'bulleted-list':
       return <ul {...attributes}>{children}</ul>
     case 'heading-one':
@@ -385,6 +490,14 @@ const Element = ({ attributes, children, element }) => {
       return <li {...attributes}>{children}</li>
     case 'numbered-list':
       return <ol {...attributes}>{children}</ol>
+    case 'image':
+      return <Image {...props} />
+    case 'link':
+      return (
+        <a {...attributes} href={element.url}>
+          {children}
+        </a>
+      )
     default:
       return <p {...attributes}>{children}</p>
   }
@@ -477,3 +590,196 @@ export const Menu = React.forwardRef(({ className, ...props }, ref) => (
 export const Toolbar = React.forwardRef(({ className, ...props }, ref) => (
   <Menu {...props} ref={ref} className={className} />
 ))
+
+const withImages = (editor) => {
+  const { insertData, isVoid } = editor
+
+  editor.isVoid = (element) => {
+    return element.type === 'image' ? true : isVoid(element)
+  }
+
+  editor.insertData = (data) => {
+    const text = data.getData('text/plain')
+    const { files } = data
+
+    if (files && files.length > 0) {
+      for (const file of files) {
+        const reader = new FileReader()
+        const [mime] = file.type.split('/')
+
+        if (mime === 'image') {
+          reader.addEventListener('load', () => {
+            const url = reader.result
+            insertImage(editor, url)
+          })
+
+          reader.readAsDataURL(file)
+        }
+      }
+    } else if (isImageUrl(text)) {
+      insertImage(editor, text)
+    } else {
+      insertData(data)
+    }
+  }
+
+  return editor
+}
+
+const insertImage = (editor, url) => {
+  const text = { text: '' }
+  const image = { type: 'image', url, children: [text] }
+  Transforms.insertNodes(editor, image)
+}
+
+const Image = ({ attributes, children, element }) => {
+  const selected = useSelected()
+  const focused = useFocused()
+  console.log(element)
+  return (
+    <div {...attributes}>
+      <div contentEditable={false}>
+        <img
+          src={element?.url ? element.url : ''}
+          style={{
+            width: '100%',
+            maxWidth: '400px',
+            borderRadius: '5px'
+          }}
+        />
+      </div>
+      {children}
+    </div>
+  )
+}
+
+const InsertImageButton = () => {
+  const editor = useSlateStatic()
+  return (
+    <Button
+      onMouseDown={(event) => {
+        event.preventDefault()
+        const url = window.prompt('Enter the URL of the image:')
+        if (url && !isImageUrl(url)) {
+          alert('URL is not an image')
+          return
+        }
+        insertImage(editor, url)
+      }}
+    >
+      <ImageIcon color={'disabled'} />
+    </Button>
+  )
+}
+
+const isImageUrl = (url) => {
+  if (!url) return false
+  if (!isUrl(url)) return false
+  const ext = new URL(url).pathname.split('.').pop()
+  return imageExtensions.includes(ext)
+}
+
+// Handling links
+
+const withLinks = (editor) => {
+  const { insertData, insertText, isInline } = editor
+
+  editor.isInline = (element) => {
+    return element.type === 'link' ? true : isInline(element)
+  }
+
+  editor.insertText = (text) => {
+    if (text && isUrl(text)) {
+      wrapLink(editor, text)
+    } else {
+      insertText(text)
+    }
+  }
+
+  editor.insertData = (data) => {
+    const text = data.getData('text/plain')
+
+    if (text && isUrl(text)) {
+      wrapLink(editor, text)
+    } else {
+      insertData(data)
+    }
+  }
+
+  return editor
+}
+
+const insertLink = (editor, url) => {
+  if (editor.selection) {
+    wrapLink(editor, url)
+  }
+}
+
+const isLinkActive = (editor) => {
+  const [link] = Editor.nodes(editor, {
+    match: (n) =>
+      !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'link'
+  })
+  return !!link
+}
+
+const unwrapLink = (editor) => {
+  Transforms.unwrapNodes(editor, {
+    match: (n) =>
+      !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'link'
+  })
+}
+
+const wrapLink = (editor, url) => {
+  if (isLinkActive(editor)) {
+    unwrapLink(editor)
+  }
+
+  const { selection } = editor
+  const isCollapsed = selection && Range.isCollapsed(selection)
+  const link = {
+    type: 'link',
+    url,
+    children: isCollapsed ? [{ text: url }] : []
+  }
+
+  if (isCollapsed) {
+    Transforms.insertNodes(editor, link)
+  } else {
+    Transforms.wrapNodes(editor, link, { split: true })
+    Transforms.collapse(editor, { edge: 'end' })
+  }
+}
+
+const LinkButton = () => {
+  const editor = useSlate()
+  return (
+    <Button
+      onMouseDown={(event) => {
+        event.preventDefault()
+        const url = window.prompt('Enter the URL of the link:')
+        if (!url) return
+        insertLink(editor, url)
+      }}
+    >
+      <LinkIcon color={isLinkActive(editor) ? 'primary' : 'disabled'} />
+    </Button>
+  )
+}
+
+const RemoveLinkButton = () => {
+  const editor = useSlate()
+
+  return (
+    <Button
+      active={isLinkActive(editor)}
+      onMouseDown={(event) => {
+        if (isLinkActive(editor)) {
+          unwrapLink(editor)
+        }
+      }}
+    >
+      <LinkOffIcon color={isLinkActive(editor) ? 'primary' : 'disabled'} />
+    </Button>
+  )
+}
