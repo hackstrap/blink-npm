@@ -8,12 +8,24 @@ import {
   Grid,
   Container,
 } from "@material-ui/core";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { OptionInterface } from "../../interfaces";
+import { fetchCollection } from "../../fetch";
+import { useContext } from "react";
+import { globalContext } from "../../../AppContext";
+
 interface ChartCardInterface {
   title: string;
   value: string;
   options: object;
   labels: string[];
   data: number[];
+  currentYear: string;
+  changeHandler: Function;
+}
+
+interface PropsInterface {
+  selectedStartup: OptionInterface;
 }
 
 interface InfoCardPropsInterface {
@@ -30,6 +42,8 @@ interface ValuationChartInterface {
   description?: string;
   data: object;
   options: object;
+  currentYear: string;
+  changeHandler: Function;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -59,15 +73,11 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
   },
   chartCardValue: {
-    fontSize: "2rem",
+    fontSize: "1.6rem",
     fontWeight: "bold",
   },
   chartCardTitle: {
     fontWeight: "bold",
-  },
-  divider: {
-    marginRight: "1rem",
-    marginLeft: "1rem",
   },
   yearSelect: {
     borderRadius: "10px",
@@ -90,13 +100,7 @@ const renderYearOptions = (handleClick: Function) => {
   }
   return years.map((year, i) => {
     return (
-      <option
-        key={i}
-        value={year}
-        onClick={() => {
-          handleClick(year);
-        }}
-      >
+      <option key={i} value={year}>
         {`  ${year}`}
       </option>
     );
@@ -118,7 +122,7 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
       </Typography>
       <Typography
         color="primary"
-        variant="h2"
+        variant="h3"
         className={classes.chartCardValue}
       >
         {v1}
@@ -165,29 +169,43 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
 export const ChartCard = (props: ChartCardInterface) => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { title, value, options, labels, data } = props;
+  const { title, value, options, labels, data, currentYear, changeHandler } =
+    props;
+  const matches = useMediaQuery("(max-width:1300px)");
   return (
-    <div className={classes.chartCardBox}>
+    <div
+      className={classes.chartCardBox}
+      style={matches ? { flexDirection: "column" } : { flexDirection: "row" }}
+    >
       <div className={classes.chartInfoLeft}>
         <Typography variant="h4" className={classes.chartCardTitle}>
           {title}
         </Typography>
         <Typography
           color="primary"
-          variant="h2"
+          variant="h3"
           className={classes.chartCardValue}
-          style={{ marginTop: "30%" }}
+          style={
+            matches
+              ? { marginTop: "10%", marginBottom: "10%" }
+              : { marginTop: "30%" }
+          }
         >
           {value}
         </Typography>
       </div>
-      <Divider orientation="vertical" className={classes.divider} />
+      <Divider
+        orientation={matches ? "horizontal" : "vertical"}
+        style={matches ? { marginBottom: "10%" } : { marginBottom: 0 }}
+      />
       <div className={classes.chartInfoRight}>
         <div style={{ display: "flex" }}>
-          <select className={classes.yearSelect}>
-            {renderYearOptions(() => {
-              console.log("Hello");
-            })}
+          <select
+            className={classes.yearSelect}
+            value={currentYear}
+            onChange={(e) => changeHandler(e.target.value)}
+          >
+            {renderYearOptions(changeHandler)}
           </select>
         </div>
 
@@ -219,36 +237,83 @@ export const ChartCard = (props: ChartCardInterface) => {
 };
 
 const ValuationChart = (props: ValuationChartInterface) => {
-  let { title, data, description, options } = props;
+  let { title, data, description, options, changeHandler, currentYear } = props;
   const theme = useTheme();
   const classes = useStyles(theme);
+
   return (
-    <div className={classes.chartCardBox}>
+    <div className={classes.chartCardBox} style={{ flexDirection: "column" }}>
       <div style={{ display: "flex", width: "100%" }}>
         <Typography variant="h4" className={classes.chartCardTitle}>
           {title}
         </Typography>
-        <select className={classes.yearSelect}>
-          {renderYearOptions(() => {
-            console.log("Hello");
-          })}
+        <select
+          className={classes.yearSelect}
+          value={currentYear}
+          onChange={(e) => changeHandler(e.target.value)}
+        >
+          {renderYearOptions(changeHandler)}
         </select>
       </div>
+      <ChartWrapper type="line" data={data} options={options} />
     </div>
   );
 };
 
-const ValuationPage = () => {
+const ValuationPage = (props: PropsInterface) => {
   const theme = useTheme();
   const classes = useStyles(theme);
+  const matches = useMediaQuery("(max-width:500px)");
+
+  const [currentYear, setCurrentYear] = React.useState(
+    new Date().getFullYear().toString()
+  );
+  const handleYearChange = (year: string) => {
+    setCurrentYear(year);
+  };
+
+  const appContext = useContext(globalContext);
+
+  const getData = () => {
+    fetchCollection(
+      appContext?.apiRoute,
+      appContext?.token,
+      "valuation",
+      currentYear,
+      props.selectedStartup.accessor
+    );
+  };
+  React.useEffect(() => {}, [props]);
 
   return (
     <Container maxWidth="lg">
-      <Grid style={{ marginTop: "2rem" }} container spacing={5}>
+      <Grid style={{ marginTop: "2rem" }} container spacing={matches ? 2 : 5}>
+        <Grid item xs={12} md={6}>
+          <InfoCard
+            t1="IRR"
+            v1="$1,000,000"
+            t2="IRR"
+            v2="$1,000,000"
+            t3=""
+            v3=""
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <InfoCard
+            t1="IRR"
+            v1="$1,000,000"
+            t2="IRR"
+            v2="$1,000,000"
+            t3=""
+            v3=""
+          />
+        </Grid>
         <Grid item xs={12} md={6}>
           <ChartCard
             title="IRR %"
             value="$1,000,000"
+            currentYear={currentYear}
+            changeHandler={handleYearChange}
             options={{
               scales: {
                 x: {
@@ -273,21 +338,42 @@ const ValuationPage = () => {
           />
         </Grid>
         <Grid item xs={12} md={6}>
-          <InfoCard
-            t1="IRR"
-            v1="$1,000,000"
-            t2="IRR"
-            v2="$1,000,000"
-            t3=""
-            v3=""
+          <ChartCard
+            title="IRR %"
+            value="$1,000,000"
+            currentYear={currentYear}
+            changeHandler={handleYearChange}
+            options={{
+              scales: {
+                x: {
+                  grid: {
+                    display: false,
+                  },
+                },
+                y: {
+                  grid: {
+                    borderDashOffset: 2,
+                    borderWidth: 5,
+                    borderDash: [15],
+                  },
+                  ticks: {
+                    count: 3,
+                  },
+                },
+              },
+            }}
+            labels={["Q1", "Q2", "Q3", "Q4"]}
+            data={[10, 45, 20, 30]}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <ValuationChart
             title="Valuation"
-            data={{}}
+            data={chartData}
             description="Valuation"
-            options={{}}
+            options={chartOptions}
+            currentYear={currentYear}
+            changeHandler={handleYearChange}
           />
         </Grid>
       </Grid>
@@ -295,3 +381,52 @@ const ValuationPage = () => {
   );
 };
 export default ValuationPage;
+
+const chartData = {
+  labels: ["Transactions Comparable"],
+  datasets: [
+    {
+      type: "bar",
+      label: "min",
+      backgroundColor: "rgba(240, 140, 121, 1.0)",
+      borderColor: "rgba(140, 140, 140, 0.0)",
+      data: [
+        [10, 25],
+        [-40, -40],
+        [40, 40],
+      ],
+      barPercentage: 0.2,
+    },
+  ],
+};
+
+const chartOptions = {
+  indexAxis: "y",
+
+  tooltips: {
+    mode: "index",
+    intersect: false,
+    displayColors: false,
+  },
+  responsive: true,
+  title: {
+    display: true,
+    text: "Chart.js stackable with Min/Avg/Max",
+  },
+  scales: {
+    y: {
+      // position: "left",
+      stacked: true,
+      ticks: {
+        count: 2,
+      },
+    },
+    x: {
+      stacked: false,
+
+      ticks: {
+        count: 3,
+      },
+    },
+  },
+};

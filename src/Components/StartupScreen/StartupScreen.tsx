@@ -15,6 +15,7 @@ import SettingsView from "./SettingsView/SettingsView";
 import TablesView from "./TablesView/TablesView";
 import HomeView from "./HomeView/HomeView";
 import { globalContext } from "../../AppContext";
+import Snackbar, { SnackbarOrigin } from "@material-ui/core/Snackbar";
 
 const useStyles = makeStyles({
   screen: {
@@ -53,6 +54,9 @@ const useStyles = makeStyles({
     fontSize: "1.2rem",
   },
 });
+export interface State extends SnackbarOrigin {
+  open: boolean;
+}
 
 const StartupScreen = () => {
   const theme = useTheme();
@@ -78,6 +82,18 @@ const StartupScreen = () => {
 
   return (
     <Container maxWidth="lg" className={classes.screen}>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={appContext?.snackbarState.open}
+        onClose={() =>
+          appContext?.setSnackbarState({
+            open: false,
+            message: "",
+          })
+        }
+        message={appContext?.snackbarState.message}
+        key={"top" + "right"}
+      />
       <div className={classes.navigationBtnContainer}>
         <Button
           onClick={() => {

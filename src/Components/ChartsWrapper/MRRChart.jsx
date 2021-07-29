@@ -220,6 +220,9 @@ const MRRChart = (props) => {
           data = {
             ...data,
             datasets: getDatasets(data.datasets, serverData),
+            chart_name: "monthly_recurring_revenue_chart",
+            startup_id: props.selectedStartup.accessor,
+            chart_info: props.chartInfo,
           };
           setChartData(data);
         } else {

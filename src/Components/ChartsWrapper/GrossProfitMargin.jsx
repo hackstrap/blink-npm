@@ -104,6 +104,9 @@ const GrossProfitMargin = (props) => {
           data = {
             ...data,
             datasets: getDatasets(data.datasets, serverData),
+            chart_name: "gross_profit_margin_chart",
+            startup_id: props.selectedStartup.accessor,
+            chart_info: props.chartInfo,
           };
           // console.log(data, serverData);
           setChartData(data);

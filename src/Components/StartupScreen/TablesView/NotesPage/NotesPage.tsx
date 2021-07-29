@@ -108,7 +108,7 @@ const NotesPage = (props: PropsInterface) => {
             note_data: [
               {
                 type: "paragraph",
-                children: [{ text: "No Data Avaliable" }],
+                children: [{ text: "" }],
               },
             ],
             email_status: false,
@@ -165,6 +165,7 @@ const NotesPage = (props: PropsInterface) => {
                 updateData(val);
               }}
               preview={false}
+              selectedStartup={props.selectedStartup}
             />
           ) : (
             <CircularProgress />

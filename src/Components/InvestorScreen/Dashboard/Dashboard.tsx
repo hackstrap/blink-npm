@@ -47,11 +47,13 @@ const useStyles = makeStyles((theme: Theme) => {
       // color: (theme) => theme.palette.grey[600],
     },
     viewContainer: {
-      // display: "flex",
+      display: "flex",
+      flexDirection: "column",
       width: "100%",
     },
     viewSelectionContainer: {
       display: "flex",
+
       margin: "auto",
       marginTop: "4rem",
     },
@@ -61,11 +63,12 @@ const useStyles = makeStyles((theme: Theme) => {
       fontSize: "1.2rem",
     },
     startupSelect: {
-      marginLeft: "auto",
+      margin: "auto",
       backgroundColor: "#fff",
     },
     btnGrp: {
-      marginLeft: "auto",
+      margin: "auto",
+      marginBottom: "2rem",
     },
     btnStyleActive: {
       backgroundColor: theme.palette.primary.main,
@@ -99,7 +102,7 @@ const Dashboard = (props: PropsInterface) => {
       case "notes":
         return <NotesPage selectedStartup={selectedStartup} />;
       case "valuation":
-        return <ValuationPage />;
+        return <ValuationPage selectedStartup={selectedStartup} />;
       default:
         return <MetricsPage selectedStartup={selectedStartup} />;
     }
@@ -120,7 +123,7 @@ const Dashboard = (props: PropsInterface) => {
     });
   };
   return (
-    <Container maxWidth="xl" className={classes.screen}>
+    <div className={classes.screen}>
       <div className={classes.viewContainer}>
         <div className={classes.viewSelectionContainer}>
           <ButtonGroup className={classes.btnGrp}>
@@ -158,17 +161,17 @@ const Dashboard = (props: PropsInterface) => {
               Valuation
             </Button>
           </ButtonGroup>
-          <Select
-            variant="outlined"
-            className={classes.startupSelect}
-            defaultValue={selectedStartup.accessor}
-          >
-            {renderStartupOptions(props.startupOptions)}
-          </Select>
         </div>
+        <Select
+          variant="outlined"
+          className={classes.startupSelect}
+          defaultValue={selectedStartup.accessor}
+        >
+          {renderStartupOptions(props.startupOptions)}
+        </Select>
       </div>
       {renderCurrentPage(appContext?.currentPage)}
-    </Container>
+    </div>
   );
 };
 

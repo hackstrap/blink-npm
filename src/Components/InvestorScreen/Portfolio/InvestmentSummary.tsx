@@ -21,6 +21,12 @@ const useStyles = makeStyles((theme) => ({
 const InvestmentSummary = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
+  const [currentYear, setCurrentYear] = React.useState(
+    new Date().getFullYear().toString()
+  );
+  const handleYearChange = (year: string) => {
+    setCurrentYear(year);
+  };
 
   return (
     <Container maxWidth="lg">
@@ -50,6 +56,8 @@ const InvestmentSummary = () => {
             }}
             labels={["Q1", "Q2", "Q3", "Q4"]}
             data={[10, 45, 20, 30]}
+            currentYear={currentYear}
+            changeHandler={handleYearChange}
           />
         </Grid>
         <Grid item xs={12} md={6}>

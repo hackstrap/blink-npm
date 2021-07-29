@@ -15,6 +15,9 @@ import {
 } from "@material-ui/core";
 import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
 import { DateRange } from "react-date-range";
+import { globalContext } from "../../../AppContext";
+import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
+import axios from "axios";
 Chart.register(...registerables);
 
 const useStyles = makeStyles((theme) => {
@@ -119,14 +122,7 @@ const LineChartComponent = ({
     };
   }, [currentYear, thisGraph.current, data]);
 
-  // const [dateRange, setDateRange] = React.useState([
-  //   {
-  //     startDate: new Date(),
-  //     endDate: new Date(),
-  //     key: 'selection'
-  //   }
-  // ])
-
+  const appContext = React.useContext(globalContext);
   const [showDatePicker, setShowDatePicker] = React.useState(false);
 
   // const renderRange = (dateRange) => {
@@ -196,16 +192,62 @@ const LineChartComponent = ({
           )}
         </div>
         <div>
-          <Button
-            onClick={(e) => {
-              if (thisContainer.current !== null)
-                toPng(thisContainer.current).then(function (dataUrl) {
-                  saveAs(dataUrl, "blink-chart.png");
-                });
-            }}
-          >
-            <GetAppOutlinedIcon />
-          </Button>
+          {appContext?.currentScreen === "startupScreen" ? (
+            <button
+              style={{
+                border: "none",
+                background: "white",
+                marginLeft: "15px",
+              }}
+              // variant="outlined"
+              onClick={(e) => {
+                if (thisContainer.current !== null)
+                  toPng(thisContainer.current).then(function (dataUrl) {
+                    let blob = dataURItoBlob(dataUrl);
+                    const file = new File([blob], `${title}.png`, {
+                      type: "image/png",
+                    });
+                    const formData = new FormData();
+                    formData.append(`file`, file);
+                    axios({
+                      method: "post",
+                      url: `${appContext.apiRoute}blink/media/upload`,
+                      data: formData,
+                    })
+                      .then((res) => {
+                        console.log(res);
+                        let location = res.data.uploaded.location;
+                        axios({
+                          method: "put",
+                          url: `${appContext.apiRoute}v1/charts?startup_id=${data.startup_id}`,
+                          data: [
+                            {
+                              ...data.chart_info,
+                              chart_image: location,
+                            },
+                          ],
+                          headers: {
+                            Authorization: appContext.token,
+                          },
+                        })
+                          .then((res) => {
+                            console.log("db updated", res);
+                            appContext.setSnackbarState({
+                              open: true,
+                              message: "Chart Image Saved to Cloud",
+                            });
+                          })
+                          .catch((err) => console.log(err));
+                      })
+                      .catch((err) => console.log(err));
+                  });
+              }}
+            >
+              <CloudUploadOutlinedIcon />
+            </button>
+          ) : (
+            <div></div>
+          )}
         </div>
       </div>
       <Typography variant="body2" className={styles.graphDescription}>
@@ -238,6 +280,28 @@ const LineChartComponent = ({
 };
 
 export default LineChartComponent;
+
+function dataURItoBlob(dataURI) {
+  // convert base64 to raw binary data held in a string
+  // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+  var byteString = atob(dataURI.split(",")[1]);
+  // separate out the mime component
+  var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+  // write the bytes of the string to an ArrayBuffer
+  var ab = new ArrayBuffer(byteString.length);
+
+  // create a view into the buffer
+  var ia = new Uint8Array(ab);
+
+  // set the bytes of the buffer to the correct values
+  for (var i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  // write the ArrayBuffer to a blob, and you're done
+  var blob = new Blob([ab], { type: mimeString });
+  return blob;
+}
 
 {
   /* <DateRange

@@ -178,6 +178,9 @@ const MonthlyActiveUsers = (props) => {
           data = {
             ...data,
             datasets: getDatasets(data.datasets, serverData),
+            chart_name: "monthly_active_users_chart",
+            startup_id: props.selectedStartup.accessor,
+            chart_info: props.chartInfo,
           };
           setChartData(data);
         } else {

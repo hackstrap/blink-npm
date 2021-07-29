@@ -17,6 +17,13 @@ import {
 } from "@material-ui/core";
 import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
 import { DateRange } from "react-date-range";
+import axios from "axios";
+import { globalContext } from "../../AppContext";
+import { ContactsTwoTone } from "@material-ui/icons";
+import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
+import { updateCollection } from "../fetch";
+import { ChartCard } from "../InvestorScreen/Dashboard/ValuationPage";
+
 Chart.register(annotationPlugin);
 
 Chart.register(...registerables);
@@ -100,6 +107,7 @@ const ChartComponent = ({
   const thisGraph = useRef(null);
   const theme = useTheme();
   const classes = useStyles(theme);
+
   const renderChart = (ref) => {
     if (ref.current !== null && data && options) {
       return new Chart(ref.current, {
@@ -170,58 +178,135 @@ const ChartComponent = ({
   //   );
   // };
 
+  const appContext = React.useContext(globalContext);
+
   return (
-    <div className={classes.chartContainer} ref={thisContainer}>
-      <div className={styles.infoContainer}>
-        <div className={classes.title}>
-          <Typography variant="h4">{title}</Typography>
-        </div>
-        <div className={classes.datePicker}>
-          <Button
-            onClick={(e) => {
-              setShowYearConfig(!showYearConfig);
-            }}
-            variant="outlined"
-          >
-            <Typography variant="body2">{currentYear}</Typography>
-          </Button>
-          {showYearConfig ? (
-            <div
-              className={styles.columnConfigBox}
-              onMouseLeave={() => {
-                setShowYearConfig(false);
+    <div className={classes.chartContainer}>
+      <div ref={thisContainer}>
+        <div className={styles.infoContainer}>
+          <div className={classes.title}>
+            <Typography variant="h4">{title}</Typography>
+          </div>
+          <div className={classes.datePicker}>
+            <Button
+              onClick={(e) => {
+                setShowYearConfig(!showYearConfig);
               }}
+              variant="outlined"
             >
-              {renderYearOptions()}
-            </div>
-          ) : (
-            <div></div>
-          )}
+              <Typography variant="body2">{currentYear}</Typography>
+            </Button>
+            {showYearConfig ? (
+              <div
+                className={styles.columnConfigBox}
+                onMouseLeave={() => {
+                  setShowYearConfig(false);
+                }}
+              >
+                {renderYearOptions()}
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
+          <div>
+            {appContext?.currentScreen === "startupScreen" ? (
+              <button
+                style={{
+                  border: "none",
+                  background: "white",
+                  marginLeft: "15px",
+                }}
+                // variant="outlined"
+                onClick={(e) => {
+                  e.target.style.opacity = "0";
+
+                  if (thisContainer.current !== null)
+                    toPng(thisContainer.current).then(function (dataUrl) {
+                      function dataURItoBlob(dataURI) {
+                        // convert base64 to raw binary data held in a string
+                        // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+                        var byteString = atob(dataURI.split(",")[1]);
+                        // separate out the mime component
+                        var mimeString = dataURI
+                          .split(",")[0]
+                          .split(":")[1]
+                          .split(";")[0];
+                        // write the bytes of the string to an ArrayBuffer
+                        var ab = new ArrayBuffer(byteString.length);
+
+                        // create a view into the buffer
+                        var ia = new Uint8Array(ab);
+
+                        // set the bytes of the buffer to the correct values
+                        for (var i = 0; i < byteString.length; i++) {
+                          ia[i] = byteString.charCodeAt(i);
+                        }
+
+                        // write the ArrayBuffer to a blob, and you're done
+                        var blob = new Blob([ab], { type: mimeString });
+                        return blob;
+                      }
+                      let blob = dataURItoBlob(dataUrl);
+                      const file = new File([blob], `${title}.png`, {
+                        type: "image/png",
+                      });
+                      const formData = new FormData();
+                      formData.append(`file`, file);
+                      axios({
+                        method: "post",
+                        url: `${appContext.apiRoute}blink/media/upload`,
+                        data: formData,
+                      })
+                        .then((res) => {
+                          console.log(res);
+                          e.target.style.opacity = "1";
+
+                          let location = res.data.uploaded.location;
+                          axios({
+                            method: "put",
+                            url: `${appContext.apiRoute}v1/charts?startup_id=${data.startup_id}`,
+                            data: [
+                              {
+                                ...data.chart_info,
+                                chart_image: location,
+                              },
+                            ],
+                            headers: {
+                              Authorization: appContext.token,
+                            },
+                          })
+                            .then((res) => {
+                              console.log("db updated", res);
+                              appContext.setSnackbarState({
+                                open: true,
+                                message: "Chart Image Saved to Cloud",
+                              });
+                            })
+                            .catch((err) => console.log(err));
+                        })
+                        .catch((err) => console.log(err));
+                    });
+                }}
+              >
+                <CloudUploadOutlinedIcon />
+              </button>
+            ) : (
+              <div></div>
+            )}
+          </div>
         </div>
-        <div>
-          <Button
-            // variant="outlined"
-            onClick={(e) => {
-              if (thisContainer.current !== null)
-                toPng(thisContainer.current).then(function (dataUrl) {
-                  saveAs(dataUrl, "blink-chart.png");
-                });
-            }}
-          >
-            <GetAppOutlinedIcon />
-          </Button>
-        </div>
+        <Typography variant="body2" className={styles.graphDescription}>
+          {description}
+        </Typography>
+        {data ? (
+          <div className={styles.tableContainer}>
+            <canvas className={classes.canvas} ref={thisGraph}></canvas>
+          </div>
+        ) : (
+          <Typography variant="h3">No Data Avaliable for this year</Typography>
+        )}
       </div>
-      <Typography variant="body2" className={styles.graphDescription}>
-        {description}
-      </Typography>
-      {data ? (
-        <div className={styles.tableContainer}>
-          <canvas className={classes.canvas} ref={thisGraph}></canvas>
-        </div>
-      ) : (
-        <Typography variant="h3">No Data Avaliable for this year</Typography>
-      )}
       {chartControl ? (
         <div className={classes.toggleContainer}>
           <Switch
@@ -242,6 +327,43 @@ const ChartComponent = ({
 };
 
 export default ChartComponent;
+
+// function convertURIToImageData(URI) {
+//   return new Promise(function (resolve, reject) {
+//     if (URI == null) return reject();
+//     var canvas = document.createElement("canvas"),
+//       context = canvas.getContext("2d"),
+//       image = new Image();
+//     image.addEventListener(
+//       "load",
+//       function () {
+//         canvas.width = image.width;
+//         canvas.height = image.height;
+//         context.drawImage(
+//           image,
+//           0,
+//           0,
+//           canvas.width,
+//           canvas.height
+//         );
+//         resolve(
+//           context.getImageData(
+//             0,
+//             0,
+//             canvas.width,
+//             canvas.height
+//           )
+//         );
+//       },
+//       false
+//     );
+//     image.src = URI;
+//   });
+// }
+
+// convertURIToImageData(dataUrl).then(function (imageData) {
+//   console.log(imageData);
+// });
 
 // <DateRange
 //                 startDatePlaceholder={"Start Month"}

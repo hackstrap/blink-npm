@@ -53,16 +53,9 @@ export const updateCollection = (
   });
 };
 
-export const loginForImageBucket = () => {
-  return axios({
-    method: "post",
-    url: `https://api.hackstrap.com/auth/login/hackstrap`,
-    data: {
-      username: "compliance@hackstrap.com",
-      password: "complianehackstrap",
-    },
-  });
-};
+// export const uploadImage = () => {
+
+// }
 
 export const fetchInvestorInfo = (
   apiRoute: string | undefined,

@@ -7,6 +7,7 @@ import {
   Button,
   ButtonGroup,
   Select,
+  Snackbar,
 } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
@@ -153,6 +154,18 @@ const InvestorScreen = () => {
   };
   return (
     <Container maxWidth="lg" className={classes.screen}>
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        open={appContext?.snackbarState.open}
+        onClose={() =>
+          appContext?.setSnackbarState({
+            open: false,
+            message: "",
+          })
+        }
+        message={appContext?.snackbarState.message}
+        key={"top" + "right"}
+      />
       <div className={classes.navigationBtnContainer}>
         <Button onClick={() => appContext?.setCurrentView("portfolio")}>
           <HomeOutlinedIcon />

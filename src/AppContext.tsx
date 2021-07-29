@@ -22,6 +22,11 @@ interface ValueInterface {
   currentPage: string | undefined
   token: string | undefined
   apiRoute: string | undefined
+  snackbarState: {
+    open: boolean
+    message: string
+  }
+  setSnackbarState: Function
 }
 export const globalContext = React.createContext<ValueInterface | null>(null)
 
@@ -46,6 +51,11 @@ const AppContext = (props: IProps) => {
     props.page
   )
 
+  const [snackbarState, setSnackbarState] = React.useState({
+    open: false,
+    message: ''
+  })
+
   React.useEffect(() => {
     setCurrentScreen(props.screen)
     setCurrentView(props.view)
@@ -62,7 +72,9 @@ const AppContext = (props: IProps) => {
         currentPage,
         setCurrentPage,
         apiRoute,
-        token
+        token,
+        snackbarState,
+        setSnackbarState
       }}
     >
       {props.children}

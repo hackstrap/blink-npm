@@ -195,6 +195,9 @@ const LTV2CAC = (props) => {
           data = {
             ...data,
             datasets: getDatasets(data.datasets, serverData),
+            chart_name: "ltv_to_cac_chart",
+            startup_id: props.selectedStartup.accessor,
+            chart_info: props.chartInfo,
           };
           // console.log(data, serverData);
           setChartData(data);
