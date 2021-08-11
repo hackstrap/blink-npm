@@ -7,6 +7,9 @@ import {
   Typography,
   Button,
   ButtonGroup,
+  capitalize,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 
 import NotesPage from "./NotesPage/NotesPage";
@@ -14,6 +17,7 @@ import RevenuePage from "./RevenuePage";
 import ExpensesPage from "./ExpensesPage";
 import EmployeePage from "./EmployeePage";
 import { globalContext } from "../../../AppContext";
+import { checkSelection } from "../HomeView/HomeView";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -41,9 +45,15 @@ const useStyles = makeStyles((theme: Theme) => {
       gap: "1.5rem",
       marginTop: "4rem",
     },
+    description: {
+      // color: (theme) => theme.palette.grey[600],
+    },
     viewContainer: {
       display: "flex",
+      alignItems: "center",
       width: "100%",
+      marginTop: "2.5rem",
+      marginBottom: "1rem",
     },
     viewSelectionContainer: {
       margin: "auto",
@@ -60,6 +70,16 @@ const useStyles = makeStyles((theme: Theme) => {
     btnStyleInactive: {
       backgroundColor: "white",
       color: "#000",
+    },
+    dropDownBtn: {
+      border: "1px solid gray",
+      background: "white",
+      // padding: "15px",
+      // display: "flex",
+      "&:focus": {
+        border: "1px solid #0066eb",
+        boxShadow: "0 0 1.5pt 1.5pt #78b3ff78",
+      },
     },
   };
 });
@@ -92,7 +112,7 @@ const TablesView = () => {
         );
       default:
         return appContext?.userInfo ? (
-          <NotesPage selectedStartup={appContext.userInfo} />
+          <NotesPage selectedStartup={appContext.userInfo} preview={false} />
         ) : (
           <div></div>
         );
@@ -100,55 +120,64 @@ const TablesView = () => {
   };
   return (
     <div className={classes.view}>
+      <div className={classes.introductionContainer}>
+        <Typography variant="h2" align="center">
+          Welcome to Your Tables
+        </Typography>
+        <Typography align="center" variant="subtitle2">
+          Select the required data table using the dropdown and start entering
+          your data.
+        </Typography>
+      </div>
       <div className={classes.viewContainer}>
-        <div className={classes.viewSelectionContainer}>
-          <ButtonGroup>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "notes"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("notes")}
+        <div>
+          <Select
+            className={classes.dropDownBtn}
+            variant="outlined"
+            value={checkSelection(
+              appContext?.currentPage,
+              ["notes", "revenue", "expenses", "employee"],
+              "Notes"
+            )}
+          >
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("notes");
+              }}
+              value={"Notes"}
             >
               Notes
-            </Button>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "revenue"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("revenue")}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("revenue");
+              }}
+              value={"Revenue"}
             >
               Revenue
-            </Button>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "expenses"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("expenses")}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("expenses");
+              }}
+              value={"Expenses"}
             >
               Expenses
-            </Button>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "employee"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("employee")}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("employee");
+              }}
+              value={"Employee"}
             >
               Employee
-            </Button>
-          </ButtonGroup>
+            </MenuItem>
+          </Select>
         </div>
+
+        <Typography variant="h3" style={{ marginLeft: "auto" }}>
+          {appContext?.userInfo?.Header}
+        </Typography>
       </div>
       {renderCurrentPage(appContext?.currentPage)}
     </div>

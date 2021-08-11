@@ -5,112 +5,114 @@ import {
   Theme,
   Tooltip,
   Typography,
-  useTheme
-} from '@material-ui/core'
+  useTheme,
+} from "@material-ui/core";
 import React, {
   useState,
   useEffect,
   useReducer,
   ReactNode,
-  useMemo
-} from 'react'
-import Table, { TableConfig, TableUIConfig } from '../../Table'
-import styles from './commonTableStyle.module.css'
+  useMemo,
+} from "react";
+import Table, { TableConfig, TableUIConfig } from "../../Table";
+import styles from "./commonTableStyle.module.css";
 import {
   YearDataInterface,
   TableDataInterface,
   ActionInterface,
   TablePropsInterface,
-  RevenueTableRowInterface
-} from '../interfaces'
+  RevenueTableRowInterface,
+} from "../interfaces";
+import { KeyDownIcon } from "../StartupScreen/TablesView/NotesPage/NotesComponent/NotesComponent";
+import { renderToolTip } from "./RevenueTable";
 
 interface ExpenseTableRowInterface {
-  [key: string]: string | number | ReactNode
+  [key: string]: string | number | ReactNode;
 }
 
 const assignWidth = (normalWidth: number, extension: number) =>
-  window.innerWidth > 1500 ? normalWidth + extension : normalWidth
+  window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
     mainTableContainer: {
-      width: '100%',
-      height: '100%',
-      boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.05);',
-      borderRadius: '20px',
-      padding: '64px',
-      paddingTop: '48px',
-      [theme.breakpoints.down('md')]: {
-        padding: '15px',
-        paddingTop: '32px',
-        paddingBottom: '32px'
+      width: "100%",
+      height: "100%",
+      boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05);",
+      borderRadius: "20px",
+      padding: "64px",
+      paddingTop: "48px",
+      [theme.breakpoints.down("md")]: {
+        padding: "15px",
+        paddingTop: "32px",
+        paddingBottom: "32px",
       },
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-      backgroundColor: 'white'
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
+      backgroundColor: "white",
     },
     infoContainer: {
-      alignItems: 'center',
-      [theme.breakpoints.down('md')]: {
+      alignItems: "center",
+      [theme.breakpoints.down("md")]: {
         gap: 15,
-        flexDirection: 'column',
-        alignItems: 'flex-start'
+        flexDirection: "column",
+        alignItems: "flex-start",
       },
-      display: 'flex',
-      width: '100%'
+      display: "flex",
+      width: "100%",
     },
     btnGroup: {
-      display: 'flex',
-      marginLeft: 'auto',
-      [theme.breakpoints.down('md')]: {
-        marginLeft: 0
-      }
+      display: "flex",
+      marginLeft: "auto",
+      [theme.breakpoints.down("md")]: {
+        marginLeft: 0,
+      },
     },
     boldText: {
-      fontSize: '1rem',
-      fontWeight: 'bold'
-    }
-  }
-})
+      fontSize: "1rem",
+      fontWeight: "bold",
+    },
+  };
+});
 
 const ExpensesTable = ({
   data,
   changeHandler,
   currentYear,
-  setCurrentYear
+  setCurrentYear,
 }: TablePropsInterface) => {
-  const theme = useTheme()
-  const classes = useStyles(theme)
-  const [showYearConfig, setShowYearConfig] = useState(false)
-  const [saveChangesBtn, setSaveChangesBtn] = useState(false)
+  const theme = useTheme();
+  const classes = useStyles(theme);
+  const [showYearConfig, setShowYearConfig] = useState(false);
+  const [saveChangesBtn, setSaveChangesBtn] = useState(false);
 
   const monthsArray = [
-    'janurary',
-    'february',
-    'march',
-    'april',
-    'may',
-    'june',
-    'july',
-    'august',
-    'september',
-    'october',
-    'november',
-    'december'
-  ]
+    "janurary",
+    "february",
+    "march",
+    "april",
+    "may",
+    "june",
+    "july",
+    "august",
+    "september",
+    "october",
+    "november",
+    "december",
+  ];
 
   const addMonth = (year: (string | number)[][], payload: any) => {
-    let data = [...year]
-    data[payload.index] = [payload.monthName, 0, 0, 0]
-    return data
-  }
+    let data = [...year];
+    data[payload.index] = [payload.monthName, 0, 0, 0];
+    return data;
+  };
 
   const removeMonth = (year: (string | number)[][], payload: any) => {
-    let data = [...year]
-    data[payload.index] = []
-    return data
-  }
+    let data = [...year];
+    data[payload.index] = [];
+    return data;
+  };
 
   const updateData = (
     data: (string | number)[][],
@@ -118,21 +120,21 @@ const ExpensesTable = ({
     columnIndex: number,
     value: string | number
   ) => {
-    setSaveChangesBtn(true)
-    data[columnIndex][rowIndex] = value
-    return data
-  }
+    setSaveChangesBtn(true);
+    data[columnIndex][rowIndex] = value;
+    return data;
+  };
 
   React.useEffect(() => {
     dispatch({
-      type: 'RESET',
-      payload: data
-    })
-  }, [data])
+      type: "RESET",
+      payload: data,
+    });
+  }, [data]);
 
   const tooltipArray = [
     {
-      heading: 'Total Cost of Goods Sold (COGS)',
+      heading: "Total Cost of Goods Sold (COGS)",
       description: (
         <div>
           <p>
@@ -141,7 +143,7 @@ const ExpensesTable = ({
             materials and labor directly used to create the good.
           </p>
         </div>
-      )
+      ),
     },
     null,
     null,
@@ -149,7 +151,7 @@ const ExpensesTable = ({
     null,
     null,
     {
-      heading: 'Total Cost of Goods Manufactured (COGM)',
+      heading: "Total Cost of Goods Manufactured (COGM)",
       description: (
         <div>
           <p>
@@ -158,10 +160,10 @@ const ExpensesTable = ({
             during the period and is ready for sale.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Direct Material Costs',
+      heading: "Direct Material Costs",
       description: (
         <div>
           <p>It is the cost of direct materials used in production.</p>
@@ -170,10 +172,10 @@ const ExpensesTable = ({
             Purchases of raw materials - Ending Raw Materials Inventory.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Direct Labor Costs',
+      heading: "Direct Labor Costs",
       description: (
         <div>
           <p>
@@ -181,22 +183,22 @@ const ExpensesTable = ({
             goods or provide services to customers.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Manufacturing Overhead',
+      heading: "Manufacturing Overhead",
       description: (
         <div>
           <p>
             Manufacturing overhead is all indirect costs incurred during the
             production process. This overhead is applied to the units produced
-            within a reporting period.{' '}
+            within a reporting period.{" "}
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Work-in-Progress (WIP) Inventory',
+      heading: "Work-in-Progress (WIP) Inventory",
       description: (
         <div>
           <p>
@@ -207,10 +209,10 @@ const ExpensesTable = ({
             Net WIP Inventory = Beginning WIP Inventory - Ending WIP Inventory.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Finished Goods Inventory',
+      heading: "Finished Goods Inventory",
       description: (
         <div>
           <p>
@@ -222,28 +224,28 @@ const ExpensesTable = ({
             Ending Finished Goods Inventory.
           </p>
         </div>
-      )
+      ),
     },
     {
-      heading: 'Total Other COGS',
+      heading: "Total Other COGS",
       description: (
         <div>
           <p>
             Total Other COGS are other miscellaneous items that add to the COGS
           </p>
         </div>
-      )
-    }
-  ]
+      ),
+    },
+  ];
 
   const reducer = (
     state: TableDataInterface,
     action: ActionInterface
   ): TableDataInterface => {
-    console.log('reducer called')
-    let currentState = { ...state }
+    console.log("reducer called");
+    let currentState = { ...state };
     switch (action.type) {
-      case 'UPDATE_DATA':
+      case "UPDATE_DATA":
         return {
           ...currentState,
           data: {
@@ -253,10 +255,10 @@ const ExpensesTable = ({
               action?.payload?.rowIndex + 1,
               action?.payload?.columnIndex,
               action?.payload?.value
-            )
-          }
-        }
-      case 'ADD_MONTH': {
+            ),
+          },
+        };
+      case "ADD_MONTH": {
         return {
           ...currentState,
           data: {
@@ -264,11 +266,11 @@ const ExpensesTable = ({
             [currentYear]: addMonth(
               currentState.data[currentYear],
               action.payload
-            )
-          }
-        }
+            ),
+          },
+        };
       }
-      case 'REMOVE_MONTH': {
+      case "REMOVE_MONTH": {
         return {
           ...currentState,
           data: {
@@ -276,14 +278,14 @@ const ExpensesTable = ({
             [currentYear]: removeMonth(
               currentState.data[currentYear],
               action.payload
-            )
-          }
-        }
+            ),
+          },
+        };
       }
-      case 'RESET': {
+      case "RESET": {
         return {
-          ...action.payload
-        }
+          ...action.payload,
+        };
       }
 
       // let config = { ...tableConfig };
@@ -295,12 +297,12 @@ const ExpensesTable = ({
       // console.log("Add month called");
       // return currentState.data[currentYear].push([action.payload]);
     }
-    return state
-  }
+    return state;
+  };
 
-  const init = (data: TableDataInterface) => data
+  const init = (data: TableDataInterface) => data;
 
-  const [state, dispatch] = useReducer(reducer, data, init)
+  const [state, dispatch] = useReducer(reducer, data, init);
 
   const getTableCellData = (
     thisData: TableDataInterface,
@@ -318,13 +320,13 @@ const ExpensesTable = ({
           return {
             ...currentData[i],
             [thisData.data[currentYear][j][0]]:
-              thisData.data[currentYear][j][i + 1]
-          }
+              thisData.data[currentYear][j][i + 1],
+          };
         else
           return {
             ...currentData[i],
-            [thisData.data[currentYear][j][0]]: 'No Data'
-          }
+            [thisData.data[currentYear][j][0]]: "No Data",
+          };
       default:
         return {
           ...currentData[i],
@@ -339,50 +341,32 @@ const ExpensesTable = ({
               title={
                 thisData.data[currentYear][j][i + 1]
                   ? `${thisData.data[currentYear][j][i + 1]}`
-                  : '0'
+                  : "0"
               }
               onChange={(e) => {
                 dispatch({
-                  type: 'UPDATE_DATA',
+                  type: "UPDATE_DATA",
                   payload: {
                     rowIndex: i,
                     columnIndex: j,
-                    value: parseInt(e.target.value)
-                  }
-                })
+                    value: parseInt(e.target.value),
+                  },
+                });
               }}
               key={`row${i}column${j}`}
             />
-          )
+          ),
           // thisData.data[currentYear][j][i + 1],
-        }
+        };
     }
-  }
-
-  const renderToolTip = (
-    data: {
-      heading: string
-      description: JSX.Element
-    } | null
-  ) => {
-    if (data) {
-      return (
-        <div>
-          <h3>{data.heading}</h3>
-          <div>{data.description}</div>
-        </div>
-      )
-    } else {
-      return <div></div>
-    }
-  }
+  };
 
   const generateTableData = (state: TableDataInterface) => {
     if (state.data[currentYear]) {
-      let thisData = { ...state }
-      let currentData: ExpenseTableRowInterface[] = []
-      let loop1 = thisData.fields.length
-      let loop2 = thisData.data[currentYear].length
+      let thisData = { ...state };
+      let currentData: ExpenseTableRowInterface[] = [];
+      let loop1 = thisData.fields.length;
+      let loop2 = thisData.data[currentYear].length;
 
       // Data is passed in the tables row wise
       for (let i = 0; i < loop1 - 1; i++) {
@@ -393,7 +377,7 @@ const ExpensesTable = ({
             <Tooltip
               title={renderToolTip(tooltipArray[i])}
               arrow
-              placement='right'
+              placement="right"
             >
               <span className={classes.boldText}>
                 {thisData.fields[i + 1].Header}
@@ -403,153 +387,155 @@ const ExpensesTable = ({
             <span className={classes.boldText}>
               {thisData.fields[i + 1].Header}
             </span>
-          )
-        }
+          ),
+        };
         // Add data for each month
         for (let j = 0; j < 12; j++) {
           if (thisData.data[currentYear][j]) {
-            currentData[i] = getTableCellData(thisData, currentData, i, j)
+            currentData[i] = getTableCellData(thisData, currentData, i, j);
           } else {
             currentData[i] = {
               ...currentData[i],
-              [monthsArray[j]]: ''
-            }
+              [monthsArray[j]]: "",
+            };
           }
         }
       }
-      return currentData
+      return currentData;
     } else {
-      return []
+      return [];
     }
-  }
+  };
 
   const generateTableConfig = (
     state: TableDataInterface,
     monthsArray: string[]
   ) => {
-    console.log('generate table called')
+    console.log("generate table called");
     if (state.data[currentYear]) {
-      const currentData = [...state.data[currentYear]]
-      console.log(currentData)
+      const currentData = [...state.data[currentYear]];
+      console.log(currentData);
       let tableConfig: TableUIConfig = {
-        columns: []
-      }
+        columns: [],
+      };
       tableConfig.columns.push({
-        Header: '',
-        accessor: 'dataRow',
-        width: assignWidth(15, 2)
-      })
+        Header: "",
+        accessor: "dataRow",
+        width: assignWidth(15, 2),
+      });
       currentData.forEach((monthData) => {
         if (monthData !== undefined && monthData.length > 0) {
           tableConfig.columns.push({
             Header: capitalize(`${monthData[0]}`),
-            accessor: `${monthData[0]}`
-          })
+            accessor: `${monthData[0]}`,
+            width: assignWidth(10, 2),
+          });
         }
-      })
-      console.log(tableConfig)
-      return tableConfig
+      });
+      console.log(tableConfig);
+      return tableConfig;
     } else {
-      return { columns: [{ Header: '', accessor: '' }] }
+      return { columns: [{ Header: "", accessor: "" }] };
     }
-  }
+  };
 
-  const tableData = useMemo(() => generateTableData(state), [state])
+  const tableData = useMemo(() => generateTableData(state), [state]);
   const tableConfig = useMemo(
     () => generateTableConfig(state, monthsArray),
     [state.data[currentYear]]
-  )
+  );
 
   const renderMonthsCheckbox = (tableConfig: TableUIConfig) => {
-    let checkboxArray: ReactNode[] = []
+    let checkboxArray: ReactNode[] = [];
 
     monthsArray.forEach((month: string, i: number) => {
-      let displayedMonths: (string | number)[] = []
+      let displayedMonths: (string | number)[] = [];
       state.data[currentYear].forEach((arr, i) => {
-        if (arr && arr.length > 0) displayedMonths.push(arr[0])
-      })
+        if (arr && arr.length > 0) displayedMonths.push(arr[0]);
+      });
       checkboxArray.push(
         <div key={i}>
           <input
-            type='checkbox'
+            type="checkbox"
             id={monthsArray[i]}
             defaultChecked={displayedMonths.includes(month)}
             onClick={() => {
               if (!displayedMonths.includes(month)) {
                 dispatch({
-                  type: 'ADD_MONTH',
+                  type: "ADD_MONTH",
                   payload: {
                     monthName: month,
-                    index: i
-                  }
-                })
+                    index: i,
+                  },
+                });
               } else {
                 dispatch({
-                  type: 'REMOVE_MONTH',
+                  type: "REMOVE_MONTH",
                   payload: {
                     monthName: month,
-                    index: i
-                  }
-                })
+                    index: i,
+                  },
+                });
               }
             }}
           />
           <label htmlFor={monthsArray[i]}>{capitalize(month)}</label>
         </div>
-      )
-    })
-    return checkboxArray
-  }
+      );
+    });
+    return checkboxArray;
+  };
 
   const renderYearOptions = () => {
-    let years: string[] = []
+    let years: string[] = [];
     for (
       let i = new Date().getFullYear();
       i > parseInt(currentYear) - 200;
       i--
     ) {
-      years = [...years, i.toString()]
+      years = [...years, i.toString()];
     }
     return years.map((year, i) => {
       return (
         <Typography
           onClick={() => {
-            setShowYearConfig(false)
-            setCurrentYear(year)
+            setShowYearConfig(false);
+            setCurrentYear(year);
           }}
           key={i}
         >
           {year}
         </Typography>
-      )
-    })
-  }
-  const [showColumnConfig, setShowColumnConfig] = useState(false)
+      );
+    });
+  };
+  const [showColumnConfig, setShowColumnConfig] = useState(false);
 
   return (
     <div className={classes.mainTableContainer}>
       <div className={classes.infoContainer}>
-        <Typography variant='h4'>Expenses</Typography>
+        <Typography variant="h4">Expenses</Typography>
         {saveChangesBtn ? (
           <Button
-            variant='outlined'
+            variant="outlined"
             onClick={() => {
-              changeHandler(state)
-              setSaveChangesBtn(false)
+              changeHandler(state);
+              setSaveChangesBtn(false);
             }}
+            className={styles.saveChanges}
           >
-            Save Changes
+            Save
           </Button>
         ) : (
           <div></div>
         )}
         <div className={classes.btnGroup}>
-          <div>
+          {/* <div>
             <Button
               onClick={(e) => {
-                setShowColumnConfig(!showColumnConfig)
+                setShowColumnConfig(!showColumnConfig);
               }}
-              variant='outlined'
+              variant="outlined"
             >
               Add/Remove Columns
             </Button>
@@ -563,15 +549,16 @@ const ExpensesTable = ({
             ) : (
               <div></div>
             )}
-          </div>
+          </div> */}
           <div>
             <Button
               onClick={(e) => {
-                setShowYearConfig(!showYearConfig)
+                setShowYearConfig(!showYearConfig);
               }}
-              variant='outlined'
+              variant="outlined"
+              className={styles.dropdownButton}
             >
-              {`Year: ${currentYear}`}
+              {`${currentYear}`} <KeyDownIcon />
             </Button>
             {showYearConfig ? (
               <div
@@ -592,7 +579,7 @@ const ExpensesTable = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ExpensesTable
+export default ExpensesTable;

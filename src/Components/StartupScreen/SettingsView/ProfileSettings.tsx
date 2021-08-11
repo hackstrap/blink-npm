@@ -100,6 +100,26 @@ interface PropsInterface {
   selectedStartup: OptionInterface;
 }
 
+const CssTextField = withStyles({
+  root: {
+    "& label.Mui-focused": {
+      color: "#0066EB",
+    },
+    "& .MuiOutlinedInput-root": {
+      width: "100%",
+      "& fieldset": {
+        borderColor: "#B8B8B8",
+      },
+      "&:hover fieldset": {
+        borderColor: "#0066EB",
+      },
+      // "&.Mui-focused fieldset": {
+      //   borderColor: "green",
+      // },
+    },
+  },
+})(TextField);
+
 const ProfileSettings = (props: PropsInterface) => {
   const appContext = useContext(globalContext);
   const theme = useTheme();
@@ -115,25 +135,7 @@ const ProfileSettings = (props: PropsInterface) => {
   //   tech: { Header: "", accessor: "" },
   //   startupDescription: "",
   // });
-  const CssTextField = withStyles({
-    root: {
-      "& label.Mui-focused": {
-        color: "#0066EB",
-      },
-      "& .MuiOutlinedInput-root": {
-        width: "100%",
-        "& fieldset": {
-          borderColor: "#B8B8B8",
-        },
-        "&:hover fieldset": {
-          borderColor: "#0066EB",
-        },
-        // "&.Mui-focused fieldset": {
-        //   borderColor: "green",
-        // },
-      },
-    },
-  })(TextField);
+
   const [startupInfo, setStartupInfo] = React.useState<StartupInfoInterface>({
     startup_name: "",
     email_id: "",
@@ -149,6 +151,8 @@ const ProfileSettings = (props: PropsInterface) => {
     currency: [],
   });
 
+  const [currencySelect, setCurrencySelect] = useState(false);
+
   useEffect(() => {
     fetchCollection(
       appContext?.apiRoute,
@@ -162,6 +166,7 @@ const ProfileSettings = (props: PropsInterface) => {
       })
       .catch((err) => console.log(err));
   }, []);
+  console.log(startupInfo?.currency);
 
   const monthsArray = [
     "janurary",
@@ -205,7 +210,7 @@ const ProfileSettings = (props: PropsInterface) => {
         </Typography>
         {startupInfo !== null ? (
           <div>
-            <div className={classes.inputContainer}>
+            {/* <div className={classes.inputContainer}>
               <Typography className={classes.inputLabel}>Email</Typography>
               <CssTextField
                 variant="outlined"
@@ -213,7 +218,7 @@ const ProfileSettings = (props: PropsInterface) => {
                 className={classes.inputValue}
                 value={startupInfo?.email_id}
               />
-            </div>
+            </div> */}
 
             <div className={classes.inputContainer}>
               <Typography className={classes.inputLabel}>
@@ -401,11 +406,11 @@ const ProfileSettings = (props: PropsInterface) => {
         <div className={classes.inputContainer}>
           <Typography className={classes.inputLabel}>Currency</Typography>
           <Select
-            // native
             variant="outlined"
             placeholder="Enter Currency"
             className={classes.inputValue}
             value={startupInfo?.currency}
+            open={currencySelect}
             multiple
             onChange={(e) => {
               if (Array.isArray(e.target.value))
@@ -415,8 +420,8 @@ const ProfileSettings = (props: PropsInterface) => {
                 });
             }}
           >
-            <option value="INR">INR</option>
-            <option value="USD">USD</option>
+            <MenuItem value="INR">INR</MenuItem>
+            <MenuItem value="USD">USD</MenuItem>
           </Select>
         </div>
         {saveChangeBtn ? (

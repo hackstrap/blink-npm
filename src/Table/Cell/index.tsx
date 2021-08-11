@@ -128,7 +128,7 @@ function Cell({ cell, isLink, className, style }: Props) {
 
   return (
     <div
-      title={React.isValidElement(data) ? cell.pseudoHeader : data}
+      // title={React.isValidElement(data) ? cell.pseudoHeader : data}
       className={className}
       ref={cellRef}
       style={style}

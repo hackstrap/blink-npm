@@ -28,6 +28,7 @@ import {
   createEditor,
   Descendant,
   Range,
+  Text,
   Element as SlateElement,
 } from "slate";
 import styles from "./index.module.css";
@@ -52,6 +53,59 @@ import LinkOffIcon from "@material-ui/icons/LinkOff";
 import axios from "axios";
 import { globalContext } from "../../../../../AppContext";
 import { extractChartData } from "../../../../ChartsWrapper/MRRChart";
+import escapeHtml from "escape-html";
+import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
+
+export const KeyDownIcon = () => (
+  <KeyboardArrowDownIcon
+    style={{
+      position: "relative",
+      transform: "translateX(10px)",
+      width: "18px",
+      height: "18",
+    }}
+  />
+);
+
+const serialize = (node) => {
+  if (Text.isText(node)) {
+    let string = escapeHtml(node.text);
+    if (node.bold) {
+      string = `<strong>${string}</strong>`;
+    }
+    return string;
+  }
+
+  const children = node.children.map((n) => serialize(n)).join("");
+  // console.log(children, node);
+
+  switch (node.type) {
+    case "quote":
+      return `<blockquote><p>${children}</p></blockquote>`;
+    case "paragraph":
+      return `<p>${children}</p>`;
+    case "link":
+      return `<a href="${escapeHtml(node.url)}">${children}</a>`;
+    case "bulleted-list":
+      return `<ul>${children}</ul>`;
+    case "heading-one":
+      return `<h1>${children}</h1>`;
+    case "heading-two":
+      return `<h2>${children}</h2>`;
+    case "list-item":
+      return `<li>${children}</li>`;
+    case "numbered-list":
+      return `<ol>${children}</ol>`;
+    case "image":
+      return `<img style="
+        width: 100%;
+        max-width: 500px;
+        border-radius: 5px;" 
+        src="${node.url}" />`;
+    default:
+      return children;
+  }
+};
 
 // import { Button, Icon, Toolbar } from "../components";
 
@@ -92,6 +146,11 @@ const useStyles = makeStyles((theme) => {
       padding: "24px",
       boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.05);",
       zIndex: "2",
+      overflow: "scroll",
+      [theme.breakpoints.down("md")]: {
+        transform: "translateY(2.5rem)",
+      },
+      height: "350px",
     },
     galleryItem: {
       display: "flex",
@@ -122,7 +181,6 @@ const NotesComponent = ({
   preview,
   selectedStartup,
 }) => {
-  console.log(noteData);
   const theme = useTheme();
   const classes = useStyles(theme);
   const [showYearConfig, setShowYearConfig] = React.useState(false);
@@ -256,61 +314,44 @@ const NotesComponent = ({
         Authorization: appContext?.token,
       },
     }).then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       setChartOptions(extractChartData(res.data));
     });
   }, [selectedStartup]);
 
   return (
     <div className={classes.mainContainer}>
+      <div className={styles.notesHeading}>
+        {noteData?.note_name ? noteData.note_name : "Investor Data"}
+      </div>
       <div className={styles.infoContainer}>
-        <div className={styles.notesHeading}>
-          {noteData?.note_name ? noteData.note_name : "Investor Data"}
-        </div>
-        {showSaveChange ? (
-          <Button
-            variant="outlined"
-            onClick={() => {
-              saveChangeHandler(value);
-              setShowSaveChange(false);
-            }}
-          >
-            Save Changes
-          </Button>
-        ) : (
-          <div></div>
-        )}
-
-        <div>
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setShowImageGallery(!showGallery);
-            }}
-          >
-            Select Image
-          </Button>
-          {showGallery ? (
-            <div
-              className={classes.galleryContainer}
-              onMouseLeave={(e) => {
-                setShowImageGallery(false);
+        <div className={styles.commonBtnContainer}>
+          {showSaveChange && !preview ? (
+            <Button
+              variant="outlined"
+              onClick={() => {
+                saveChangeHandler(value);
+                setShowSaveChange(false);
               }}
+              className={styles.saveChanges}
             >
-              {chartOptions}
-            </div>
+              Save Changes
+            </Button>
           ) : (
             <div></div>
           )}
         </div>
-        <div>
+
+        <div className={styles.commonBtnContainer}>
           <Button
             onClick={(e) => {
               setShowMonthConfig(!showMonthConfig);
             }}
             variant="outlined"
+            className={styles.dropDownBtn}
+            style={preview ? { marginLeft: 0 } : {}}
           >
-            {`Month: ${currentMonth}`}
+            {`${currentMonth}`} <KeyDownIcon />
           </Button>
           {showMonthConfig ? (
             <div
@@ -323,34 +364,74 @@ const NotesComponent = ({
             <div></div>
           )}
         </div>
-        <div>
+        <div className={styles.commonBtnContainer}>
           <Button
             onClick={(e) => {
               setShowYearConfig(!showYearConfig);
             }}
             variant="outlined"
+            className={styles.dropDownBtn}
           >
-            {`Year: ${currentYear}`}
+            {`${currentYear}`} <KeyDownIcon />
           </Button>
           {showYearConfig ? (
             <div
               className={styles.columnConfigBox}
               onMouseLeave={(e) => setShowYearConfig(false)}
             >
-              {renderYearOptions()}
+              {renderYearOptions()} <KeyDownIcon />
             </div>
           ) : (
             <div></div>
           )}
         </div>
-        <Button
-          onClick={(e) => {
-            // send email function
-          }}
-          variant="outlined"
-        >
-          Send Email
-        </Button>
+        {!preview ? (
+          <div className={styles.commonBtnContainer}>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setShowImageGallery(!showGallery);
+              }}
+              className={styles.dropDownBtn}
+            >
+              Select Image
+              <KeyDownIcon />
+            </Button>
+            {showGallery ? (
+              <div
+                className={classes.galleryContainer}
+                onMouseLeave={(e) => {
+                  setShowImageGallery(false);
+                }}
+              >
+                {chartOptions}
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </div>
+        ) : (
+          <div></div>
+        )}
+        <div className={styles.commonBtnContainer}>
+          {!preview ? (
+            <Button
+              onClick={(e) => {
+                // send email function
+                // console.log(value.note_data, editor);
+                const result = serialize(editor);
+                console.log(result);
+                copyToClipboard(result);
+              }}
+              className={styles.dropDownBtn}
+              variant="outlined"
+            >
+              Send Email
+            </Button>
+          ) : (
+            <div></div>
+          )}
+        </div>
       </div>
 
       <div className={classes.slateEditor}>
@@ -366,27 +447,34 @@ const NotesComponent = ({
               });
             }}
           >
-            <Toolbar>
-              <MarkButton format="bold" icon={<FormatBoldIcon />} />
-              <MarkButton format="italic" icon={<FormatItalicIcon />} />
-              <MarkButton format="underline" icon={<FormatUnderlinedIcon />} />
-              <MarkButton format="code" icon="code" />
-              <BlockButton format="heading-one" icon={<LooksOneIcon />} />
-              <BlockButton format="heading-two" icon={<LooksTwoIcon />} />
-              <BlockButton format="heading-three" icon={<Looks3Icon />} />
-              <BlockButton format="block-quote" icon={<FormatQuoteIcon />} />
-              <BlockButton
-                format="numbered-list"
-                icon={<FormatListNumbered />}
-              />
-              <BlockButton
-                format="bulleted-list"
-                icon={<FormatListBulleted />}
-              />
-              <InsertImageButton format="image" />
-              <LinkButton />
-              <RemoveLinkButton />
-            </Toolbar>
+            {!preview ? (
+              <Toolbar>
+                <MarkButton format="bold" icon={<FormatBoldIcon />} />
+                <MarkButton format="italic" icon={<FormatItalicIcon />} />
+                <MarkButton
+                  format="underline"
+                  icon={<FormatUnderlinedIcon />}
+                />
+                <MarkButton format="code" icon="code" />
+                <BlockButton format="heading-one" icon={<LooksOneIcon />} />
+                <BlockButton format="heading-two" icon={<LooksTwoIcon />} />
+                <BlockButton format="heading-three" icon={<Looks3Icon />} />
+                <BlockButton format="block-quote" icon={<FormatQuoteIcon />} />
+                <BlockButton
+                  format="numbered-list"
+                  icon={<FormatListNumbered />}
+                />
+                <BlockButton
+                  format="bulleted-list"
+                  icon={<FormatListBulleted />}
+                />
+                <InsertImageButton format="image" />
+                <LinkButton />
+                <RemoveLinkButton />
+              </Toolbar>
+            ) : (
+              <div></div>
+            )}
             <Editable
               renderElement={renderElement}
               renderLeaf={renderLeaf}
@@ -675,7 +763,7 @@ const insertImage = (editor, url) => {
 const Image = ({ attributes, children, element }) => {
   const selected = useSelected();
   const focused = useFocused();
-  console.log(element);
+  // console.log(element);
   return (
     <div {...attributes}>
       <div contentEditable={false}>

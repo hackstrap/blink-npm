@@ -265,7 +265,7 @@ const TotalRevenueChart = (props) => {
     }
   }, [currentYear, props]);
   return (
-    <div ref={chartRef}>
+    <div ref={chartRef} style={{ height: "100%" }}>
       <ChartComponent
         title="Total Revenue"
         description="Total revenue, also known as gross revenue, is your total revenue from recurring (MRR) and non-recurring revenue streams."

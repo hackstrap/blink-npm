@@ -8,6 +8,10 @@ import {
   ButtonGroup,
   Select,
   Snackbar,
+  Tabs,
+  Tab,
+  Box,
+  AppBar,
 } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
@@ -20,6 +24,7 @@ import AppsIcon from "@material-ui/icons/Apps";
 import { globalContext } from "../../AppContext";
 import { OptionInterface } from "../interfaces";
 import { fetchInvestorInfo } from "../fetch";
+import { EqualizerRounded, PieChartRounded } from "@material-ui/icons";
 
 const useStyles = makeStyles({
   screen: {
@@ -31,7 +36,8 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   navigationBtnContainer: {
-    padding: "2rem",
+    paddingTop: "1rem",
+    paddingBottom: "1rem",
     borderRadius: 20,
     display: "flex",
     justifyContent: "space-evenly",
@@ -39,6 +45,14 @@ const useStyles = makeStyles({
     background: "white",
     gap: "2rem",
     marginTop: "1.5rem",
+    color: "#777",
+    boxShadow: "none",
+    "& .MuiTab-textColorPrimary": {
+      color: "gray",
+    },
+    "& .MuiTab-textColorPrimary.Mui-selected": {
+      color: "#0066eb",
+    },
   },
   introductionContainer: {
     display: "flex",
@@ -82,6 +96,39 @@ export const extractStartupsInvested = (data: any[]) => {
   });
 };
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`scrollable-force-tabpanel-${index}`}
+      aria-labelledby={`scrollable-force-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: any) {
+  return {
+    id: `scrollable-force-tab-${index}`,
+    "aria-controls": `scrollable-force-tabpanel-${index}`,
+  };
+}
+
 const InvestorScreen = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
@@ -90,6 +137,11 @@ const InvestorScreen = () => {
     React.useState<null | OptionInterface>(null);
 
   const appContext = useContext(globalContext);
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+  };
 
   const [startupOptions, setStartupOptions] = React.useState<OptionInterface[]>(
     [
@@ -127,22 +179,30 @@ const InvestorScreen = () => {
   };
 
   React.useEffect(() => {
-    appContext?.setCurrentView("dashboard");
-    appContext?.setCurrentPage("metrics");
-    fetchInvestorInfo(
-      appContext?.apiRoute,
-      appContext?.token,
-      "investment",
-      "",
-      appContext?.userInfo?.accessor
-    )
-      .then((res) => {
-        let options = extractStartupsInvested(res.data);
-        setStartupOptions(options);
-      })
-      .catch((err) => console.log(err));
+    // set the navigation bar value on initial load
+    switch (appContext?.currentView) {
+      case "dashboard":
+        setValue(1);
+        break;
+      default:
+        setValue(0);
+        break;
+    }
   }, []);
 
+  React.useEffect(() => {
+    switch (value) {
+      case 1:
+        appContext?.setCurrentView("dashboard");
+        break;
+      // case 2:
+      //   appContext?.setCurrentView("settings");
+      //   break;
+      default:
+        appContext?.setCurrentView("portfolio");
+        break;
+    }
+  }, [value]);
   // const startupOptions = [
 
   // ];
@@ -166,36 +226,34 @@ const InvestorScreen = () => {
         message={appContext?.snackbarState.message}
         key={"top" + "right"}
       />
-      <div className={classes.navigationBtnContainer}>
-        <Button onClick={() => appContext?.setCurrentView("portfolio")}>
-          <HomeOutlinedIcon />
-        </Button>
-        <Button
-          onClick={() => {
-            appContext?.setCurrentView("dashboard");
-            appContext?.setCurrentPage("metrics");
-          }}
-        >
-          <AppsIcon />
-        </Button>
-        <Button
-          onClick={() => {
-            appContext?.setCurrentView("settings");
-            appContext?.setCurrentPage("profile");
-          }}
-        >
-          <SettingsOutlinedIcon />
-        </Button>
-      </div>
-
-      <div className={classes.introductionContainer}>
-        <Typography variant="h2">
-          Welcome to Your Analytics Dashboard
-        </Typography>
-        <Typography className={classes.description} variant="subtitle2">
-          Analytics will help you with key insights from your data and you can
-          share the charts with your team or investors.
-        </Typography>
+      <div>
+        <AppBar position="static" className={classes.navigationBtnContainer}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons="on"
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="scrollable force tabs example"
+          >
+            <Tab
+              label="Portfolio"
+              icon={<PieChartRounded />}
+              {...a11yProps(0)}
+            />
+            <Tab
+              label="Dashboard"
+              icon={<EqualizerRounded />}
+              {...a11yProps(1)}
+            />
+            {/* <Tab
+              label="Settings"
+              icon={<SettingsRounded />}
+              {...a11yProps(2)}
+            /> */}
+          </Tabs>
+        </AppBar>
       </div>
       {renderCurrentView(appContext?.currentView)}
     </Container>

@@ -1,0 +1,53 @@
+::-webkit-scrollbar {
+  margin-top: 4px;
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgb(187, 187, 187);
+  outline: none;
+}
+
+.editableInput {
+  border: none;
+  font-size: medium;
+  color: rgb(49, 49, 49);
+  outline: none;
+  display: flex;
+  /* height: 3rem; */
+  position: relative;
+  /* padding-left: 12px; */
+  background-color: transparent;
+  width: 100%;
+}
+
+.MuiList-root {
+  max-height: 300px;
+}
+
+/* .ql-container {
+    min-height: 500px;
+  }
+  .ql-editor {
+    min-height: 500px;
+  }
+  
+  .ql-toolbar {
+    border-radius: 4px 4px 0px 0px;
+  }
+  
+  .ql-container {
+    border-radius: 0px 0px 4px 4px;
+  } */
+
+/* 
+  .editableInput:focus {
+    border: 1px solid rgb(8, 160, 8);
+    background-color: rgba(59, 255, 59, 0.26);
+  } */

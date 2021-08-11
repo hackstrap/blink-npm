@@ -13,17 +13,21 @@
   padding: 0.3rem;
 }
 
+.cell:focus-within {
+  border: 2px solid #0066eb;
+}
+
 .head {
-  font-size: 0.9rem;
+  font-size: 1rem;
   /* color: #10389b; */
   background-color: white;
   font-weight: 600;
 }
 
-.head:hover {
+/* .head:hover {
   color: #10389b;
   transition: color 200ms ease-out;
-}
+} */
 
 .cell {
   font-size: 0.8rem;

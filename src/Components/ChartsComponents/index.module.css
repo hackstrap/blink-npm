@@ -27,10 +27,9 @@
   width: 100%;
   margin-top: 2rem;
 }
-
 .columnConfigBox {
   display: flex;
-  width: 141px;
+  /* min-width: 100px; */
   flex-direction: column;
   align-items: flex-start;
   padding: 15px;
@@ -39,6 +38,7 @@
   position: absolute;
   z-index: 20;
   background-color: white;
-  max-height: 400px;
+  max-height: 150px;
   overflow-y: auto;
+  cursor: pointer;
 }

@@ -41,7 +41,7 @@ import PieChartIcon from '@material-ui/icons/PieChart'
 import StartupScreen from './Components/StartupScreen/StartupScreen'
 import InvestorScreen from './Components/InvestorScreen/InvestorScreen'
 import { Button, Container, Hidden } from '@material-ui/core'
-
+import './App.css'
 const drawerWidth = 240
 
 const useStyles = makeStyles((theme: Theme) =>

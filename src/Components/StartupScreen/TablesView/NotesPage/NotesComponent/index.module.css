@@ -2,6 +2,10 @@
   display: flex;
   margin-bottom: 24px;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  /* justify-content: space-between; */
 }
 .notesHeading {
   font-size: 1.5rem;
@@ -38,4 +42,46 @@
   background-color: white;
   max-height: 400px;
   overflow-y: auto;
+}
+
+.saveChanges {
+  /* margin-right: auto; */
+  border-radius: 10px;
+  border: 1px solid #0066eb;
+  background-color: #0066eb18;
+  color: #0066eb;
+  padding: 5px;
+  /* margin-left: 2rem; */
+  font-size: small;
+}
+
+.dropDownBtn {
+  margin-left: 1rem;
+}
+.dropDownBtn:focus {
+  border: 1px solid #0066eb;
+  box-shadow: 0 0 1.5pt 1.5pt #78b3ff78;
+}
+
+@media only screen and (max-width: 600px) {
+  .infoContainer {
+    justify-content: space-between;
+    gap: 0;
+  }
+  .saveChanges {
+    margin-left: 0;
+    width: 100%;
+  }
+  .dropDownBtn {
+    width: 100%;
+    margin-left: 0;
+  }
+  .commonBtnContainer {
+    width: 100%;
+    display: flex;
+    margin-top: 1rem;
+  }
+  .columnConfigBox {
+    transform: translateY(2.5rem);
+  }
 }

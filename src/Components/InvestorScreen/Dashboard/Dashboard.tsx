@@ -17,6 +17,7 @@ import NotesPage from "./NotesPage";
 import { globalContext } from "../../../AppContext";
 import { OptionInterface } from "../../interfaces";
 import ValuationPage from "./ValuationPage";
+import { checkSelection } from "../../StartupScreen/HomeView/HomeView";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -50,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) => {
       display: "flex",
       flexDirection: "column",
       width: "100%",
+      marginTop: "2.5rem",
     },
     viewSelectionContainer: {
       display: "flex",
@@ -63,8 +65,12 @@ const useStyles = makeStyles((theme: Theme) => {
       fontSize: "1.2rem",
     },
     startupSelect: {
-      margin: "auto",
+      marginLeft: "auto",
       backgroundColor: "#fff",
+      width: "300px",
+      "& .MuiSelect-select:focus": {
+        backgroundColor: "white",
+      },
     },
     btnGrp: {
       margin: "auto",
@@ -80,6 +86,19 @@ const useStyles = makeStyles((theme: Theme) => {
     btnStyleInactive: {
       backgroundColor: "white",
       color: "#000",
+    },
+    dropDownBtn: {
+      border: "1px solid gray",
+      background: "white",
+      // padding: "15px",
+      // display: "flex",
+      "&:focus": {
+        border: "1px solid #0066eb",
+        boxShadow: "0 0 1.5pt 1.5pt #78b3ff78",
+      },
+      "& .MuiSelect-select:focus": {
+        backgroundColor: "white",
+      },
     },
   };
 });
@@ -111,64 +130,71 @@ const Dashboard = (props: PropsInterface) => {
   const renderStartupOptions = (optionArray: OptionInterface[]) => {
     return optionArray.map((option: OptionInterface) => {
       return (
-        <option
+        <MenuItem
           onClick={() => {
             setSelectedStartup(option);
           }}
           value={option.accessor}
         >
           {option.Header}
-        </option>
+        </MenuItem>
       );
     });
   };
   return (
     <div className={classes.screen}>
+      <div className={classes.introductionContainer}>
+        <Typography variant="h2" align="center">
+          Welcome to Startup Analytics Dashboard
+        </Typography>
+        <Typography align="center" variant="subtitle2">
+          Find Startup related Metrics and other Updates here.
+        </Typography>
+      </div>
       <div className={classes.viewContainer}>
-        <div className={classes.viewSelectionContainer}>
-          <ButtonGroup className={classes.btnGrp}>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "metrics"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("metrics")}
+        <div style={{ display: "flex" }}>
+          <Select
+            className={classes.dropDownBtn}
+            variant="outlined"
+            value={checkSelection(
+              appContext?.currentPage,
+              ["metrics", "notes", "valuation"],
+              "Metrics"
+            )}
+          >
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("metrics");
+              }}
+              value={"Metrics"}
             >
               Metrics
-            </Button>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "notes"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("notes")}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("notes");
+              }}
+              value={"Notes"}
             >
               Notes
-            </Button>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "valuation"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("valuation")}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("valuation");
+              }}
+              value={"Valuation"}
             >
               Valuation
-            </Button>
-          </ButtonGroup>
+            </MenuItem>
+          </Select>
+          <Select
+            variant="outlined"
+            className={classes.startupSelect}
+            defaultValue={selectedStartup.accessor}
+          >
+            {renderStartupOptions(props.startupOptions)}
+          </Select>
         </div>
-        <Select
-          variant="outlined"
-          className={classes.startupSelect}
-          defaultValue={selectedStartup.accessor}
-        >
-          {renderStartupOptions(props.startupOptions)}
-        </Select>
       </div>
       {renderCurrentPage(appContext?.currentPage)}
     </div>

@@ -12,12 +12,16 @@ import {
   useTheme,
   FormControlLabel,
   Switch,
+  CircularProgress,
 } from "@material-ui/core";
 import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
 import { DateRange } from "react-date-range";
 import { globalContext } from "../../../AppContext";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import axios from "axios";
+import { KeyDownIcon } from "../../StartupScreen/TablesView/NotesPage/NotesComponent/NotesComponent";
+import { Bars } from "@agney/react-loading";
+// import ChartPlaceholder from "../../ChartPlaceholder";
 Chart.register(...registerables);
 
 const useStyles = makeStyles((theme) => {
@@ -78,6 +82,13 @@ const useStyles = makeStyles((theme) => {
       fontWeight: "semibold",
       display: "flex",
       alignItems: "center",
+    },
+    dropDownBtn: {
+      display: "flex",
+      "&:focus": {
+        border: "1px solid #0066eb",
+        boxShadow: "0 0 1.5pt 1.5pt #78b3ff78",
+      },
     },
   };
 });
@@ -143,7 +154,7 @@ const LineChartComponent = ({
     let years = [];
     for (
       let i = new Date().getFullYear();
-      i > parseInt(currentYear) - 200;
+      i > parseInt(currentYear) - 100;
       i--
     ) {
       years = [...years, i.toString()];
@@ -175,8 +186,10 @@ const LineChartComponent = ({
               setShowDatePicker(!showDatePicker);
             }}
             variant="outlined"
+            classes={classes.dropDownBtn}
           >
             <Typography variant="body2">{currentYear}</Typography>
+            <KeyDownIcon />
           </Button>
           {showDatePicker ? (
             <div
@@ -258,7 +271,30 @@ const LineChartComponent = ({
           <canvas className={classes.canvas} ref={thisGraph}></canvas>
         </div>
       ) : (
-        <Typography variant="h3">No Data Avaliable for this year</Typography>
+        <div
+          style={{
+            flexGrow: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            display: "flex",
+          }}
+        >
+          <div>
+            <div style={{ maxWidth: "50px", margin: "auto", color: "gray" }}>
+              <Bars />
+            </div>
+            <Typography
+              variant="h4"
+              style={{
+                textAlign: "center",
+                marginTop: "1.5rem",
+                color: "gray",
+              }}
+            >
+              Your Analytics is building
+            </Typography>
+          </div>
+        </div>
       )}
       {chartControl ? (
         <div className={classes.toggleContainer}>

@@ -1,21 +1,15 @@
-import React, { useState, useContext } from "react";
-import {
-  colors,
-  Theme,
-  Container,
-  Typography,
-  Button,
-  ButtonGroup,
-} from "@material-ui/core";
+import React, { useContext } from "react";
+import { Container, AppBar, Tabs, Tab } from "@material-ui/core";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
-import SettingsOutlinedIcon from "@material-ui/icons/SettingsOutlined";
 import ViewCompactOutlinedIcon from "@material-ui/icons/ViewCompactOutlined";
 import SettingsView from "./SettingsView/SettingsView";
 import TablesView from "./TablesView/TablesView";
 import HomeView from "./HomeView/HomeView";
 import { globalContext } from "../../AppContext";
 import Snackbar, { SnackbarOrigin } from "@material-ui/core/Snackbar";
+import Typography from "@material-ui/core/Typography";
+import Box from "@material-ui/core/Box";
+import { EqualizerRounded, SettingsRounded } from "@material-ui/icons";
 
 const useStyles = makeStyles({
   screen: {
@@ -26,7 +20,8 @@ const useStyles = makeStyles({
     alignItems: "center",
   },
   navigationBtnContainer: {
-    padding: "1.5rem",
+    paddingTop: "1rem",
+    paddingBottom: "1rem",
     borderRadius: 20,
     display: "flex",
     justifyContent: "space-evenly",
@@ -34,6 +29,14 @@ const useStyles = makeStyles({
     background: "white",
     gap: "2rem",
     marginTop: "1.5rem",
+    color: "#777",
+    boxShadow: "none",
+    "& .MuiTab-textColorPrimary": {
+      color: "gray",
+    },
+    "& .MuiTab-textColorPrimary.Mui-selected": {
+      color: "#0066eb",
+    },
   },
 
   description: {
@@ -58,11 +61,49 @@ export interface State extends SnackbarOrigin {
   open: boolean;
 }
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: any;
+  value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`scrollable-force-tabpanel-${index}`}
+      aria-labelledby={`scrollable-force-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: any) {
+  return {
+    id: `scrollable-force-tab-${index}`,
+    "aria-controls": `scrollable-force-tabpanel-${index}`,
+  };
+}
+
 const StartupScreen = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
   // const [currentView, setCurrentView] = useState("tables");
   const appContext = useContext(globalContext);
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+    setValue(newValue);
+  };
 
   const renderCurrentView = (view: string | undefined) => {
     switch (view) {
@@ -76,9 +117,33 @@ const StartupScreen = () => {
   };
 
   React.useEffect(() => {
-    appContext?.setCurrentView("home");
-    appContext?.setCurrentPage("metrics");
+    // set the navigation bar value on initial load
+    switch (appContext?.currentView) {
+      case "tables":
+        setValue(1);
+        break;
+      case "settings":
+        setValue(2);
+        break;
+      default:
+        setValue(0);
+        break;
+    }
   }, []);
+
+  React.useEffect(() => {
+    switch (value) {
+      case 1:
+        appContext?.setCurrentView("tables");
+        break;
+      case 2:
+        appContext?.setCurrentView("settings");
+        break;
+      default:
+        appContext?.setCurrentView("home");
+        break;
+    }
+  }, [value]);
 
   return (
     <Container maxWidth="lg" className={classes.screen}>
@@ -94,31 +159,34 @@ const StartupScreen = () => {
         message={appContext?.snackbarState.message}
         key={"top" + "right"}
       />
-      <div className={classes.navigationBtnContainer}>
-        <Button
-          onClick={() => {
-            appContext?.setCurrentView("home");
-            appContext?.setCurrentPage("metrics");
-          }}
-        >
-          <HomeOutlinedIcon />
-        </Button>
-        <Button
-          onClick={() => {
-            appContext?.setCurrentView("tables");
-            appContext?.setCurrentPage("revenue");
-          }}
-        >
-          <ViewCompactOutlinedIcon />
-        </Button>
-        <Button
-          onClick={() => {
-            appContext?.setCurrentView("settings");
-            appContext?.setCurrentPage("profile");
-          }}
-        >
-          <SettingsOutlinedIcon />
-        </Button>
+      <div>
+        <AppBar position="static" className={classes.navigationBtnContainer}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            variant="scrollable"
+            scrollButtons="on"
+            indicatorColor="primary"
+            textColor="primary"
+            aria-label="scrollable force tabs example"
+          >
+            <Tab
+              label="Dashboard"
+              icon={<EqualizerRounded />}
+              {...a11yProps(0)}
+            />
+            <Tab
+              label="Tables"
+              icon={<ViewCompactOutlinedIcon />}
+              {...a11yProps(1)}
+            />
+            <Tab
+              label="Settings"
+              icon={<SettingsRounded />}
+              {...a11yProps(2)}
+            />
+          </Tabs>
+        </AppBar>
       </div>
 
       {renderCurrentView(appContext?.currentView)}

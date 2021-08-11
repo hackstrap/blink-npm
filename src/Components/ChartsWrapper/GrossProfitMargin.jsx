@@ -147,7 +147,7 @@ const GrossProfitMargin = (props) => {
   }, [currentYear, props]);
 
   return (
-    <div>
+    <div style={{ height: "100%" }}>
       <LineChartComponent
         title="Gross Profit Margin %"
         description="Gross profit margin is a measure of profitability that shows the percentage of revenue that exceeds the cost of goods sold (COGS)."

@@ -23,6 +23,8 @@ import {
   TablePropsInterface,
   RevenueTableRowInterface,
 } from "../interfaces";
+import { KeyDownIcon } from "../StartupScreen/TablesView/NotesPage/NotesComponent/NotesComponent";
+import { renderToolTip } from "./RevenueTable";
 
 interface ExpenseTableRowInterface {
   [key: string]: string | number | ReactNode;
@@ -176,24 +178,6 @@ const OpexExpensesTable = ({
       ),
     },
   ];
-
-  const renderToolTip = (
-    data: {
-      heading: string;
-      description: JSX.Element;
-    } | null
-  ) => {
-    if (data) {
-      return (
-        <div>
-          <h3>{data.heading}</h3>
-          <div>{data.description}</div>
-        </div>
-      );
-    } else {
-      return false;
-    }
-  };
 
   React.useEffect(() => {
     dispatch({
@@ -399,6 +383,7 @@ const OpexExpensesTable = ({
           tableConfig.columns.push({
             Header: capitalize(`${monthData[0]}`),
             accessor: `${monthData[0]}`,
+            width: assignWidth(10, 2),
           });
         }
       });
@@ -494,13 +479,13 @@ const OpexExpensesTable = ({
               setSaveChangesBtn(false);
             }}
           >
-            Save Changes
+            Save
           </button>
         ) : (
           <div></div>
         )}
         <div className={classes.btnGroup}>
-          <div>
+          {/* <div>
             <Button
               onClick={(e) => {
                 setShowColumnConfig(!showColumnConfig);
@@ -520,20 +505,23 @@ const OpexExpensesTable = ({
             ) : (
               <div></div>
             )}
-          </div>
+          </div> */}
           <div>
             <Button
               onClick={(e) => {
                 setShowYearConfig(!showYearConfig);
               }}
               variant="outlined"
+              className={styles.dropdownButton}
             >
-              {`Year: ${currentYear}`}
+              {`${currentYear}`} <KeyDownIcon />
             </Button>
             {showYearConfig ? (
               <div
                 className={styles.columnConfigBox}
-                onMouseLeave={(e) => setShowYearConfig(false)}
+                onMouseLeave={(e) => {
+                  setShowYearConfig(false);
+                }}
               >
                 {renderYearOptions()}
               </div>

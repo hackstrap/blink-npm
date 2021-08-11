@@ -9,16 +9,37 @@ Chart.register(...registerables);
 
 Chart.register(annotationPlugin);
 
-const ChartWrapper = ({ type, data, options }) => {
+const ChartWrapper = ({ type, data, options, gradient, backgroundColor }) => {
   const thisGraph = useRef(null);
 
   const renderChart = (ref) => {
-    if (ref.current !== null && data && options) {
-      return new Chart(ref.current, {
-        type,
-        data,
-        options,
-      });
+    if (ref.current !== null && options && data) {
+      if (gradient) {
+        const ctx = thisGraph.current.getContext("2d");
+        const gradient = ctx.createLinearGradient(0, 120, 0, 0);
+        gradient.addColorStop(1, backgroundColor + "bb");
+        gradient.addColorStop(0, backgroundColor + "00");
+        return new Chart(thisGraph.current, {
+          type,
+          data,
+          options: {
+            ...options,
+            backgroundColor: gradient,
+            maintainAspectRatio: false,
+            responsive: true,
+          },
+        });
+      } else {
+        return new Chart(thisGraph.current, {
+          type,
+          data,
+          options: {
+            ...options,
+            maintainAspectRatio: false,
+            responsive: true,
+          },
+        });
+      }
     }
   };
 
@@ -30,7 +51,7 @@ const ChartWrapper = ({ type, data, options }) => {
   }, []);
 
   return (
-    <div>
+    <div style={{ display: "flex" }}>
       <canvas ref={thisGraph}></canvas>
     </div>
   );

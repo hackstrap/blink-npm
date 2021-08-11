@@ -18,6 +18,7 @@ import MonthlyActiveUsers from "../../ChartsWrapper/MonthlyActiveUsers";
 import { OptionInterface } from "../../interfaces";
 import { fetchCollection } from "../../fetch";
 import { globalContext } from "../../../AppContext";
+import PageNotAvaliable from "../../PageNotAvaliable";
 
 const useStyles = makeStyles({
   page: {
@@ -68,15 +69,19 @@ const MetricsPage = (props: PropsInterface) => {
 
   const extractData = (data: any[]) => {
     let obj = {};
-    data.forEach((item) => {
-      obj = {
-        ...obj,
-        [item.chart_name]: {
-          ...item,
-        },
-      };
-    });
-    return obj;
+    if (data.length) {
+      data.forEach((item) => {
+        obj = {
+          ...obj,
+          [item.chart_name]: {
+            ...item,
+          },
+        };
+      });
+      return obj;
+    } else {
+      return null;
+    }
   };
 
   React.useEffect(() => {
@@ -95,70 +100,77 @@ const MetricsPage = (props: PropsInterface) => {
   }, [props.selectedStartup]);
 
   return (
-    <div>
+    <div style={{ width: "100%", height: "100%" }}>
       {/* {renderCharts(chartsConfig)} */}
-      <Grid container spacing={3} className={classes.page}>
-        {chartInfo?.total_revenue_chart?.investor_view ? (
-          <Grid item lg={6} xs={12}>
-            <TotalRevenueChart
-              // chartInfo={chartInfo?.total_revenue_chart}
-              selectedStartup={props.selectedStartup}
-            />
-          </Grid>
-        ) : (
-          <div></div>
-        )}
-        {chartInfo?.monthly_recurring_revenue_chart?.investor_view ? (
-          <Grid item lg={6} xs={12}>
-            <MRRChart
-              // chartInfo={chartInfo?.monthly_recurring_revenue_chart}
-              selectedStartup={props.selectedStartup}
-            />
-          </Grid>
-        ) : (
-          <div></div>
-        )}
-        {chartInfo?.gross_profit_margin_chart?.investor_view ? (
-          <Grid item lg={6} xs={12}>
-            <GrossProfitMargin
-              // chartInfo={chartInfo?.gross_profit_margin_chart}
-              selectedStartup={props.selectedStartup}
-            />
-          </Grid>
-        ) : (
-          <div></div>
-        )}
-        {chartInfo?.customer_churn_rate_chart?.investor_view ? (
-          <Grid item lg={6} xs={12}>
-            <CustomerChurnRate
-              // chartInfo={chartInfo?.customer_churn_rate_chart}
-              selectedStartup={props.selectedStartup}
-            />
-          </Grid>
-        ) : (
-          <div></div>
-        )}
-        {chartInfo?.monthly_active_users_chart?.investor_view ? (
-          <Grid item lg={6} xs={12}>
-            <MonthlyActiveUsers
-              // chartInfo={chartInfo?.monthly_active_users_chart}
-              selectedStartup={props.selectedStartup}
-            />
-          </Grid>
-        ) : (
-          <div></div>
-        )}
-        {chartInfo?.ltv_to_cac_chart?.investor_view ? (
-          <Grid item lg={6} xs={12}>
-            <LTV2CAC
-              // chartInfo={chartInfo?.ltv_to_cac_chart}
-              selectedStartup={props.selectedStartup}
-            />
-          </Grid>
-        ) : (
-          <div></div>
-        )}
-      </Grid>
+
+      {chartInfo ? (
+        <Grid container spacing={3} className={classes.page}>
+          {chartInfo?.total_revenue_chart?.investor_view ? (
+            <Grid item lg={6} xs={12}>
+              <TotalRevenueChart
+                // chartInfo={chartInfo?.total_revenue_chart}
+                selectedStartup={props.selectedStartup}
+              />
+            </Grid>
+          ) : (
+            <div></div>
+          )}
+          {chartInfo?.monthly_recurring_revenue_chart?.investor_view ? (
+            <Grid item lg={6} xs={12}>
+              <MRRChart
+                // chartInfo={chartInfo?.monthly_recurring_revenue_chart}
+                selectedStartup={props.selectedStartup}
+              />
+            </Grid>
+          ) : (
+            <div></div>
+          )}
+          {chartInfo?.gross_profit_margin_chart?.investor_view ? (
+            <Grid item lg={6} xs={12}>
+              <GrossProfitMargin
+                // chartInfo={chartInfo?.gross_profit_margin_chart}
+                selectedStartup={props.selectedStartup}
+              />
+            </Grid>
+          ) : (
+            <div></div>
+          )}
+          {chartInfo?.customer_churn_rate_chart?.investor_view ? (
+            <Grid item lg={6} xs={12}>
+              <CustomerChurnRate
+                // chartInfo={chartInfo?.customer_churn_rate_chart}
+                selectedStartup={props.selectedStartup}
+              />
+            </Grid>
+          ) : (
+            <div></div>
+          )}
+          {chartInfo?.monthly_active_users_chart?.investor_view ? (
+            <Grid item lg={6} xs={12}>
+              <MonthlyActiveUsers
+                // chartInfo={chartInfo?.monthly_active_users_chart}
+                selectedStartup={props.selectedStartup}
+              />
+            </Grid>
+          ) : (
+            <div></div>
+          )}
+          {chartInfo?.ltv_to_cac_chart?.investor_view ? (
+            <Grid item lg={6} xs={12}>
+              <LTV2CAC
+                // chartInfo={chartInfo?.ltv_to_cac_chart}
+                selectedStartup={props.selectedStartup}
+              />
+            </Grid>
+          ) : (
+            <div></div>
+          )}
+        </Grid>
+      ) : (
+        <div style={{ marginTop: "2.5rem", width: "100%", height: "100%" }}>
+          <PageNotAvaliable />
+        </div>
+      )}
     </div>
   );
 };

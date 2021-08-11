@@ -244,7 +244,7 @@ const MonthlyActiveUsers = (props) => {
   }, [currentYear, props]);
 
   return (
-    <div ref={chartRef}>
+    <div ref={chartRef} style={{ height: "100%" }}>
       <ChartComponent
         title="Monthly Active Users (MAU)"
         description="MAU stands for monthly active user, it’s the number of users that have done something meaningful in your product in the last 30 days/calendar month."

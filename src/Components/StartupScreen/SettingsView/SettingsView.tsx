@@ -7,12 +7,15 @@ import {
   Typography,
   Button,
   ButtonGroup,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import ProfileSettings from "./ProfileSettings";
 import DashboardPage from "./DashboardPage";
 import ContactsPage from "./ContactsPage";
 import DatabasePage from "./DatabasePage";
 import { globalContext } from "../../../AppContext";
+import { checkSelection } from "../HomeView/HomeView";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -46,7 +49,10 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     viewContainer: {
       display: "flex",
+      alignItems: "center",
       width: "100%",
+      marginTop: "2.5rem",
+      marginBottom: "1rem",
     },
     viewSelectionContainer: {
       margin: "auto",
@@ -63,6 +69,16 @@ const useStyles = makeStyles((theme: Theme) => {
       backgroundColor: "white",
       color: "#000",
     },
+    dropDownBtn: {
+      border: "1px solid gray",
+      background: "white",
+      // padding: "15px",
+      // display: "flex",
+      "&:focus": {
+        border: "1px solid #0066eb",
+        boxShadow: "0 0 1.5pt 1.5pt #78b3ff78",
+      },
+    },
   };
 });
 
@@ -74,75 +90,49 @@ const SettingsView = () => {
 
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
-      case "profile":
+      default:
         return appContext?.userInfo ? (
           <ProfileSettings selectedStartup={appContext.userInfo} />
         ) : (
           <div></div>
         );
-      default:
-        return <div></div>;
-      // case "database":
-      //   return <DatabasePage />;
-      // case "contact":
-      //   return <ContactsPage />;
-      // case "dashboard":
-      //   return <DashboardPage />;
     }
   };
   return (
     <Container maxWidth="lg" className={classes.screen}>
+      <div className={classes.introductionContainer}>
+        <Typography variant="h2" align="center">
+          Welcome to Your Settings page
+        </Typography>
+        <Typography align="center" variant="subtitle2">
+          Manage your settings here.
+        </Typography>
+      </div>
       <div className={classes.viewContainer}>
-        <div className={classes.viewSelectionContainer}>
-          <ButtonGroup>
-            {/* <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "dashboard"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("dashboard")}
+        <div>
+          <Select
+            className={classes.dropDownBtn}
+            variant="outlined"
+            value={checkSelection(
+              appContext?.currentPage,
+              ["profile"],
+              "Profile"
+            )}
+          >
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("profile");
+              }}
+              value={"Profile"}
             >
-              Dashboards
-            </Button>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage === "contact"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("contact")}
-            >
-              Contact
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              className={
-                appContext?.currentPage === "database"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("database")}
-            >
-              Databases
-            </Button> */}
-            <Button
-              variant="contained"
-              size="large"
-              className={
-                appContext?.currentPage === "profile"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("profile")}
-            >
-              Profile Setting
-            </Button>
-          </ButtonGroup>
+              Profile
+            </MenuItem>
+          </Select>
         </div>
+
+        <Typography variant="h3" style={{ marginLeft: "auto" }}>
+          {appContext?.userInfo?.Header}
+        </Typography>
       </div>
       {renderCurrentPage(appContext?.currentPage)}
     </Container>

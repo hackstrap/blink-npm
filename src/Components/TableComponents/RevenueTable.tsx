@@ -18,6 +18,7 @@ import {
   TablePropsInterface,
   RevenueTableRowInterface,
 } from "../interfaces";
+import { KeyDownIcon } from "../StartupScreen/TablesView/NotesPage/NotesComponent/NotesComponent";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -61,6 +62,24 @@ const useStyles = makeStyles((theme: Theme) => {
     },
   };
 });
+
+export const renderToolTip = (
+  data: {
+    heading: string;
+    description: JSX.Element;
+  } | null
+) => {
+  if (data) {
+    return (
+      <div style={{ padding: "12px" }}>
+        <h3>{data.heading}</h3>
+        <div>{data.description}</div>
+      </div>
+    );
+  } else {
+    return false;
+  }
+};
 
 const assignWidth = (normalWidth: number, extension: number) =>
   window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
@@ -251,24 +270,6 @@ const RevenueTable = ({
     },
   ];
 
-  const renderToolTip = (
-    data: {
-      heading: string;
-      description: JSX.Element;
-    } | null
-  ) => {
-    if (data) {
-      return (
-        <div>
-          <h3>{data.heading}</h3>
-          <div>{data.description}</div>
-        </div>
-      );
-    } else {
-      return false;
-    }
-  };
-
   React.useEffect(() => {
     dispatch({ type: "RESET", payload: data });
   }, [data]);
@@ -383,6 +384,7 @@ const RevenueTable = ({
               </Typography>
             ),
             accessor: `${monthData[0]}`,
+            width: assignWidth(10, 2),
           });
         }
       });
@@ -485,20 +487,22 @@ const RevenueTable = ({
               changeHandler(state);
               setSaveChangesBtn(false);
             }}
+            className={styles.saveChanges}
           >
-            Save Changes
+            Save
           </Button>
         ) : (
           <div></div>
         )}
 
         <div className={classes.btnGroup}>
-          <div>
+          {/* <div>
             <Button
               onClick={(e) => {
                 setShowColumnConfig(!showColumnConfig);
               }}
               variant="outlined"
+              className={styles.dropdownButton}
             >
               Add/Remove Columns
             </Button>
@@ -512,15 +516,16 @@ const RevenueTable = ({
             ) : (
               <div></div>
             )}
-          </div>
+          </div> */}
           <div>
             <Button
               onClick={(e) => {
                 setShowYearConfig(!showYearConfig);
               }}
               variant="outlined"
+              className={styles.dropdownButton}
             >
-              {`Year: ${currentYear}`}
+              {`${currentYear}`} <KeyDownIcon />
             </Button>
             {showYearConfig ? (
               <div
@@ -533,12 +538,13 @@ const RevenueTable = ({
               <div></div>
             )}
           </div>
-          <div>
+          {/* <div>
             <Button
               onClick={(e) => {
                 setShowCurrencyConfig(!showCurrencyConfig);
               }}
               variant="outlined"
+              className={styles.dropdownButton}
             >
               {`Currency: ${state.currency}`}
             </Button>
@@ -552,7 +558,7 @@ const RevenueTable = ({
             ) : (
               <div></div>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
       <div className={styles.tableContainer}>

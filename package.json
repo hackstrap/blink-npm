@@ -1,6 +1,6 @@
 {
   "name": "@hackstrap/blink-npm",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "This repo contains the code for blink npm pakage",
   "author": "AbhijeetNandvikar",
   "license": "MIT",
@@ -65,6 +65,7 @@
     "dist"
   ],
   "dependencies": {
+    "@agney/react-loading": "^0.1.2",
     "@uiw/react-md-editor": "^3.4.2",
     "axios": "^0.21.1",
     "chart.js": "^3.3.2",

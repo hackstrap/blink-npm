@@ -13,6 +13,7 @@ import NotesComponent from "../../StartupScreen/TablesView/NotesPage/NotesCompon
 import { fetchCollection, updateCollection } from "../../fetch";
 import { NoteDataInterface, OptionInterface } from "../../interfaces";
 import { globalContext } from "../../../AppContext";
+import PageNotAvaliable from "../../PageNotAvaliable";
 
 const defaultText = `May 2021 Investor Updates
 In this section, startups can share updates regaring the growth, sales, new partnerships, hires, and the other things going on at the company.
@@ -101,23 +102,24 @@ const NotesPage = (props: PropsInterface) => {
         if (note.length) {
           setnoteData(note[0]);
         } else {
+          setnoteData(null);
           console.log("note not avaliable, init empty note");
-          setnoteData({
-            note_name: "Investor Data",
-            month: new Date().getMonth() + 1,
-            note_data: [
-              {
-                type: "paragraph",
-                children: [{ text: "" }],
-              },
-            ],
-            email_status: false,
-            investor_view: false,
-            last_emailed: "",
-            last_updated: "",
-            year: 2021,
-            startup_id: "",
-          });
+          // setnoteData({
+          //   note_name: "Investor Data",
+          //   month: new Date().getMonth() + 1,
+          //   note_data: [
+          //     {
+          //       type: "paragraph",
+          //       children: [{ text: "" }],
+          //     },
+          //   ],
+          //   email_status: false,
+          //   investor_view: false,
+          //   last_emailed: "",
+          //   last_updated: "",
+          //   year: 2021,
+          //   startup_id: "",
+          // });
         }
       })
       .catch((err) => console.log(err));
@@ -152,7 +154,7 @@ const NotesPage = (props: PropsInterface) => {
   return (
     <div className={classes.page}>
       <Grid container spacing={4}>
-        <Grid item xs={12}>
+        <Grid item lg={8} xs={12}>
           {noteData ? (
             <NotesComponent
               currentYear={currentYear}
@@ -166,7 +168,7 @@ const NotesPage = (props: PropsInterface) => {
               selectedStartup={props.selectedStartup}
             />
           ) : (
-            <CircularProgress />
+            <PageNotAvaliable />
           )}
         </Grid>
       </Grid>

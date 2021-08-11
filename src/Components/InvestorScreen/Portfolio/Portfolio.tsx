@@ -17,6 +17,7 @@ import {
 import { globalContext } from "../../../AppContext";
 import { OptionInterface } from "../../interfaces";
 import InvestmentSummary from "./InvestmentSummary";
+import { checkSelection } from "../../StartupScreen/HomeView/HomeView";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -78,6 +79,16 @@ const useStyles = makeStyles((theme: Theme) => {
       backgroundColor: "white",
       color: "#000",
     },
+    dropDownBtn: {
+      border: "1px solid gray",
+      background: "white",
+      // padding: "15px",
+      // display: "flex",
+      "&:focus": {
+        border: "1px solid #0066eb",
+        boxShadow: "0 0 1.5pt 1.5pt #78b3ff78",
+      },
+    },
   };
 });
 
@@ -91,7 +102,7 @@ const Portfolio = () => {
   const appContext = useContext(globalContext);
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
-      case "investmentOverview":
+      case "investment overview":
         return <div>Page 2</div>;
       default:
         return <InvestmentSummary />;
@@ -114,32 +125,34 @@ const Portfolio = () => {
   // };
   return (
     <Container maxWidth="xl" className={classes.screen}>
+      <div className={classes.introductionContainer}>
+        <Typography variant="h2" align="center">
+          Welcome to Your Portfolio
+        </Typography>
+        <Typography align="center" variant="subtitle2">
+          Find Key Insights related to your Portfolio here.
+        </Typography>
+      </div>
       <div className={classes.viewContainer}>
-        <div className={classes.viewSelectionContainer}>
-          <ButtonGroup className={classes.btnGrp}>
-            <Button
-              variant="contained"
-              className={
-                appContext?.currentPage !== "investmentOverview"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("investmentSummary")}
+        <div style={{ display: "flex" }}>
+          <Select
+            className={classes.dropDownBtn}
+            variant="outlined"
+            value={checkSelection(
+              appContext?.currentPage,
+              ["investment summary"],
+              "Investment Summary"
+            )}
+          >
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("investment summary");
+              }}
+              value={"Investment Summary"}
             >
               Investment Summary
-            </Button>
-            {/* <Button
-              variant="contained"
-              className={
-                appContext?.currentPage !== "metrics"
-                  ? classes.btnStyleActive
-                  : classes.btnStyleInactive
-              }
-              onClick={() => appContext?.setCurrentPage("notes")}
-            >
-              Notes
-            </Button> */}
-          </ButtonGroup>
+            </MenuItem>
+          </Select>
         </div>
       </div>
       {renderCurrentPage(appContext?.currentPage)}

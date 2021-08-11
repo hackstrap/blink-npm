@@ -71,6 +71,7 @@ const monthsArray = [
 
 interface PropsInterface {
   selectedStartup: OptionInterface;
+  preview?: boolean;
 }
 
 const NotesPage = (props: PropsInterface) => {
@@ -152,7 +153,7 @@ const NotesPage = (props: PropsInterface) => {
   return (
     <div className={classes.page}>
       <Grid container spacing={4}>
-        <Grid item xs={12}>
+        <Grid item lg={8} xs={12}>
           {noteData ? (
             <NotesComponent
               currentYear={currentYear}
@@ -164,7 +165,7 @@ const NotesPage = (props: PropsInterface) => {
               saveChangeHandler={(val: NoteDataInterface) => {
                 updateData(val);
               }}
-              preview={false}
+              preview={props?.preview ? true : false}
               selectedStartup={props.selectedStartup}
             />
           ) : (

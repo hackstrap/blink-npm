@@ -254,7 +254,7 @@ const LTV2CAC = (props) => {
   }, [currentYear, props]);
 
   return (
-    <div ref={chartRef}>
+    <div ref={chartRef} style={{ height: "100%" }}>
       <ChartComponent
         title="LTV : CAC Ratio"
         description="The Customer Lifetime Value to Customer Acquisition Cost (LTV : CAC) ratio measures the relationship between the lifetime value of a customer, and the cost of acquiring that customer. "

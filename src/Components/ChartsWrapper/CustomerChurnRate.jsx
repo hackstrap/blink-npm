@@ -147,7 +147,7 @@ const CustomerChurnRate = (props) => {
   }, [currentYear, props]);
 
   return (
-    <div>
+    <div style={{ height: "100%" }}>
       <LineChartComponent
         title="Customer Churn Rate (%)"
         description="Customer churn is the percentage of customers that stopped using your company's product or service during a certain time frame."

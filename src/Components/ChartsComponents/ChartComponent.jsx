@@ -4,6 +4,7 @@ import { Chart, registerables } from "chart.js";
 import { saveAs } from "file-saver";
 import { toSvg, toPng } from "html-to-image";
 import annotationPlugin from "chartjs-plugin-annotation";
+import { Bars } from "@agney/react-loading";
 
 import {
   Typography,
@@ -14,6 +15,7 @@ import {
   useTheme,
   FormControlLabel,
   Switch,
+  CircularProgress,
 } from "@material-ui/core";
 import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
 import { DateRange } from "react-date-range";
@@ -23,6 +25,8 @@ import { ContactsTwoTone } from "@material-ui/icons";
 import CloudUploadOutlinedIcon from "@material-ui/icons/CloudUploadOutlined";
 import { updateCollection } from "../fetch";
 import { ChartCard } from "../InvestorScreen/Dashboard/ValuationPage";
+import { KeyDownIcon } from "../StartupScreen/TablesView/NotesPage/NotesComponent/NotesComponent";
+// import ChartPlaceholder from "../ChartPlaceholder";
 
 Chart.register(annotationPlugin);
 
@@ -90,6 +94,13 @@ const useStyles = makeStyles((theme) => {
       display: "flex",
       alignItems: "center",
     },
+    dropDownBtn: {
+      display: "flex",
+      "&:focus": {
+        border: "1px solid #0066eb",
+        boxShadow: "0 0 1.5pt 1.5pt #78b3ff78",
+      },
+    },
   };
 });
 
@@ -142,7 +153,7 @@ const ChartComponent = ({
     let years = [];
     for (
       let i = new Date().getFullYear();
-      i > parseInt(currentYear) - 200;
+      i > parseInt(currentYear) - 100;
       i--
     ) {
       years = [...years, i.toString()];
@@ -182,7 +193,14 @@ const ChartComponent = ({
 
   return (
     <div className={classes.chartContainer}>
-      <div ref={thisContainer}>
+      <div
+        ref={thisContainer}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+        }}
+      >
         <div className={styles.infoContainer}>
           <div className={classes.title}>
             <Typography variant="h4">{title}</Typography>
@@ -193,8 +211,10 @@ const ChartComponent = ({
                 setShowYearConfig(!showYearConfig);
               }}
               variant="outlined"
+              className={classes.dropDownBtn}
             >
-              <Typography variant="body2">{currentYear}</Typography>
+              <Typography variant="body2">{currentYear}</Typography>{" "}
+              <KeyDownIcon />
             </Button>
             {showYearConfig ? (
               <div
@@ -304,7 +324,30 @@ const ChartComponent = ({
             <canvas className={classes.canvas} ref={thisGraph}></canvas>
           </div>
         ) : (
-          <Typography variant="h3">No Data Avaliable for this year</Typography>
+          <div
+            style={{
+              flexGrow: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <div>
+              <div style={{ maxWidth: "50px", margin: "auto", color: "gray" }}>
+                <Bars />
+              </div>
+              <Typography
+                variant="h4"
+                style={{
+                  textAlign: "center",
+                  marginTop: "1.5rem",
+                  color: "gray",
+                }}
+              >
+                Your Analytics is building
+              </Typography>
+            </div>
+          </div>
         )}
       </div>
       {chartControl ? (
