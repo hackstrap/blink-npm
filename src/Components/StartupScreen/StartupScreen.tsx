@@ -1,78 +1,81 @@
-import React, { useContext } from "react";
-import { Container, AppBar, Tabs, Tab } from "@material-ui/core";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import ViewCompactOutlinedIcon from "@material-ui/icons/ViewCompactOutlined";
-import SettingsView from "./SettingsView/SettingsView";
-import TablesView from "./TablesView/TablesView";
-import HomeView from "./HomeView/HomeView";
-import { globalContext } from "../../AppContext";
-import Snackbar, { SnackbarOrigin } from "@material-ui/core/Snackbar";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import { EqualizerRounded, SettingsRounded } from "@material-ui/icons";
+import React, { useContext } from 'react'
+import { Container, AppBar, Tabs, Tab } from '@material-ui/core'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
+import ViewCompactOutlinedIcon from '@material-ui/icons/ViewCompactOutlined'
+import SettingsView from './SettingsView/SettingsView'
+import TablesView from './TablesView/TablesView'
+import HomeView from './HomeView/HomeView'
+import { globalContext } from '../../AppContext'
+import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar'
+import Typography from '@material-ui/core/Typography'
+import Box from '@material-ui/core/Box'
+import { EqualizerRounded, SettingsRounded } from '@material-ui/icons'
 
-const useStyles = makeStyles({
-  screen: {
-    width: "100%",
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  navigationBtnContainer: {
-    paddingTop: "1rem",
-    paddingBottom: "1rem",
-    borderRadius: 20,
-    display: "flex",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    background: "white",
-    gap: "2rem",
-    marginTop: "1.5rem",
-    color: "#777",
-    boxShadow: "none",
-    "& .MuiTab-textColorPrimary": {
-      color: "gray",
+const useStyles = makeStyles(
+  {
+    screen: {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
     },
-    "& .MuiTab-textColorPrimary.Mui-selected": {
-      color: "#0066eb",
+    navigationBtnContainer: {
+      paddingTop: '1rem',
+      paddingBottom: '1rem',
+      borderRadius: 20,
+      display: 'flex',
+      justifyContent: 'space-evenly',
+      alignItems: 'center',
+      background: 'white',
+      gap: '2rem',
+      marginTop: '1.5rem',
+      color: '#777',
+      boxShadow: 'none',
+      '& .MuiTab-textColorPrimary': {
+        color: 'gray'
+      },
+      '& .MuiTab-textColorPrimary.Mui-selected': {
+        color: '#0066eb'
+      }
     },
-  },
 
-  description: {
-    // color: (theme) => theme.palette.grey[600],
-    textAlign: "center",
+    description: {
+      // color: (theme) => theme.palette.grey[600],
+      textAlign: 'center'
+    },
+    viewContainer: {
+      display: 'flex',
+      width: '100%'
+    },
+    viewSelectionContainer: {
+      margin: 'auto',
+      marginTop: '4rem'
+    },
+    btnStyle: {
+      paddingLeft: '1.5rem',
+      paddingRight: '1.5rem',
+      fontSize: '1.2rem'
+    }
   },
-  viewContainer: {
-    display: "flex",
-    width: "100%",
-  },
-  viewSelectionContainer: {
-    margin: "auto",
-    marginTop: "4rem",
-  },
-  btnStyle: {
-    paddingLeft: "1.5rem",
-    paddingRight: "1.5rem",
-    fontSize: "1.2rem",
-  },
-});
+  { index: 1 }
+)
 export interface State extends SnackbarOrigin {
-  open: boolean;
+  open: boolean
 }
 
 interface TabPanelProps {
-  children?: React.ReactNode;
-  index: any;
-  value: any;
+  children?: React.ReactNode
+  index: any
+  value: any
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props
 
   return (
     <div
-      role="tabpanel"
+      role='tabpanel'
       hidden={value !== index}
       id={`scrollable-force-tabpanel-${index}`}
       aria-labelledby={`scrollable-force-tab-${index}`}
@@ -84,104 +87,104 @@ function TabPanel(props: TabPanelProps) {
         </Box>
       )}
     </div>
-  );
+  )
 }
 
 function a11yProps(index: any) {
   return {
     id: `scrollable-force-tab-${index}`,
-    "aria-controls": `scrollable-force-tabpanel-${index}`,
-  };
+    'aria-controls': `scrollable-force-tabpanel-${index}`
+  }
 }
 
 const StartupScreen = () => {
-  const theme = useTheme();
-  const classes = useStyles(theme);
+  const theme = useTheme()
+  const classes = useStyles(theme)
   // const [currentView, setCurrentView] = useState("tables");
-  const appContext = useContext(globalContext);
-  const [value, setValue] = React.useState(0);
+  const appContext = useContext(globalContext)
+  const [value, setValue] = React.useState(0)
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-    setValue(newValue);
-  };
+    setValue(newValue)
+  }
 
   const renderCurrentView = (view: string | undefined) => {
     switch (view) {
-      case "settings":
-        return <SettingsView />;
-      case "tables":
-        return <TablesView />;
+      case 'settings':
+        return <SettingsView />
+      case 'tables':
+        return <TablesView />
       default:
-        return <HomeView />;
+        return <HomeView />
     }
-  };
+  }
 
   React.useEffect(() => {
     // set the navigation bar value on initial load
     switch (appContext?.currentView) {
-      case "tables":
-        setValue(1);
-        break;
-      case "settings":
-        setValue(2);
-        break;
+      case 'tables':
+        setValue(1)
+        break
+      case 'settings':
+        setValue(2)
+        break
       default:
-        setValue(0);
-        break;
+        setValue(0)
+        break
     }
-  }, []);
+  }, [])
 
   React.useEffect(() => {
     switch (value) {
       case 1:
-        appContext?.setCurrentView("tables");
-        break;
+        appContext?.setCurrentView('tables')
+        break
       case 2:
-        appContext?.setCurrentView("settings");
-        break;
+        appContext?.setCurrentView('settings')
+        break
       default:
-        appContext?.setCurrentView("home");
-        break;
+        appContext?.setCurrentView('home')
+        break
     }
-  }, [value]);
+  }, [value])
 
   return (
-    <Container maxWidth="lg" className={classes.screen}>
+    <Container maxWidth='lg' className={classes.screen}>
       <Snackbar
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         open={appContext?.snackbarState.open}
         onClose={() =>
           appContext?.setSnackbarState({
             open: false,
-            message: "",
+            message: ''
           })
         }
         message={appContext?.snackbarState.message}
-        key={"top" + "right"}
+        key={'top' + 'right'}
       />
       <div>
-        <AppBar position="static" className={classes.navigationBtnContainer}>
+        <AppBar position='static' className={classes.navigationBtnContainer}>
           <Tabs
             value={value}
             onChange={handleChange}
-            variant="scrollable"
-            scrollButtons="on"
-            indicatorColor="primary"
-            textColor="primary"
-            aria-label="scrollable force tabs example"
+            variant='scrollable'
+            scrollButtons='on'
+            indicatorColor='primary'
+            textColor='primary'
+            aria-label='scrollable force tabs example'
           >
             <Tab
-              label="Dashboard"
+              label='Dashboard'
               icon={<EqualizerRounded />}
               {...a11yProps(0)}
             />
             <Tab
-              label="Tables"
+              label='Tables'
               icon={<ViewCompactOutlinedIcon />}
               {...a11yProps(1)}
             />
             <Tab
-              label="Settings"
+              label='Settings'
               icon={<SettingsRounded />}
               {...a11yProps(2)}
             />
@@ -191,7 +194,7 @@ const StartupScreen = () => {
 
       {renderCurrentView(appContext?.currentView)}
     </Container>
-  );
-};
+  )
+}
 
-export default StartupScreen;
+export default StartupScreen
