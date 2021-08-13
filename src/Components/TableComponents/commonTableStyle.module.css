@@ -94,17 +94,17 @@
 
 .saveChanges {
   /* margin-right: auto; */
-  border-radius: 10px;
-  border: 1px solid #0066eb;
-  background-color: #0066eb18;
-  color: #0066eb;
-  padding: 5px;
-  margin-left: 2rem;
-  font-size: small;
+  border-radius: 10px !important;
+  border: 1px solid #0066eb !important;
+  background-color: #0066eb18 !important;
+  color: #0066eb !important;
+  padding: 5px !important;
+  margin-left: 2rem !important;
+  font-size: small !important;
 }
 
 .saveChanges:hover {
-  background-color: #0066eb18;
+  background-color: #0066eb18 !important;
 }
 
 .selectInput {
@@ -115,6 +115,6 @@
 }
 
 .dropdownButton:focus {
-  border: 1px solid #0066eb;
-  box-shadow: 0 0 1.5pt 1.5pt #78b3ff78;
+  border: 1px solid #0066eb !important;
+  box-shadow: 0 0 1.5pt 1.5pt #78b3ff78 !important;
 }

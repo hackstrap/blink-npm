@@ -2,7 +2,7 @@ import * as React from 'react'
 // import styles from './styles.module.css'
 import App from './App'
 import AppContext from './AppContext'
-import { CssBaseline, ThemeProvider } from '@material-ui/core'
+import { CssBaseline, StylesProvider, ThemeProvider } from '@material-ui/core'
 import { defaultTheme as theme } from './theme'
 
 interface Props {
@@ -34,10 +34,12 @@ export const BlinkApp = ({
       apiRoute={apiRoute}
       token={token}
     >
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <App />
-      </ThemeProvider>
+      <StylesProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <App />
+        </ThemeProvider>
+      </StylesProvider>
     </AppContext>
   )
 }
