@@ -156,8 +156,15 @@ export const StartupPieChartCard = (props: StartupPieInterface) => {
         orientation={matches ? "horizontal" : "vertical"}
         style={matches ? { marginBottom: "10%" } : { marginBottom: 0 }}
       />
-      <div className={classes.chartInfoRight}>
-        <div style={{ display: "flex" }}>
+      <div style={{ display: "flex" }}>
+        <ChartWrapper
+          type={"pie"}
+          data={data}
+          options={options}
+          gradient={false}
+          backgroundColor={""}
+        />
+        <div>
           <Select
             variant="outlined"
             className={classes.yearSelect}
@@ -170,13 +177,6 @@ export const StartupPieChartCard = (props: StartupPieInterface) => {
           </Select>
         </div>
       </div>
-      <ChartWrapper
-        type={"pie"}
-        data={data}
-        options={options}
-        gradient={false}
-        backgroundColor={""}
-      />
     </div>
   );
 };

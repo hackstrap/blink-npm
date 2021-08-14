@@ -1,9 +1,9 @@
-import { Switch } from '@material-ui/core'
-import React, { FC } from 'react'
-import { useToggleStyles } from './toggle-styles'
+import { Switch } from "@material-ui/core";
+import { FC } from "react";
+import { useToggleStyles } from "./toggle-styles";
 
 export const Toggle: FC<{ onChange: () => void }> = (props) => {
-  const classes = useToggleStyles()
+  const classes = useToggleStyles();
 
   return (
     <Switch
@@ -14,9 +14,9 @@ export const Toggle: FC<{ onChange: () => void }> = (props) => {
         switchBase: classes.switchBase,
         thumb: classes.thumb,
         track: classes.track,
-        checked: classes.checked
+        checked: classes.checked,
       }}
       {...props}
     />
-  )
-}
+  );
+};

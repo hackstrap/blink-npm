@@ -18,11 +18,6 @@ import {
 const useStyles = makeStyles((theme) => ({
   infoCardTitle: {},
   infoCardValue: {},
-  gridItem: {
-    [theme.breakpoints.up("md")]: {
-      maxHeight: "300px",
-    },
-  },
 }));
 
 const InvestmentSummary = () => {
@@ -105,7 +100,7 @@ const InvestmentSummary = () => {
             }}
           />
         </Grid>
-        <Grid item xs={12} md={6} className={classes.gridItem}>
+        <Grid item xs={12} md={6}>
           <StartupPieChartCard
             title={"Startups"}
             value="24"

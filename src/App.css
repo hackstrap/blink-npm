@@ -1,25 +1,25 @@
 ::-webkit-scrollbar {
-  margin-top: 4px;
-  height: 5px;
-  width: 5px;
-  border-radius: 50%;
+  margin-top: 4px !important;
+  height: 5px !important;
+  width: 5px !important;
+  border-radius: 50% !important;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(187, 187, 187);
-  outline: none;
+  background-color: rgb(187, 187, 187) !important;
+  outline: none !important;
 }
 
 .editableInput {
-  border: none;
-  font-size: medium;
-  color: rgb(49, 49, 49);
-  outline: none;
-  display: flex;
+  border: none !important;
+  font-size: medium !important;
+  color: rgb(49, 49, 49) !important;
+  outline: none !important;
+  display: flex !important;
   /* height: 3rem; */
   position: relative;
   /* padding-left: 12px; */
@@ -28,7 +28,7 @@
 }
 
 .MuiList-root {
-  max-height: 300px;
+  max-height: 300px !important;
 }
 
 /* .ql-container {

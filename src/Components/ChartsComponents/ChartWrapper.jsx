@@ -51,7 +51,7 @@ const ChartWrapper = ({ type, data, options, gradient, backgroundColor }) => {
   }, []);
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ width: "100%" }}>
       <canvas ref={thisGraph}></canvas>
     </div>
   );

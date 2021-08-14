@@ -188,9 +188,9 @@ const HomeView = () => {
           </Select>
         </div>
 
-        <Typography variant="h3" style={{ marginLeft: "auto" }}>
+        {/* <Typography variant="h3" style={{ marginLeft: "auto" }}>
           {appContext?.userInfo?.Header}
-        </Typography>
+        </Typography> */}
       </div>
       {renderCurrentPage(appContext?.currentPage)}
     </div>
