@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import ChartWrapper from "../../ChartsComponents/ChartWrapper";
 import {
@@ -14,6 +14,9 @@ import {
   InfoCard,
   StartupPieChartCard,
 } from "../Dashboard/ValuationPage";
+import { globalContext } from "../../../AppContext";
+import { fetchInvestorInfoUnity } from "../../fetch";
+import { investmentSummaryInterface } from "../../interfaces";
 
 const useStyles = makeStyles((theme) => ({
   infoCardTitle: {},
@@ -24,12 +27,45 @@ const InvestmentSummary = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
   const [currentYear, setCurrentYear] = React.useState(
-    new Date().getFullYear().toString()
+    // new Date().getFullYear().toString()
+    "2020"
   );
   const matches = useMediaQuery("(max-width:1300px)");
   const handleYearChange = (year: string) => {
     setCurrentYear(year);
   };
+  const [summaryData, setSummaryData] =
+    useState<investmentSummaryInterface | null>(null);
+
+  const appContext = useContext(globalContext);
+
+  const getData = () => {
+    fetchInvestorInfoUnity(
+      appContext?.apiRoute,
+      appContext?.token,
+      "investment_summary",
+      currentYear,
+      appContext?.userInfo?.accessor
+    ).then((res) => {
+      if (res.data !== []) {
+        console.log(
+          summaryData && summaryData?.agg_net_irr_data
+            ? summaryData?.agg_net_irr_data[parseInt(currentYear)]?.map((n) =>
+                Math.floor(n)
+              )
+            : []
+        );
+
+        setSummaryData(res.data);
+      } else {
+        setSummaryData(null);
+      }
+    });
+  };
+
+  React.useEffect(() => {
+    getData();
+  }, [currentYear]);
 
   return (
     <Container maxWidth="lg">
@@ -37,17 +73,33 @@ const InvestmentSummary = () => {
         <Grid item xs={12} md={6}>
           <InfoCard
             t1="Current Total Investment Value (₹)"
-            v1="₹ 8,00,000.00"
+            v1={
+              summaryData && summaryData?.current_total_investment_value
+                ? `${summaryData?.current_total_investment_value}`
+                : ""
+            }
             t2="Total Investment"
-            v2="₹ 80,000.00"
+            v2={
+              summaryData && summaryData?.total_investment
+                ? `${summaryData?.total_investment}`
+                : ""
+            }
             t3="Aggregate Multiple"
-            v3="10X"
+            v3={
+              summaryData && summaryData?.aggregate_multiple
+                ? `${summaryData?.aggregate_multiple}`
+                : ""
+            }
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <ChartCard
             title="IRR ( % )"
-            value="25%"
+            value={
+              summaryData && summaryData?.aggregate_net_irr
+                ? `${summaryData?.aggregate_net_irr}`
+                : ""
+            }
             currentYear={currentYear}
             changeHandler={handleYearChange}
             options={{
@@ -88,7 +140,12 @@ const InvestmentSummary = () => {
                   type: "line",
                   label: "Valuation (₹)",
                   fill: true,
-                  data: [10, 45, 20, 30],
+                  data: [10, 15, 20, 25],
+                  // summaryData && summaryData?.agg_net_irr_data
+                  //   ? summaryData?.agg_net_irr_data[
+                  //       parseInt(currentYear)
+                  //     ]?.map((n) => Math.floor(n))
+                  //   : [],
                   // backgroundColor: ["rgba(91, 143, 249, .5)"],
                   borderColor: ["#5B8FF9"],
                   borderWidth: 3,

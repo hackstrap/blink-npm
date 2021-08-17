@@ -249,7 +249,9 @@ const UsersTable = ({
         return {
           ...currentData[i],
           [monthsArray[j]]: (
-            <Typography>{thisData.data[currentYear][j][i + 1]}</Typography>
+            <Typography className={styles.fixedData}>
+              {thisData.data[currentYear][j][i + 1]}
+            </Typography>
           ),
         };
       default:

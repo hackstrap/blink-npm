@@ -23,6 +23,8 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
+import ConfirmationWrapper from "../ConfirmationComponent/ConfirmationWrapper";
+import { DeleteRounded } from "@material-ui/icons";
 
 interface TablePropsInterface {
   data: TableDataInterface;
@@ -153,6 +155,7 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
   const classes = useStyles(theme);
   const init = (data: TableDataInterface) => data;
   const [saveChangesBtn, setSaveChangesBtn] = useState(false);
+  const [deleteRowMode, setDeleteRowMode] = useState(false);
 
   const updateData = (
     data: (string | number)[][],
@@ -171,6 +174,12 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
     let currentData = [...data];
     currentData.push([]);
     return currentData;
+  };
+
+  const removeRow = (data: (string | number)[][], rowIndex: number) => {
+    return data.filter((d, i) => {
+      return i === rowIndex ? false : true;
+    });
   };
 
   const reducer = (
@@ -195,6 +204,13 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
           ...currentState,
           data: addRow(currentState.data),
         };
+      case "REMOVE_ROW": {
+        setSaveChangesBtn(true);
+        return {
+          ...currentState,
+          data: removeRow(currentState.data, action?.payload?.rowIndex),
+        };
+      }
     }
     return state;
   };
@@ -403,6 +419,29 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
       // 2nd loop is for iterating over columns
       let loop2 = thisData.fields.length;
       for (let i = 0; i < loop1; i++) {
+        if (deleteRowMode) {
+          currentData[i] = {
+            ...currentData[i],
+            deleteRow: (
+              <ConfirmationWrapper
+                message={"Are you sure?"}
+                handler={() => {
+                  dispatch({
+                    type: "REMOVE_ROW",
+                    payload: {
+                      rowIndex: i,
+                    },
+                  });
+                }}
+                position={{ x: 35, y: -45 }}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <DeleteRounded style={{ margin: "auto" }} />
+                </div>
+              </ConfirmationWrapper>
+            ),
+          };
+        }
         for (let j = 0; j < loop2; j++) {
           currentData[i] = {
             ...currentData[i],
@@ -419,17 +458,35 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
     return currentData;
   };
 
+  const generateTableConfig = () => {
+    if (!deleteRowMode) {
+      return {
+        columns: employeeTableFields,
+      };
+    } else {
+      return {
+        columns: [
+          {
+            Header: "",
+            accessor: "deleteRow",
+            width: assignWidth(3, 0),
+          },
+          ...employeeTableFields,
+        ],
+      };
+    }
+  };
   // thisData.data[currentYear][i][j]
 
-  const tableData = useMemo(() => generateTableData(state), [state]);
-  // const tableConfig = useMemo(
-  //   () => generateTableConfig(state, monthsArray),
-  //   []
-  // );
+  const tableData = useMemo(
+    () => generateTableData(state),
+    [state, deleteRowMode]
+  );
+  const tableConfig = useMemo(() => generateTableConfig(), [deleteRowMode]);
 
-  const tableConfig: TableUIConfig = {
-    columns: employeeTableFields,
-  };
+  // const tableConfig: TableUIConfig = {
+  //   columns: employeeTableFields,
+  // };
 
   return (
     <div className={classes.mainTableContainer}>
@@ -457,8 +514,21 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
                 type: "ADD_ROW",
               });
             }}
+            className={styles.commonButton}
+
           >
             Add Row
+          </Button>
+        </div>
+        <div>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setDeleteRowMode(!deleteRowMode);
+            }}
+            className={styles.commonButton}
+          >
+            {!deleteRowMode ? "Remove Row" : "Done"}
           </Button>
         </div>
       </div>

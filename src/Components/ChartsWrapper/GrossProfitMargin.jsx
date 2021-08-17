@@ -1,7 +1,11 @@
 import React, { useContext } from "react";
 import { globalContext } from "../../AppContext";
 import LineChartComponent from "../ChartsComponents/LineChart/LineChart";
-import { fetchCollection, updateCollection } from "../fetch";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  updateCollection,
+} from "../fetch";
 import { extractChartData } from "./MRRChart";
 
 const chartFields = [
@@ -91,7 +95,7 @@ const GrossProfitMargin = (props) => {
     return currentData;
   };
   const getData = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "revenue",

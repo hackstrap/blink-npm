@@ -274,13 +274,18 @@ const OpexExpensesTable = ({
         if (thisData.data[currentYear][j][i + 1])
           return {
             ...currentData[i],
-            [thisData.data[currentYear][j][0]]:
-              thisData.data[currentYear][j][i + 1],
+            [thisData.data[currentYear][j][0]]: (
+              <Typography className={styles.fixedData}>
+                {thisData.data[currentYear][j][i + 1]}
+              </Typography>
+            ),
           };
         else
           return {
             ...currentData[i],
-            [thisData.data[currentYear][j][0]]: "No Data",
+            [thisData.data[currentYear][j][0]]: (
+              <Typography className={styles.fixedData}>No Data</Typography>
+            ),
           };
       default:
         return {

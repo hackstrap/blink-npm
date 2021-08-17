@@ -13,7 +13,7 @@
 .columnConfigBtn {
   padding: 12px;
   border-radius: 4px;
-  border: 1px solid gray;
+  border: 1px solid #808080;
   background-color: white;
 }
 .infoContainer {
@@ -60,6 +60,16 @@
   background-color: transparent;
   width: 100%;
   /* text-align: center; */
+}
+.editableInputBold {
+  border: none;
+  font-size: 1rem;
+  outline: none;
+  display: flex;
+  position: relative;
+  background-color: transparent;
+  width: 100%;
+  font-weight: bold;
 }
 
 .tableContainer > div {
@@ -110,8 +120,13 @@
 .selectInput {
   padding: 5px !important;
   border-radius: 10px !important;
-  border: 1px solid gray !important;
+  border: 1px solid #808080 !important;
   background-color: white !important;
+  outline: none;
+}
+
+.commonButton {
+  margin-left: 15px;
 }
 
 .dropdownButton:focus {
@@ -119,8 +134,18 @@
   box-shadow: 0 0 1.5pt 1.5pt #78b3ff78 !important;
 }
 
+.fixedData {
+  /* font-weight: 600; */
+  color: #0066eb;
+}
+
 @media only screen and (max-width: 1400px) {
   .saveChanges {
     margin-left: 0rem !important;
+  }
+  .commonButton {
+    margin-left: 0px;
+    margin-top: 15px;
+    width: 100%;
   }
 }

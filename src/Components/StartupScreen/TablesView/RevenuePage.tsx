@@ -3,7 +3,11 @@ import RevenueTable from "../../TableComponents/RevenueTable";
 import { testData, usersTableData } from "../../../RevenueData";
 import { CircularProgress, Container } from "@material-ui/core";
 import UsersTable from "../../TableComponents/UsersTable";
-import { fetchCollection, updateCollection } from "../../fetch";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  updateCollection,
+} from "../../fetch";
 import {
   TableDataInterface,
   YearDataInterface,
@@ -191,7 +195,7 @@ const RevenuePage = (props: PropsInterface) => {
     new Date().getFullYear().toString()
   );
   const getRevenueData = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "revenue",
@@ -212,7 +216,7 @@ const RevenuePage = (props: PropsInterface) => {
   };
 
   const getUserData = () => [
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "users",

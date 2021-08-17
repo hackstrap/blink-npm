@@ -2,7 +2,11 @@ import { ChartData } from "chart.js";
 import React, { useContext } from "react";
 import { globalContext } from "../../AppContext";
 import ChartComponent from "../ChartsComponents/ChartComponent";
-import { fetchCollection, updateCollection } from "../fetch";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  updateCollection,
+} from "../fetch";
 import { OptionInterface } from "../interfaces";
 
 export const extractChartData = (data, fields) => {
@@ -207,7 +211,7 @@ const MRRChart = (props) => {
   const chartRef = React.useRef(null);
 
   const getData = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "revenue",

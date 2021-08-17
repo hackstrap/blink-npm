@@ -34,11 +34,33 @@ export const fetchCollection = (
   );
 };
 
+export const fetchCollectionUnity = (
+  apiRoute: string | undefined,
+  token: string | undefined,
+  collection: string,
+  year?: string,
+  startupId?: string,
+  month?: string
+) => {
+  return axios.get(
+    `${
+      apiRoute ? apiRoute : fallbackRoute
+    }unity/v1/${collection}?page=${page}&page_size=${page_size}&startup_id=${
+      startupId ? startupId : ""
+    }${year ? `&year=${year}` : ""}${month ? "&month=" + month : ""}`,
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+};
+
 export const updateCollection = (
   apiRoute: string | undefined,
   token: string | undefined,
   collection: string,
-  data: object[],
+  data: any,
   startupId?: string
 ) => {
   return axios({
@@ -69,6 +91,28 @@ export const fetchInvestorInfo = (
     `${
       apiRoute ? apiRoute : fallbackRoute
     }v1/${collection}?page=${page}&page_size=${page_size}&investor_id=${
+      investor_id ? investor_id : ""
+    }`,
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+};
+
+export const fetchInvestorInfoUnity = (
+  apiRoute: string | undefined,
+  token: string | undefined,
+  collection: string,
+  year?: string,
+  investor_id?: string,
+  month?: string
+) => {
+  return axios.get(
+    `${
+      apiRoute ? apiRoute : fallbackRoute
+    }unity/v1/investor/${collection}?page=${page}&page_size=${page_size}&investor_id=${
       investor_id ? investor_id : ""
     }`,
     {

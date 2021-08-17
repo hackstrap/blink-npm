@@ -1,7 +1,11 @@
 import React, { useContext } from "react";
 import { globalContext } from "../../AppContext";
 import ChartComponent from "../ChartsComponents/ChartComponent";
-import { fetchCollection, updateCollection } from "../fetch";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  updateCollection,
+} from "../fetch";
 import { extractChartData } from "./MRRChart";
 
 const chartFields = [
@@ -182,7 +186,7 @@ const LTV2CAC = (props) => {
   };
 
   const getData = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "users",
@@ -209,6 +213,7 @@ const LTV2CAC = (props) => {
   };
 
   React.useEffect(() => {
+    getData();
     if (
       chartRef?.current?.clientWidth !== undefined &&
       chartRef?.current?.clientWidth < 500

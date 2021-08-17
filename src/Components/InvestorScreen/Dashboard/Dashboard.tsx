@@ -88,7 +88,7 @@ const useStyles = makeStyles((theme: Theme) => {
       color: "#000",
     },
     dropDownBtn: {
-      border: "1px solid gray",
+      border: "1px solid #808080",
       background: "white",
       // padding: "15px",
       // display: "flex",

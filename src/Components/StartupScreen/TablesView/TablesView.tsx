@@ -18,6 +18,7 @@ import ExpensesPage from "./ExpensesPage";
 import EmployeePage from "./EmployeePage";
 import { globalContext } from "../../../AppContext";
 import { checkSelection } from "../HomeView/HomeView";
+import ProductPage from "./ProductPage";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -72,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) => {
       color: "#000",
     },
     dropDownBtn: {
-      border: "1px solid gray",
+      border: "1px solid #808080",
       background: "white",
       // padding: "15px",
       // display: "flex",
@@ -110,6 +111,12 @@ const TablesView = () => {
         ) : (
           <div></div>
         );
+      case "product":
+        return appContext?.userInfo ? (
+          <ProductPage selectedStartup={appContext.userInfo} />
+        ) : (
+          <div></div>
+        );
       default:
         return appContext?.userInfo ? (
           <NotesPage selectedStartup={appContext.userInfo} preview={false} />
@@ -136,7 +143,7 @@ const TablesView = () => {
             variant="outlined"
             value={checkSelection(
               appContext?.currentPage,
-              ["notes", "revenue", "expenses", "employee"],
+              ["notes", "revenue", "expenses", "employee", "product"],
               "Notes"
             )}
           >
@@ -171,6 +178,14 @@ const TablesView = () => {
               value={"Employee"}
             >
               Employee
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                appContext?.setCurrentPage("product");
+              }}
+              value={"Product"}
+            >
+              Product
             </MenuItem>
           </Select>
         </div>

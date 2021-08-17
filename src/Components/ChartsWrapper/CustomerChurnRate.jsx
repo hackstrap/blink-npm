@@ -1,7 +1,11 @@
 import React, { useContext } from "react";
 import { globalContext } from "../../AppContext";
 import LineChartComponent from "../ChartsComponents/LineChart/LineChart";
-import { fetchCollection, updateCollection } from "../fetch";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  updateCollection,
+} from "../fetch";
 import { extractChartData } from "./MRRChart";
 
 const chartFields = [
@@ -92,7 +96,7 @@ const CustomerChurnRate = (props) => {
   };
 
   const getData = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "users",

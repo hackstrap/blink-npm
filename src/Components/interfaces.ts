@@ -57,3 +57,22 @@ export interface SelectField_Interface extends Form_Field {
   type: "select";
   multiple?: boolean;
 }
+
+export interface investmentSummaryInterface {
+  agg_net_irr_data: {
+    [key: string]: number[];
+  };
+  aggregate_multiple: number;
+  aggregate_net_irr: number;
+  current_total_investment_value: number;
+  organization: string;
+  startups_by: [
+    {
+      data: number[];
+      filter: string;
+      labels: string[];
+    }
+  ];
+  total_investment: string;
+  total_startups: string;
+}

@@ -185,13 +185,7 @@ const RevenueTable = ({
     return state;
   };
 
-  const calculateTotalrevenue = (data: any[]) => {
-    let total = 0;
-    data.forEach((d: number, i: number) => {
-      if (i > 1 && i <= state.fields.length - 1) total += d;
-    });
-    return total;
-  };
+  //
 
   const init = (data: TableDataInterface) => {
     return { ...data };
@@ -310,8 +304,8 @@ const RevenueTable = ({
               currentData[i] = {
                 ...currentData[i],
                 [monthsArray[j]]: (
-                  <Typography>
-                    {calculateTotalrevenue(thisData.data[currentYear][j])}
+                  <Typography className={styles.fixedData}>
+                    {thisData.data[currentYear][j][i + 1]}
                   </Typography>
                 ),
               };
@@ -399,6 +393,8 @@ const RevenueTable = ({
     () => generateTableConfig(state, monthsArray),
     [state.data[currentYear]]
   );
+
+  console.log("Revenue Table Data", tableData, tableConfig);
 
   const renderMonthsCheckbox = (tableConfig: TableUIConfig) => {
     let checkboxArray: ReactNode[] = [];

@@ -1,7 +1,11 @@
 import React, { ReactNode, RefObject, useContext } from "react";
 import { globalContext } from "../../AppContext";
 import ChartComponent from "../ChartsComponents/ChartComponent";
-import { fetchCollection, updateCollection } from "../fetch";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  updateCollection,
+} from "../fetch";
 import { extractChartData } from "./MRRChart";
 
 const chartFields = [
@@ -178,7 +182,7 @@ const TotalRevenueChart = (props) => {
   };
 
   const getData = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "revenue",

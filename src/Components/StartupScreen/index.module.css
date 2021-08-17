@@ -1,7 +1,7 @@
 .navigationBtnContainer {
   padding-top: 1rem;
   padding-bottom: 1rem;
-  border-radius: 20;
+  border-radius: 20px;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -12,9 +12,9 @@
   box-shadow: none;
 }
 
-.MuiTab-textColorPrimary {
-  color: gray !important;
+.inactive {
+  color: #808080 !important;
 }
-.MuiTab-textColorPrimary.Mui-selected {
+.active {
   color: #0066eb !important;
 }

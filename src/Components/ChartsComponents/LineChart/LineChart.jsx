@@ -280,7 +280,7 @@ const LineChartComponent = ({
           }}
         >
           <div>
-            <div style={{ maxWidth: "50px", margin: "auto", color: "gray" }}>
+            <div style={{ maxWidth: "50px", margin: "auto", color: "#808080" }}>
               <Bars />
             </div>
             <Typography
@@ -288,7 +288,7 @@ const LineChartComponent = ({
               style={{
                 textAlign: "center",
                 marginTop: "1.5rem",
-                color: "gray",
+                color: "#808080",
               }}
             >
               Your Analytics is building
