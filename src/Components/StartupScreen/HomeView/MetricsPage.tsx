@@ -18,6 +18,8 @@ import MonthlyActiveUsers from "../../ChartsWrapper/MonthlyActiveUsers";
 import { OptionInterface } from "../../interfaces";
 import { fetchCollection } from "../../fetch";
 import { globalContext } from "../../../AppContext";
+import InvestorParticipation from "../../ChartsWrapper/Startups/Tyke/InvestorParticipation";
+import InvestorAmountChart from "../../ChartsWrapper/Startups/Tyke/InvestorAmount";
 
 const useStyles = makeStyles((theme: Theme) => {
   return {
@@ -157,6 +159,32 @@ const MetricsPage = (props: PropsInterface) => {
           <Grid item lg={6} xs={12}>
             <LTV2CAC
               chartInfo={chartInfo?.ltv_to_cac_chart}
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
+        {chartInfo?.avg_investor_participation_per_campaign_chart
+          ?.show_chart ? (
+          <Grid item lg={6} xs={12}>
+            <InvestorParticipation
+              chartInfo={
+                chartInfo?.avg_investor_participation_per_campaign_chart
+              }
+              selectedStartup={props.selectedStartup}
+            />
+          </Grid>
+        ) : (
+          <div></div>
+        )}
+        {chartInfo?.avg_investor_investment_amount_per_campaign_chart
+          ?.show_chart ? (
+          <Grid item lg={6} xs={12}>
+            <InvestorAmountChart
+              chartInfo={
+                chartInfo?.avg_investor_investment_amount_per_campaign_chart
+              }
               selectedStartup={props.selectedStartup}
             />
           </Grid>

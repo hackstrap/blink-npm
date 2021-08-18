@@ -58,7 +58,7 @@ export interface SelectField_Interface extends Form_Field {
   multiple?: boolean;
 }
 
-export interface investmentSummaryInterface {
+export interface InvestmentSummaryInterface {
   agg_net_irr_data: {
     [key: string]: number[];
   };
@@ -75,4 +75,46 @@ export interface investmentSummaryInterface {
   ];
   total_investment: string;
   total_startups: string;
+}
+
+export interface ValuationDataInterface {
+  _id: string;
+  startup_id: string;
+  valuation: number;
+  valuation_chart: {
+    min: number;
+    max: number;
+    name: string;
+  }[];
+  valuation_data: {
+    [key: string]: number[];
+  };
+}
+
+export interface PortfolioDataInterface {
+  investor_id: string;
+  investment_summary: InvestmentSummaryInterface[];
+  startup_summary: {
+    startup_id: string;
+    total_money_invested: number;
+    current_investment_value: number;
+    multiple: number;
+    startup_net_irr_data: {
+      [key: string]: number[];
+    };
+    investment_time: {
+      in_months: number[];
+      in_days: number;
+      in_years: number;
+    };
+    organization: {
+      fees: number;
+      carry: number;
+      one_time_fees: number;
+      name: string;
+      discount: number;
+      valuation_cap: number;
+      entry_valuation: number;
+    }[];
+  };
 }

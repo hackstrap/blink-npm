@@ -10,11 +10,21 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { OptionInterface } from "../../interfaces";
-import { fetchCollection } from "../../fetch";
+import {
+  OptionInterface,
+  PortfolioDataInterface,
+  ValuationDataInterface,
+} from "../../interfaces";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  fetchInvestorInfo,
+} from "../../fetch";
 import { useContext } from "react";
 import { globalContext } from "../../../AppContext";
 import { useMemo } from "react";
+import AnalyticsIsBuilding from "../../ChartsComponents/AnalyticsIsBuilding";
+import { useState } from "react";
 
 interface ChartCardInterface {
   title: string;
@@ -51,7 +61,11 @@ interface StartupPieInterface {
   title: string;
   value: string;
   options: object;
-  data: object;
+  data: {
+    data: number[];
+    filter: string;
+    labels: string[];
+  }[];
   filters: string[];
   changeHandler: Function;
 }
@@ -130,6 +144,29 @@ export const StartupPieChartCard = (props: StartupPieInterface) => {
       );
     });
   }, []);
+
+  let chartData = {};
+  data.forEach((s) => {
+    if (s.filter === state) {
+      chartData = {
+        labels: s.labels,
+        datasets: [
+          {
+            axis: "y",
+            type: "doughnut",
+            label: "Valuation (₹)",
+            fill: true,
+            data: s.data,
+            backgroundColor: ["red", "#4339F2", "#FFB731", "green"],
+            borderWidth: 3,
+            pointRadius: 4,
+            pointBorderWidth: 3,
+          },
+        ],
+      };
+    }
+  });
+
   return (
     <div
       className={classes.chartCardBox}
@@ -149,7 +186,7 @@ export const StartupPieChartCard = (props: StartupPieInterface) => {
               : { marginTop: "30%" }
           }
         >
-          {value}
+          {data ? value : "No Data"}
         </Typography>
       </div>
       <Divider
@@ -157,13 +194,17 @@ export const StartupPieChartCard = (props: StartupPieInterface) => {
         style={matches ? { marginBottom: "10%" } : { marginBottom: 0 }}
       />
       <div style={{ display: "flex" }}>
-        <ChartWrapper
-          type={"pie"}
-          data={data}
-          options={options}
-          gradient={false}
-          backgroundColor={""}
-        />
+        {data ? (
+          <ChartWrapper
+            type={"pie"}
+            data={chartData}
+            options={options}
+            gradient={false}
+            backgroundColor={""}
+          />
+        ) : (
+          <AnalyticsIsBuilding />
+        )}
         <div>
           <Select
             variant="outlined"
@@ -258,6 +299,7 @@ export const ChartCard = (props: ChartCardInterface) => {
   const classes = useStyles(theme);
   const { title, value, options, data, currentYear, changeHandler } = props;
   const matches = useMediaQuery("(max-width:1300px)");
+  console.log(data);
   return (
     <div
       className={classes.chartCardBox}
@@ -296,13 +338,17 @@ export const ChartCard = (props: ChartCardInterface) => {
           </Select>
         </div>
 
-        <ChartWrapper
-          type={"line"}
-          data={data}
-          options={options}
-          gradient={true}
-          backgroundColor={data.datasets[0].borderColor}
-        />
+        {data ? (
+          <ChartWrapper
+            type={"line"}
+            data={data}
+            options={options}
+            gradient={true}
+            backgroundColor={data.datasets[0].borderColor}
+          />
+        ) : (
+          <AnalyticsIsBuilding />
+        )}
       </div>
     </div>
   );
@@ -366,18 +412,51 @@ const ValuationPage = (props: PropsInterface) => {
     setCurrentYear(year);
   };
 
+  const [valuationData, setValuationData] =
+    useState<ValuationDataInterface | null>(null);
+  const [portfolioData, setPortfolioData] =
+    useState<PortfolioDataInterface | null>(null);
+
   const appContext = useContext(globalContext);
 
-  const getData = () => {
+  const getValuationData = () => {
     fetchCollection(
       appContext?.apiRoute,
       appContext?.token,
       "valuation",
-      currentYear,
+      undefined,
       props.selectedStartup.accessor
-    );
+    ).then((res) => {
+      if (res.data.length) {
+        setValuationData(res.data);
+      } else {
+        setValuationData(null);
+      }
+    });
   };
-  React.useEffect(() => {}, [props]);
+
+  const getPortfolioData = () => {
+    fetchInvestorInfo(
+      appContext?.apiRoute,
+      appContext?.token,
+      "portfolio",
+      currentYear,
+      appContext?.userInfo?.accessor
+    ).then((res) => {
+      if (res.data.length) {
+        setPortfolioData(res.data);
+      } else {
+        setPortfolioData(null);
+      }
+    });
+  };
+  React.useEffect(() => {
+    getValuationData();
+  }, [props, currentYear]);
+
+  React.useEffect(() => {
+    getPortfolioData();
+  }, []);
 
   return (
     <Container maxWidth="lg">
