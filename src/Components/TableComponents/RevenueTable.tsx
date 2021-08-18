@@ -95,7 +95,7 @@ const RevenueTable = ({
   const [saveChangesBtn, setSaveChangesBtn] = useState(false);
 
   const monthsArray = [
-    "janurary",
+    "january",
     "february",
     "march",
     "april",
@@ -475,7 +475,7 @@ const RevenueTable = ({
   return (
     <div className={classes.mainTableContainer}>
       <div className={classes.infoContainer}>
-        <Typography variant="h4">Revenue Data</Typography>
+        <Typography variant="h4">Revenue</Typography>
         {saveChangesBtn ? (
           <Button
             variant="outlined"

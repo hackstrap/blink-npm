@@ -112,7 +112,7 @@ const ProductTable = ({
   const [deleteRowMode, setDeleteRowMode] = useState(false);
 
   const monthsArray = [
-    "janurary",
+    "january",
     "february",
     "march",
     "april",
@@ -517,7 +517,7 @@ const ProductTable = ({
   return (
     <div className={classes.mainTableContainer}>
       <div className={classes.infoContainer}>
-        <Typography variant="h4">Product Table</Typography>
+        <Typography variant="h4">Product</Typography>
         {saveChangesBtn ? (
           <Button
             variant="outlined"

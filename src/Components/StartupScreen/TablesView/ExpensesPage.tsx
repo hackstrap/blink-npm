@@ -11,8 +11,8 @@ import { globalContext } from "../../../AppContext";
 //   currency: 'INR',
 //   fields: ,
 //   data: {
-//     '2020': [['janurary'], ['february'], ['march'], ['april'], ['may']],
-//     '2019': [['janurary'], ['february'], ['march'], ['april'], ['may']]
+//     '2020': [['january'], ['february'], ['march'], ['april'], ['may']],
+//     '2019': [['january'], ['february'], ['march'], ['april'], ['may']]
 //   }
 // }
 
@@ -68,15 +68,6 @@ const opexTableFields = [
   },
   { Header: "Total Other Expenses", accessor: "total_other_expenses" },
 ];
-
-// const opexExpesesData = {
-//   currency: 'INR',
-//   fields: ,
-//   data: {
-//     '2020': [['janurary'], ['february'], ['march'], ['april'], ['may']],
-//     '2019': [['janurary'], ['february'], ['march'], ['april'], ['may']]
-//   }
-// }
 
 interface PropsInterface {
   selectedStartup: OptionInterface;
@@ -220,44 +211,3 @@ const ExpensesPage = (props: PropsInterface) => {
 };
 
 export default ExpensesPage;
-
-// const serverData = {
-//   currency: "INR",
-//   fields: [
-//     { Header: "Total COGS", accessor: "total_cogs" },
-//     {
-//       Header: "Total Customer Support Expenses",
-//       accessor: "total_customer_support_expenses",
-//     },
-//     { Header: "Total Payroll - Support", accessor: "total_payroll_support" },
-//     {
-//       Header: "Software & Tools - Support",
-//       accessor: "software_and_tools_support",
-//     },
-//     {
-//       Header: "Total Service Delivery Expenses",
-//       accessor: "total_service_delivery_expenses",
-//     },
-//     {
-//       Header: "Hosting - Service Delivery",
-//       accessor: "hosting_service_delivery",
-//     },
-//     {
-//       Header: "Total Cost of Good Manufactured",
-//       accessor: "total_cost_of_goods_manufactured",
-//     },
-//     { Header: "Direct Material Costs", accessor: "direct_material_costs" },
-//     { Header: "Direct Labor Costs", accessor: "direct_labor_costs" },
-//     { Header: "Manufacturing Overhead", accessor: "manufacturing_overhead" },
-//     { Header: "Net WIP Inventory", accessor: "net_wip_inventory" },
-//     {
-//       Header: "Net Finished Goods Inventory",
-//       accessor: "net_finished_goods_inventory",
-//     },
-//     { Header: "Total Other COGS", accessor: "total_other_cogs" },
-//   ],
-//   data: {
-//     "2020": [["janurary"], ["february"], ["march"], ["april"], ["may"]],
-//     "2019": [["janurary"], ["february"], ["march"], ["april"], ["may"]],
-//   },
-// };

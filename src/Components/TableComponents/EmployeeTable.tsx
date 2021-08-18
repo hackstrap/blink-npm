@@ -29,6 +29,7 @@ import { DeleteRounded } from "@material-ui/icons";
 interface TablePropsInterface {
   data: TableDataInterface;
   changeHandler: Function;
+  deleteHandler: Function;
   // options: {
   //   [key: string]: OptionInterface[];
   // };
@@ -150,7 +151,11 @@ const formatDate = (date: string | number) => {
 const assignWidth = (normalWidth: number, extension: number) =>
   window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
 
-const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
+const EmployeeTable = ({
+  data,
+  changeHandler,
+  deleteHandler,
+}: TablePropsInterface) => {
   const theme = useTheme();
   const classes = useStyles(theme);
   const init = (data: TableDataInterface) => data;
@@ -171,7 +176,11 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
 
   const addRow = (data: (string | number)[][]) => {
     setSaveChangesBtn(true);
-    let currentData = [...data];
+    let currentData: (string | number)[][] = [];
+
+    if (data !== undefined && data?.length) {
+      currentData = [...data];
+    }
     currentData.push([]);
     return currentData;
   };
@@ -211,6 +220,8 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
           data: removeRow(currentState.data, action?.payload?.rowIndex),
         };
       }
+      case "RESET":
+        return action.payload;
     }
     return state;
   };
@@ -387,12 +398,12 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
             value={
               thisData.data[i][j] !== undefined
                 ? thisData.data[i][j]
-                : "No Data"
+                : "Enter Data"
             }
             title={
               thisData.data[i][j] !== undefined
                 ? `${thisData.data[i][j]}`
-                : "No Data  "
+                : "Enter Data  "
             }
             onChange={(e) => {
               dispatch({
@@ -426,11 +437,15 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
               <ConfirmationWrapper
                 message={"Are you sure?"}
                 handler={() => {
-                  dispatch({
-                    type: "REMOVE_ROW",
-                    payload: {
-                      rowIndex: i,
-                    },
+                  // dispatch({
+                  //   type: "REMOVE_ROW",
+                  //   payload: {
+                  //     rowIndex: i,
+                  //   },
+                  // });
+                  deleteHandler({
+                    ...thisData,
+                    data: [thisData.data[i]],
                   });
                 }}
                 position={{ x: 35, y: -45 }}
@@ -478,6 +493,15 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
   };
   // thisData.data[currentYear][i][j]
 
+  React.useEffect(() => {
+    if (data !== undefined) {
+      dispatch({
+        type: "RESET",
+        payload: data,
+      });
+    }
+  }, [data]);
+
   const tableData = useMemo(
     () => generateTableData(state),
     [state, deleteRowMode]
@@ -515,7 +539,6 @@ const EmployeeTable = ({ data, changeHandler }: TablePropsInterface) => {
               });
             }}
             className={styles.commonButton}
-
           >
             Add Row
           </Button>

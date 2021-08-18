@@ -1,13 +1,19 @@
 import React, { useContext, useState } from "react";
 import OpexExpensesTable from "../../TableComponents/OpexExpensesTable";
 import { OptionInterface } from "../../interfaces";
-import { fetchCollection, updateCollection } from "../../fetch";
+import {
+  deleteCollection,
+  fetchCollection,
+  updateCollection,
+} from "../../fetch";
+
 // import {
 //   convertToFrontendSchema,
 //   convertToBackendSchema,
 // } from "../RevenuePage/RevenuePage";
 import EmployeeTable from "../../TableComponents/EmployeeTable";
 import { globalContext } from "../../../AppContext";
+import { extractChartData } from "../../ChartsWrapper/MRRChart";
 
 interface PropsInterface {
   selectedStartup: OptionInterface;
@@ -55,15 +61,13 @@ export const convertToBackendSchema = (
 ) => {
   // fields should be strictly according to sequence of table rows
   let serverData = data.data.map((rowData, rowIndex) => {
-    let obj: object = {};
+    let obj: any = {};
     data.fields.forEach((field, i) => {
-      if (i !== 0) {
-        // because we want to ignore 1st field
-        obj = {
-          ...obj,
-          [field.accessor]: rowData[i],
-        };
-      }
+      // because we want to ignore 1st field
+      obj = {
+        ...obj,
+        [field.accessor]: rowData[i],
+      };
     });
     // Adding the id
     if (rowData[fields.length]) {
@@ -76,6 +80,7 @@ export const convertToBackendSchema = (
       obj = {
         ...obj,
         startup_id: startupId,
+        employee_id: "",
       };
     }
 
@@ -197,6 +202,25 @@ const EmployeePage = (props: PropsInterface) => {
         <div>
           <EmployeeTable
             data={employeeTableData}
+            deleteHandler={(data: TableDataInterface) => {
+              const serverData = convertToBackendSchema(
+                data,
+                employeeTableFields,
+                props.selectedStartup.accessor
+              );
+              console.log(serverData);
+              deleteCollection(
+                appContext?.apiRoute,
+                appContext?.token,
+                "employee",
+                serverData,
+                serverData[0]?._id
+              )
+                .then((res) => {
+                  getData();
+                })
+                .catch((err) => console.log(err));
+            }}
             changeHandler={(value: TableDataInterface) => {
               const serverData = convertToBackendSchema(
                 value,

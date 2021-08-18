@@ -169,7 +169,7 @@ const ProfileSettings = (props: PropsInterface) => {
   console.log(startupInfo?.currency);
 
   const monthsArray = [
-    "janurary",
+    "january",
     "february",
     "march",
     "april",

@@ -185,7 +185,7 @@ const NotesComponent = ({
   const classes = useStyles(theme);
   const [showYearConfig, setShowYearConfig] = React.useState(false);
   const monthsArray = [
-    "janurary",
+    "january",
     "february",
     "march",
     "april",

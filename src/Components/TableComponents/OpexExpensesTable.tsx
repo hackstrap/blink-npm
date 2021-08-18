@@ -84,7 +84,7 @@ const OpexExpensesTable = ({
   const [saveChangesBtn, setSaveChangesBtn] = useState(false);
 
   const monthsArray = [
-    "janurary",
+    "january",
     "february",
     "march",
     "april",

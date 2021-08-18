@@ -75,6 +75,25 @@ export const updateCollection = (
   });
 };
 
+export const deleteCollection = (
+  apiRoute: string | undefined,
+  token: string | undefined,
+  collection: string,
+  data: any,
+  id?: string
+) => {
+  return axios({
+    method: "delete",
+    url: `${apiRoute ? apiRoute : fallbackRoute}v1/${collection}/${
+      id ? id : ""
+    }`,
+    headers: {
+      Authorization: token,
+    },
+    data,
+  });
+};
+
 // export const uploadImage = () => {
 
 // }

@@ -95,7 +95,7 @@ const UsersTable = ({
   const [showYearConfig, setShowYearConfig] = useState(false);
   const [saveChangesBtn, setSaveChangesBtn] = useState(false);
   const monthsArray = [
-    "janurary",
+    "january",
     "february",
     "march",
     "april",
@@ -446,7 +446,7 @@ const UsersTable = ({
   return (
     <div className={classes.mainTableContainer}>
       <div className={classes.infoContainer}>
-        <Typography variant="h4">User</Typography>
+        <Typography variant="h4">Users</Typography>
         {saveChangesBtn ? (
           <Button
             variant="outlined"

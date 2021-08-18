@@ -55,7 +55,7 @@ const useStyles = makeStyles({
 });
 
 const monthsArray = [
-  "janurary",
+  "january",
   "february",
   "march",
   "april",

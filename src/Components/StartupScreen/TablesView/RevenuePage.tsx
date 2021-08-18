@@ -163,7 +163,7 @@ export const convertToBackendSchema = (
 };
 
 const monthsArray = [
-  "janurary",
+  "january",
   "february",
   "march",
   "april",
