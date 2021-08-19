@@ -67,13 +67,13 @@ export const userTableFields = [
 
 export const createEmptyData = (year: string, fields: OptionInterface[]) => {
   const initYearData = () => {
-    let data: (string | number)[][] = [];
+    let data: (string | undefined)[][] = [];
     for (let i = 0; i < 12; i++) {
       data[i] = fields.map((field, j) => {
         if (j === 0) {
           return monthsArray[i];
         } else {
-          return 0;
+          return undefined;
         }
       });
     }
@@ -129,15 +129,17 @@ export const convertToBackendSchema = (
   year: string,
   startupId: string
 ) => {
+  console.log(data, "Table data");
   // fields should be strictly according to sequence of table rows
   let serverData = data.data[year].map((monthData, monthIndex) => {
     let obj = {};
     data.fields.forEach((field, i) => {
+      let d = monthData[i]?.toString();
       if (i !== 0) {
         // because we want to ignore 1st field
         obj = {
           ...obj,
-          [field.accessor]: monthData[i],
+          [field.accessor]: d ? parseInt(d) : null,
         };
       }
     });
@@ -159,6 +161,7 @@ export const convertToBackendSchema = (
 
     return obj;
   });
+  console.log(serverData, "this is serverData");
   return serverData;
 };
 

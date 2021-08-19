@@ -77,11 +77,11 @@ const employeeTableFields = [
 export interface TableDataInterface {
   currency?: string;
   fields: OptionInterface[];
-  data: (string | number)[][];
+  data: (string | undefined)[][];
 }
 
 interface EmployeeTableRowInterface {
-  [key: string]: string | number | ReactNode | JSX.Element;
+  [key: string]: string | undefined | ReactNode | JSX.Element;
 }
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -163,10 +163,10 @@ const EmployeeTable = ({
   const [deleteRowMode, setDeleteRowMode] = useState(false);
 
   const updateData = (
-    data: (string | number)[][],
+    data: (string | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | number
+    value: string | undefined
   ) => {
     setSaveChangesBtn(true);
     let currentData = [...data];
@@ -174,9 +174,9 @@ const EmployeeTable = ({
     return currentData;
   };
 
-  const addRow = (data: (string | number)[][]) => {
+  const addRow = (data: (string | undefined)[][]) => {
     setSaveChangesBtn(true);
-    let currentData: (string | number)[][] = [];
+    let currentData: (string | undefined)[][] = [];
 
     if (data !== undefined && data?.length) {
       currentData = [...data];
@@ -185,7 +185,7 @@ const EmployeeTable = ({
     return currentData;
   };
 
-  const removeRow = (data: (string | number)[][], rowIndex: number) => {
+  const removeRow = (data: (string | undefined)[][], rowIndex: number) => {
     return data.filter((d, i) => {
       return i === rowIndex ? false : true;
     });
@@ -295,7 +295,7 @@ const EmployeeTable = ({
     }
   };
 
-  const getDateString = (str: string | number) => {
+  const getDateString = (str: string | undefined) => {
     if (typeof str === "string") {
       return str.split("T")[0];
     }
@@ -306,7 +306,7 @@ const EmployeeTable = ({
     j: number,
     thisData: TableDataInterface,
     currentData: EmployeeTableRowInterface[]
-  ): ReactElement | ReactNode | string | number => {
+  ): ReactElement | ReactNode | string | undefined => {
     switch (j) {
       case 1:
       case 2:

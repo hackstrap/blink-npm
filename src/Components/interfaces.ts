@@ -16,7 +16,7 @@ export interface TableDataInterface {
 }
 
 export interface YearDataInterface {
-  [key: string]: (string | number)[][];
+  [key: string]: (string | undefined)[][];
 }
 
 export interface TablePropsInterface {

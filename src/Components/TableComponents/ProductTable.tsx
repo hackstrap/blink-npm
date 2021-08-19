@@ -126,23 +126,23 @@ const ProductTable = ({
     "december",
   ];
 
-  const addMonth = (year: (string | number)[][], payload: any) => {
+  const addMonth = (year: (string | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [payload.monthName, 0, 0, 0];
     return data;
   };
 
-  const removeMonth = (year: (string | number)[][], payload: any) => {
+  const removeMonth = (year: (string | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [];
     return data;
   };
 
   const updateData = (
-    data: number[][],
+    data: (string | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: number
+    value: string | undefined
   ) => {
     data[rowIndex][columnIndex] = value;
     return data;
@@ -158,7 +158,23 @@ const ProductTable = ({
     return {
       ...data,
       labels: [...data.labels, "Enter Row Name"],
-      dataset: [...data.dataset, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+      dataset: [
+        ...data.dataset,
+        [
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+        ],
+      ],
     };
   };
 
@@ -303,10 +319,8 @@ const ProductTable = ({
   const generateTableData = (state: ProductDataInterface) => {
     let thisData = { ...state };
     let currentData: ProductTableRowInterface[] = [];
-    let loop1 = thisData.labels.length;
-    // let loop2 = thisData.dataset.length;
-
-    // Data is passed in the tables row wise
+    let loop1 = thisData?.labels?.length;
+    console.log(state);
     for (let i = 0; i < loop1; i++) {
       // Add data for first column
       currentData[i] = {
@@ -349,16 +363,20 @@ const ProductTable = ({
       };
       // Add data for each month
       for (let j = 0; j < 12; j++) {
-        if (thisData.dataset[i][j] !== undefined) {
-          // Checking for data
+        // Checking for data
+        if (i < 3) {
           currentData[i] = {
             ...currentData[i],
             [monthsArray[j]]: (
               <input
                 className={styles.editableInput}
-                value={thisData.dataset[i][j] ? thisData.dataset[i][j] : 0}
+                type="number"
+                placeholder="Enter Data"
+                value={thisData.dataset[i][j]}
                 title={
-                  thisData.dataset[i][j] ? `${thisData.dataset[i][j]}` : "0"
+                  thisData.dataset[i][j]
+                    ? `${thisData.dataset[i][j]}`
+                    : "Enter Data"
                 }
                 onChange={(e) => {
                   dispatch({
@@ -377,7 +395,11 @@ const ProductTable = ({
         } else {
           currentData[i] = {
             ...currentData[i],
-            [monthsArray[j]]: "",
+            [monthsArray[j]]: (
+              <Typography className={styles.fixedData}>
+                {thisData.dataset[i][j] ? thisData.dataset[i][j] : "No Data"}
+              </Typography>
+            ),
           };
         }
       }
@@ -438,57 +460,9 @@ const ProductTable = ({
 
   console.log(tableData, tableConfig);
 
-  // const renderMonthsCheckbox = (tableConfig: TableUIConfig) => {
-  //   let checkboxArray: ReactNode[] = [];
-
-  //   monthsArray.forEach((month: string, i: number) => {
-  //     let displayedMonths: (string | number)[] = [];
-  //     state.data[currentYear].forEach((arr, i) => {
-  //       if (arr && arr.length > 0) displayedMonths.push(arr[0]);
-  //     });
-  //     checkboxArray.push(
-  //       <div key={i}>
-  //         <input
-  //           type="checkbox"
-  //           id={monthsArray[i]}
-  //           defaultChecked={displayedMonths.includes(month)}
-  //           onClick={() => {
-  //             if (!displayedMonths.includes(month)) {
-  //               dispatch({
-  //                 type: "ADD_MONTH",
-  //                 payload: {
-  //                   monthName: month,
-  //                   index: i,
-  //                 },
-  //               });
-  //             } else {
-  //               dispatch({
-  //                 type: "REMOVE_MONTH",
-  //                 payload: {
-  //                   monthName: month,
-  //                   index: i,
-  //                 },
-  //               });
-  //             }
-  //           }}
-  //         />
-  //         <label htmlFor={monthsArray[i]}>{capitalize(month)}</label>
-  //       </div>
-  //     );
-  //   });
-  //   return checkboxArray;
-  // };
-
   const [showColumnConfig, setShowColumnConfig] = useState(false);
   const [showCurrencyConfig, setShowCurrencyConfig] = useState(false);
   const [showYearConfig, setShowYearConfig] = useState(false);
-
-  // const renderCurrencyOptions = () => {
-  //   let currencyList = ["USD", "INR"];
-  //   return currencyList.map((c, i) => {
-  //     return <Typography key={i}>{c}</Typography>;
-  //   });
-  // };
 
   const renderYearOptions = () => {
     let years: string[] = [];
@@ -534,7 +508,7 @@ const ProductTable = ({
         )}
 
         <div className={classes.btnGroup}>
-          <div>
+          {/* <div>
             <Button
               variant="outlined"
               onClick={() => {
@@ -557,44 +531,6 @@ const ProductTable = ({
             >
               {!deleteRowMode ? "Remove Row" : "Done"}
             </Button>
-          </div>
-          {/* <div>
-            <Button
-              onClick={(e) => {
-                setEditTable(!editTable);
-              }}
-              variant="outlined"
-              className={styles.dropdownButton}
-            >
-              Edit Table
-            </Button>
-            {editTable ? (
-              <div
-                className={styles.columnConfigBox}
-                onMouseLeave={(e) => setEditTable(false)}
-              >
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    dispatch({
-                      type: "ADD_ROW",
-                    });
-                  }}
-                >
-                  Add Row
-                </Button>
-                <Button
-                  variant="outlined"
-                  onClick={() => {
-                    setRemove
-                  }}
-                >
-                  Remove Row
-                </Button>
-              </div>
-            ) : (
-              <div></div>
-            )}
           </div> */}
           <div>
             <Button

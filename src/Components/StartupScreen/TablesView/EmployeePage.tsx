@@ -22,7 +22,7 @@ interface PropsInterface {
 export interface TableDataInterface {
   currency?: string;
   fields: OptionInterface[];
-  data: (string | number)[][];
+  data: (string | undefined)[][];
 }
 
 export const convertToFrontendSchema = (
@@ -39,12 +39,12 @@ export const convertToFrontendSchema = (
     return convertedData;
   } else {
     convertedData.data = data.map((document: any) => {
-      let arr: (string | number)[] = [];
+      let arr: (string | undefined)[] = [];
       fields.forEach((field, i) => {
         if (document[field.accessor]) {
           arr.push(document[field.accessor]);
         } else {
-          arr.push(0);
+          arr.push(undefined);
         }
       });
       arr.push(document._id);
@@ -62,11 +62,14 @@ export const convertToBackendSchema = (
   // fields should be strictly according to sequence of table rows
   let serverData = data.data.map((rowData, rowIndex) => {
     let obj: any = {};
+
     data.fields.forEach((field, i) => {
+      let d = rowData[i]?.toString();
+
       // because we want to ignore 1st field
       obj = {
         ...obj,
-        [field.accessor]: rowData[i],
+        [field.accessor]: d ? parseInt(d) : null,
       };
     });
     // Adding the id

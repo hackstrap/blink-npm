@@ -26,7 +26,7 @@ import { KeyDownIcon } from "../StartupScreen/TablesView/NotesPage/NotesComponen
 import { renderToolTip } from "./RevenueTable";
 
 interface UserTableRowInterface {
-  [key: string]: string | number | ReactNode;
+  [key: string]: string | ReactNode;
 }
 
 // // program to convert first letter of a string to uppercase
@@ -137,8 +137,8 @@ const UsersTable = ({
         </div>
       ),
     },
-    null,
-    null,
+    undefined,
+    undefined,
     {
       heading: "Customer Churn",
       description: (
@@ -152,7 +152,7 @@ const UsersTable = ({
     },
   ];
 
-  const addMonth = (year: (string | number)[][], payload: any) => {
+  const addMonth = (year: (string | undefined)[][], payload: any) => {
     setSaveChangesBtn(true);
     let data = [...year];
     data[payload.index] = [payload.monthName, 0, 0, 0];
@@ -163,7 +163,7 @@ const UsersTable = ({
     dispatch({ type: "RESET", payload: data });
   }, [data]);
 
-  const removeMonth = (year: (string | number)[][], payload: any) => {
+  const removeMonth = (year: (string | undefined)[][], payload: any) => {
     setSaveChangesBtn(true);
     let data = [...year];
     data[payload.index] = [];
@@ -171,10 +171,10 @@ const UsersTable = ({
   };
 
   const updateData = (
-    data: (string | number)[][],
+    data: (string | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | number
+    value: string | undefined
   ) => {
     setSaveChangesBtn(true);
     data[columnIndex][rowIndex] = value;
@@ -243,6 +243,7 @@ const UsersTable = ({
     thisData: TableDataInterface,
     currentData: UserTableRowInterface[]
   ) => {
+    const propertyName = thisData.data[currentYear][j][0]?.toString();
     switch (i) {
       case 1:
       case 2:
@@ -250,25 +251,25 @@ const UsersTable = ({
           ...currentData[i],
           [monthsArray[j]]: (
             <Typography className={styles.fixedData}>
-              {thisData.data[currentYear][j][i + 1]}
+              {thisData.data[currentYear][j][i + 1]
+                ? thisData.data[currentYear][j][i + 1]
+                : "No Data"}
             </Typography>
           ),
         };
       default:
         return {
           ...currentData[i],
-          [thisData.data[currentYear][j][0]]: (
+          [propertyName ? propertyName : ""]: (
             <input
               className={styles.editableInput}
-              value={
-                thisData.data[currentYear][j][i + 1]
-                  ? thisData.data[currentYear][j][i + 1]
-                  : 0
-              }
+              value={thisData.data[currentYear][j][i + 1]}
+              placeholder="Enter Data"
+              type="number"
               title={
                 thisData.data[currentYear][j][i + 1]
                   ? `${thisData.data[currentYear][j][i + 1]}`
-                  : "0"
+                  : "Enter Data"
               }
               onChange={(e) => {
                 dispatch({
@@ -276,7 +277,7 @@ const UsersTable = ({
                   payload: {
                     rowIndex: i,
                     columnIndex: j,
-                    value: parseInt(e.target.value),
+                    value: e.target.value,
                   },
                 });
               }}
@@ -373,7 +374,7 @@ const UsersTable = ({
     let checkboxArray: ReactNode[] = [];
 
     monthsArray.forEach((month: string, i: number) => {
-      let displayedMonths: (string | number)[] = [];
+      let displayedMonths: (string | number | undefined)[] = [];
       state.data[currentYear].forEach((arr, i) => {
         if (arr && arr.length > 0) displayedMonths.push(arr[0]);
       });

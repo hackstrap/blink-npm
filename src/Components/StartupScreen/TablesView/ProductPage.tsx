@@ -21,7 +21,7 @@ export interface ProductDataInterface {
   startup_id: string;
   year: number;
   labels: string[];
-  dataset: number[][];
+  dataset: (string | undefined)[][];
 }
 
 export interface ProductTableInterface {
@@ -33,13 +33,13 @@ export interface ProductTableInterface {
 
 export const createEmptyData = (year: string, fields: OptionInterface[]) => {
   const initYearData = () => {
-    let data: (string | number)[][] = [];
+    let data: (string | undefined)[][] = [];
     for (let i = 0; i < 12; i++) {
       data[i] = fields.map((field, j) => {
         if (j === 0) {
           return monthsArray[i];
         } else {
-          return 0;
+          return undefined;
         }
       });
     }
@@ -79,8 +79,7 @@ const ProductPage = (props: PropsInterface) => {
     useState<ProductDataInterface | null>(null);
 
   const [currentYear, setCurrentYear] = useState<string>(
-    // new Date().getFullYear().toString()
-    "2020"
+    new Date().getFullYear().toString()
   );
 
   const getProductData = () => {
@@ -97,8 +96,90 @@ const ProductPage = (props: PropsInterface) => {
           let emptyData = {
             startup_id: props.selectedStartup.accessor,
             year: parseInt(currentYear),
-            labels: ["Fill your data here"],
-            dataset: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]],
+            labels: [
+              "No. of Campaigns",
+              "Investors Participated",
+              "Total Invested Amount",
+              "Avg Investor Participation per Campaign",
+              "Avg Investor Investment Amount per Campaign",
+            ],
+            dataset: [
+              [
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+              ],
+              [
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+              ],
+              [
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+              ],
+              [
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+              ],
+              [
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+              ],
+            ],
           };
           setProductTableData(emptyData);
         } else {
@@ -132,12 +213,37 @@ const ProductPage = (props: PropsInterface) => {
             setCurrentYear={(year: string) => {
               setCurrentYear(year);
             }}
-            changeHandler={(data) => {
+            changeHandler={(data: any) => {
+              let currentData = { ...data };
+              if (!data.labels?.length) {
+                currentData = {
+                  startup_id: props.selectedStartup.accessor,
+                  year: parseInt(currentYear),
+                  labels: ["Fill your data here"],
+                  dataset: [
+                    [
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                      null,
+                    ],
+                  ],
+                };
+              }
               updateCollection(
                 appContext?.apiRoute,
                 appContext?.token,
                 "product",
-                [data],
+                [currentData],
                 props.selectedStartup.accessor
               )
                 .then((res) => getProductData())

@@ -64,10 +64,12 @@ const useStyles = makeStyles((theme: Theme) => {
 });
 
 export const renderToolTip = (
-  data: {
-    heading: string;
-    description: JSX.Element;
-  } | null
+  data:
+    | {
+        heading: string;
+        description: JSX.Element;
+      }
+    | undefined
 ) => {
   if (data) {
     return (
@@ -109,23 +111,23 @@ const RevenueTable = ({
     "december",
   ];
 
-  const addMonth = (year: (string | number)[][], payload: any) => {
+  const addMonth = (year: (string | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [payload.monthName, 0, 0, 0];
     return data;
   };
 
-  const removeMonth = (year: (string | number)[][], payload: any) => {
+  const removeMonth = (year: (string | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [];
     return data;
   };
 
   const updateData = (
-    data: (string | number)[][],
+    data: (string | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | number
+    value: string | undefined
   ) => {
     data[columnIndex][rowIndex] = value;
     return data;
@@ -305,26 +307,27 @@ const RevenueTable = ({
                 ...currentData[i],
                 [monthsArray[j]]: (
                   <Typography className={styles.fixedData}>
-                    {thisData.data[currentYear][j][i + 1]}
+                    {thisData.data[currentYear][j][i + 1]
+                      ? thisData.data[currentYear][j][i + 1]
+                      : "No Data"}
                   </Typography>
                 ),
               };
             } else {
+              let propertyName = thisData.data[currentYear][j][0]?.toString();
               currentData[i] = {
                 ...currentData[i],
-                [thisData.data[currentYear][j][0]]: (
+                [propertyName ? propertyName : ""]: (
                   <input
                     className={styles.editableInput}
-                    value={
-                      thisData.data[currentYear][j][i + 1]
-                        ? thisData.data[currentYear][j][i + 1]
-                        : 0
-                    }
+                    value={thisData.data[currentYear][j][i + 1]}
                     title={
                       thisData.data[currentYear][j][i + 1]
                         ? `${thisData.data[currentYear][j][i + 1]}`
-                        : "0"
+                        : "Enter Data"
                     }
+                    type="number"
+                    placeholder="Enter Data"
                     onChange={(e) => {
                       dispatch({
                         type: "UPDATE_DATA",
@@ -344,7 +347,7 @@ const RevenueTable = ({
           } else {
             currentData[i] = {
               ...currentData[i],
-              [monthsArray[j]]: "",
+              [monthsArray[j]]: "No Data",
             };
           }
         }
@@ -400,7 +403,7 @@ const RevenueTable = ({
     let checkboxArray: ReactNode[] = [];
 
     monthsArray.forEach((month: string, i: number) => {
-      let displayedMonths: (string | number)[] = [];
+      let displayedMonths: (string | number | undefined)[] = [];
       state.data[currentYear].forEach((arr, i) => {
         if (arr && arr.length > 0) displayedMonths.push(arr[0]);
       });

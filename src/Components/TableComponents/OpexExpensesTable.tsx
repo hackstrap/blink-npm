@@ -98,13 +98,13 @@ const OpexExpensesTable = ({
     "december",
   ];
 
-  const addMonth = (year: (string | number)[][], payload: any) => {
+  const addMonth = (year: (string | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [payload.monthName, 0, 0, 0];
     return data;
   };
 
-  const removeMonth = (year: (string | number)[][], payload: any) => {
+  const removeMonth = (year: (string | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [];
     return data;
@@ -187,10 +187,10 @@ const OpexExpensesTable = ({
   }, [data]);
 
   const updateData = (
-    data: (string | number)[][],
+    data: (string | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | number
+    value: string | undefined
   ) => {
     setSaveChangesBtn(true);
     data[columnIndex][rowIndex] = value;
@@ -269,12 +269,13 @@ const OpexExpensesTable = ({
     i: number,
     j: number
   ) => {
+    const propertyName = thisData.data[currentYear][j][0]?.toString();
     switch (i) {
       case 0:
         if (thisData.data[currentYear][j][i + 1])
           return {
             ...currentData[i],
-            [thisData.data[currentYear][j][0]]: (
+            [propertyName ? propertyName : ""]: (
               <Typography className={styles.fixedData}>
                 {thisData.data[currentYear][j][i + 1]}
               </Typography>
@@ -283,21 +284,19 @@ const OpexExpensesTable = ({
         else
           return {
             ...currentData[i],
-            [thisData.data[currentYear][j][0]]: (
+            [propertyName ? propertyName : ""]: (
               <Typography className={styles.fixedData}>No Data</Typography>
             ),
           };
       default:
         return {
           ...currentData[i],
-          [thisData.data[currentYear][j][0]]: (
+          [propertyName ? propertyName : ""]: (
             <input
+              type="number"
+              placeholder="Enter Data"
               className={styles.editableInput}
-              value={
-                thisData.data[currentYear][j][i + 1]
-                  ? thisData.data[currentYear][j][i + 1]
-                  : 0
-              }
+              value={thisData.data[currentYear][j][i + 1]}
               title={
                 thisData.data[currentYear][j][i + 1]
                   ? `${thisData.data[currentYear][j][i + 1]}`
@@ -409,7 +408,7 @@ const OpexExpensesTable = ({
     let checkboxArray: ReactNode[] = [];
 
     monthsArray.forEach((month: string, i: number) => {
-      let displayedMonths: (string | number)[] = [];
+      let displayedMonths: (string | number | undefined)[] = [];
       state.data[currentYear].forEach((arr, i) => {
         if (arr && arr.length > 0) displayedMonths.push(arr[0]);
       });
