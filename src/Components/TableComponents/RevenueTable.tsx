@@ -300,54 +300,47 @@ const RevenueTable = ({
         };
         // Add data for each month
         for (let j = 0; j < 12; j++) {
-          if (thisData.data[currentYear][j]) {
-            // Checking for total revenue
-            if (i === 0) {
-              currentData[i] = {
-                ...currentData[i],
-                [monthsArray[j]]: (
-                  <Typography className={styles.fixedData}>
-                    {thisData.data[currentYear][j][i + 1]
-                      ? thisData.data[currentYear][j][i + 1]
-                      : "No Data"}
-                  </Typography>
-                ),
-              };
-            } else {
-              let propertyName = thisData.data[currentYear][j][0]?.toString();
-              currentData[i] = {
-                ...currentData[i],
-                [propertyName ? propertyName : ""]: (
-                  <input
-                    className={styles.editableInput}
-                    value={thisData.data[currentYear][j][i + 1]}
-                    title={
-                      thisData.data[currentYear][j][i + 1]
-                        ? `${thisData.data[currentYear][j][i + 1]}`
-                        : "Enter Data"
-                    }
-                    type="number"
-                    placeholder="Enter Data"
-                    onChange={(e) => {
-                      dispatch({
-                        type: "UPDATE_DATA",
-                        payload: {
-                          rowIndex: i,
-                          columnIndex: j,
-                          value: parseInt(e.target.value),
-                        },
-                      });
-                    }}
-                    key={`row${i}column${j}`}
-                  />
-                ),
-                // thisData.data[currentYear][j][i + 1],
-              };
-            }
-          } else {
+          // Checking for total revenue
+          if (i === 0) {
             currentData[i] = {
               ...currentData[i],
-              [monthsArray[j]]: "No Data",
+              [monthsArray[j]]: (
+                <Typography className={styles.fixedData}>
+                  {thisData.data[currentYear][j][i + 1]
+                    ? thisData.data[currentYear][j][i + 1]
+                    : "No Data"}
+                </Typography>
+              ),
+            };
+          } else {
+            let propertyName = thisData.data[currentYear][j][0]?.toString();
+            currentData[i] = {
+              ...currentData[i],
+              [propertyName ? propertyName : ""]: (
+                <input
+                  className={styles.editableInput}
+                  value={thisData.data[currentYear][j][i + 1]}
+                  title={
+                    thisData.data[currentYear][j][i + 1]
+                      ? `${thisData.data[currentYear][j][i + 1]}`
+                      : "Enter Data"
+                  }
+                  type="number"
+                  placeholder="Enter Data"
+                  onChange={(e) => {
+                    dispatch({
+                      type: "UPDATE_DATA",
+                      payload: {
+                        rowIndex: i,
+                        columnIndex: j,
+                        value: parseInt(e.target.value),
+                      },
+                    });
+                  }}
+                  key={`row${i}column${j}`}
+                />
+              ),
+              // thisData.data[currentYear][j][i + 1],
             };
           }
         }

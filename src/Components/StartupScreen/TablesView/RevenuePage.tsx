@@ -105,15 +105,19 @@ export const convertToFrontendSchema = (
   if (data.length == 0) {
     return createEmptyData(year, fields);
   } else {
-    convertedData.data[year] = data.map((monthData: any) => {
-      let arr: (string | number)[] = [];
+    let currentData: any = [...data];
+    currentData = currentData.sort((m1: any, m2: any) => {
+      return m1["month"] - m2["month"];
+    });
+    convertedData.data[year] = currentData.map((monthData: any) => {
+      let arr: (string | undefined)[] = [];
       fields.forEach((field, i) => {
         if (monthData[field.accessor]) {
           arr.push(monthData[field.accessor]);
         } else if (i === 0) {
           arr.push(monthsArray[monthData["month"] - 1]);
         } else {
-          arr.push(0);
+          arr.push(undefined);
         }
       });
       arr.push(monthData._id);
