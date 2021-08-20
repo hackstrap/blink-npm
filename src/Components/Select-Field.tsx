@@ -134,7 +134,6 @@ const SelectField: FC<SelectFieldInterface> = (props) => {
                           let newData = props?.value?.filter((val) => {
                             return val !== value ? true : false;
                           });
-                          console.log(newData);
                           props.setValue(newData);
                         }
                       }}

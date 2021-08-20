@@ -246,7 +246,6 @@ const UsersTable = ({
     const propertyName = thisData.data[currentYear][j][0]?.toString();
     switch (i) {
       case 1:
-      case 2:
         return {
           ...currentData[i],
           [monthsArray[j]]: (

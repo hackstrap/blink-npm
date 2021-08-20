@@ -50,14 +50,6 @@ const InvestmentSummary = () => {
       appContext?.userInfo?.accessor
     ).then((res) => {
       if (res.data !== []) {
-        console.log(
-          summaryData && summaryData?.agg_net_irr_data
-            ? summaryData?.agg_net_irr_data[parseInt(currentYear)]?.map((n) =>
-                Math.floor(n)
-              )
-            : []
-        );
-
         setSummaryData(res.data);
       } else {
         setSummaryData(null);

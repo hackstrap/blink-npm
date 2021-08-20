@@ -77,7 +77,6 @@ const serialize = (node) => {
   }
 
   const children = node.children.map((n) => serialize(n)).join("");
-  // console.log(children, node);
 
   switch (node.type) {
     case "quote":
@@ -314,7 +313,6 @@ const NotesComponent = ({
         Authorization: appContext?.token,
       },
     }).then((res) => {
-      // console.log(res.data);
       setChartOptions(extractChartData(res.data));
     });
   }, [selectedStartup]);
@@ -418,9 +416,7 @@ const NotesComponent = ({
             <Button
               onClick={(e) => {
                 // send email function
-                // console.log(value.note_data, editor);
                 const result = serialize(editor);
-                console.log(result);
                 copyToClipboard(result);
               }}
               className={styles.dropDownBtn}
@@ -440,7 +436,6 @@ const NotesComponent = ({
             editor={editor}
             value={value.note_data}
             onChange={(newValue) => {
-              console.log(newValue);
               setValue({
                 ...value,
                 note_data: newValue,
@@ -763,7 +758,6 @@ const insertImage = (editor, url) => {
 const Image = ({ attributes, children, element }) => {
   const selected = useSelected();
   const focused = useFocused();
-  // console.log(element);
   return (
     <div {...attributes}>
       <div contentEditable={false}>

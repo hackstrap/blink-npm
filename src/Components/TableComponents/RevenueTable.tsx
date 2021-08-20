@@ -390,8 +390,6 @@ const RevenueTable = ({
     [state.data[currentYear]]
   );
 
-  console.log("Revenue Table Data", tableData, tableConfig);
-
   const renderMonthsCheckbox = (tableConfig: TableUIConfig) => {
     let checkboxArray: ReactNode[] = [];
 

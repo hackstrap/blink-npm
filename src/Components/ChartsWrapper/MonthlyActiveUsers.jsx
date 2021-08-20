@@ -178,7 +178,6 @@ const MonthlyActiveUsers = (props) => {
       .then((res) => {
         const serverData = extractChartData(res.data, chartFields);
         if (res.data.length) {
-          console.log(res.data);
           data = {
             ...data,
             datasets: getDatasets(data.datasets, serverData),

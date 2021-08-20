@@ -134,7 +134,6 @@ const ChartComponent = ({
     }
   };
   useEffect(() => {
-    // console.log("useEffect ran", data);
     const myGraph = renderChart(thisGraph);
     return () => {
       if (myGraph?.destroy) myGraph.destroy();
@@ -279,7 +278,6 @@ const ChartComponent = ({
                         data: formData,
                       })
                         .then((res) => {
-                          console.log(res);
                           e.target.style.opacity = "1";
 
                           let location = res.data.uploaded.location;
@@ -297,7 +295,6 @@ const ChartComponent = ({
                             },
                           })
                             .then((res) => {
-                              console.log("db updated", res);
                               appContext.setSnackbarState({
                                 open: true,
                                 message: "Chart Image Saved to Cloud",
@@ -372,53 +369,3 @@ const ChartComponent = ({
 };
 
 export default ChartComponent;
-
-// function convertURIToImageData(URI) {
-//   return new Promise(function (resolve, reject) {
-//     if (URI == null) return reject();
-//     var canvas = document.createElement("canvas"),
-//       context = canvas.getContext("2d"),
-//       image = new Image();
-//     image.addEventListener(
-//       "load",
-//       function () {
-//         canvas.width = image.width;
-//         canvas.height = image.height;
-//         context.drawImage(
-//           image,
-//           0,
-//           0,
-//           canvas.width,
-//           canvas.height
-//         );
-//         resolve(
-//           context.getImageData(
-//             0,
-//             0,
-//             canvas.width,
-//             canvas.height
-//           )
-//         );
-//       },
-//       false
-//     );
-//     image.src = URI;
-//   });
-// }
-
-// convertURIToImageData(dataUrl).then(function (imageData) {
-//   console.log(imageData);
-// });
-
-// <DateRange
-//                 startDatePlaceholder={"Start Month"}
-//                 endDatePlaceholder={"End Date"}
-//                 editableDateInputs={true}
-//                 onChange={(item) => {
-//
-//                   setDateRange([item.selection]);
-//                 }}
-//                 moveRangeOnFirstSelection={false}
-//                 ranges={dateRange}
-//                 dateDisplayFormat={"MMM yyyy"}
-//               />

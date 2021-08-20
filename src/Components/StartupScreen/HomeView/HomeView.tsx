@@ -114,8 +114,6 @@ const HomeView = () => {
   // const [currentPage, setCurrentPage] = useState("metrics");
   const appContext = useContext(globalContext);
 
-  console.log(appContext?.currentPage);
-
   const renderCurrentPage = (page: string | undefined) => {
     switch (page) {
       case "notes":

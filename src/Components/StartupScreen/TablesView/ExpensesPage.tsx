@@ -195,7 +195,6 @@ const ExpensesPage = (props: PropsInterface) => {
               props.selectedStartup.accessor
             )
               .then((res) => {
-                console.log(res.data);
                 getData2();
               })
               .catch((err) => console.log(err));

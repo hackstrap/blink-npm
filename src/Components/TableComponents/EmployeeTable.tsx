@@ -136,7 +136,6 @@ function capitalizeFirstLetter(str: string) {
 }
 
 const formatDate = (date: string | number) => {
-  console.log(date);
   var d = new Date(date),
     month = "" + (d.getMonth() + 1),
     day = "" + d.getDate(),
@@ -195,7 +194,6 @@ const EmployeeTable = ({
     state: TableDataInterface,
     action: ActionInterface
   ): TableDataInterface => {
-    console.log("reducer called", action);
     let currentState = { ...state };
     switch (action.type) {
       case "UPDATE_DATA":

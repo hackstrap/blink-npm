@@ -211,7 +211,6 @@ const EmployeePage = (props: PropsInterface) => {
                 employeeTableFields,
                 props.selectedStartup.accessor
               );
-              console.log(serverData);
               deleteCollection(
                 appContext?.apiRoute,
                 appContext?.token,

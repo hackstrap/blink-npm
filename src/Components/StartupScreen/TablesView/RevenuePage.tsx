@@ -112,7 +112,7 @@ export const convertToFrontendSchema = (
     convertedData.data[year] = currentData.map((monthData: any) => {
       let arr: (string | undefined)[] = [];
       fields.forEach((field, i) => {
-        if (monthData[field.accessor]) {
+        if (monthData[field.accessor] || monthData[field.accessor] === 0) {
           arr.push(monthData[field.accessor]);
         } else if (i === 0) {
           arr.push(monthsArray[monthData["month"] - 1]);
@@ -133,7 +133,6 @@ export const convertToBackendSchema = (
   year: string,
   startupId: string
 ) => {
-  console.log(data, "Table data");
   // fields should be strictly according to sequence of table rows
   let serverData = data.data[year].map((monthData, monthIndex) => {
     let obj = {};
@@ -165,7 +164,6 @@ export const convertToBackendSchema = (
 
     return obj;
   });
-  console.log(serverData, "this is serverData");
   return serverData;
 };
 
@@ -215,6 +213,7 @@ const RevenuePage = (props: PropsInterface) => {
           fields,
           currentYear
         );
+
         setRevenueTableData(frontendData);
       })
       .catch((err) => {

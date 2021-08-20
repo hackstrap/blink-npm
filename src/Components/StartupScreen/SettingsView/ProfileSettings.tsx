@@ -166,7 +166,6 @@ const ProfileSettings = (props: PropsInterface) => {
       })
       .catch((err) => console.log(err));
   }, []);
-  console.log(startupInfo?.currency);
 
   const monthsArray = [
     "january",
@@ -451,19 +450,6 @@ const ProfileSettings = (props: PropsInterface) => {
           <div></div>
         )}
       </Container>
-      {/* <div className={classes.tableContainer}>
-        <div>
-          <Typography variant="h3" className={classes.heading}>
-            Investors Details Table
-          </Typography>
-          <InvestorDetailsTable
-            data={investorDetailsTableData}
-            changeHandler={(e) => {
-              console.log(e);
-            }}
-          />
-        </div>
-      </div> */}
     </div>
   );
 };

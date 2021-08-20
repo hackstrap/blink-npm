@@ -228,7 +228,6 @@ const LineChartComponent = ({
                       data: formData,
                     })
                       .then((res) => {
-                        console.log(res);
                         let location = res.data.uploaded.location;
                         axios({
                           method: "put",
@@ -244,7 +243,6 @@ const LineChartComponent = ({
                           },
                         })
                           .then((res) => {
-                            console.log("db updated", res);
                             appContext.setSnackbarState({
                               open: true,
                               message: "Chart Image Saved to Cloud",
@@ -337,20 +335,4 @@ function dataURItoBlob(dataURI) {
   // write the ArrayBuffer to a blob, and you're done
   var blob = new Blob([ab], { type: mimeString });
   return blob;
-}
-
-{
-  /* <DateRange
-startDatePlaceholder={'Start Month'}
-endDatePlaceholder={'End Date'}
-editableDateInputs={true}
-onChange={(item) => {
-  console.log(item)
-  console.log(dateRange)
-  setDateRange([item.selection])
-}}
-moveRangeOnFirstSelection={false}
-ranges={dateRange}
-dateDisplayFormat={'MMM yyyy'}
-/> */
 }

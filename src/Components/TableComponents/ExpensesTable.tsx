@@ -242,7 +242,6 @@ const ExpensesTable = ({
     state: TableDataInterface,
     action: ActionInterface
   ): TableDataInterface => {
-    console.log("reducer called");
     let currentState = { ...state };
     switch (action.type) {
       case "UPDATE_DATA":
@@ -287,15 +286,6 @@ const ExpensesTable = ({
           ...action.payload,
         };
       }
-
-      // let config = { ...tableConfig };
-      // config.columns.push({
-      //   Header: action.payload,
-      //   accessor: action.payload,
-      // });
-      // setTableConfig(config);
-      // console.log("Add month called");
-      // return currentState.data[currentYear].push([action.payload]);
     }
     return state;
   };
@@ -415,10 +405,8 @@ const ExpensesTable = ({
     state: TableDataInterface,
     monthsArray: string[]
   ) => {
-    console.log("generate table called");
     if (state.data[currentYear]) {
       const currentData = [...state.data[currentYear]];
-      console.log(currentData);
       let tableConfig: TableUIConfig = {
         columns: [],
       };
@@ -436,7 +424,6 @@ const ExpensesTable = ({
           });
         }
       });
-      console.log(tableConfig);
       return tableConfig;
     } else {
       return { columns: [{ Header: "", accessor: "" }] };

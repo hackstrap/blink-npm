@@ -91,7 +91,6 @@ const ProductPage = (props: PropsInterface) => {
       props.selectedStartup.accessor
     )
       .then((res) => {
-        console.log(res.data);
         if (res.data.length < 1) {
           let emptyData = {
             startup_id: props.selectedStartup.accessor,
@@ -194,7 +193,6 @@ const ProductPage = (props: PropsInterface) => {
     getProductData();
   }, [currentYear]);
 
-  console.log(productTableData, "This is productTable data");
   return (
     <div
       style={{

@@ -134,7 +134,6 @@ const ProfileSettings = (props: PropsInterface) => {
       props.investorInfo.accessor
     )
       .then((res) => {
-        console.log(res.data);
         setInvestorDetails(res.data[0]);
       })
       .catch((err) => console.log(err));

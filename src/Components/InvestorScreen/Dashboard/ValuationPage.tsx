@@ -299,7 +299,6 @@ export const ChartCard = (props: ChartCardInterface) => {
   const classes = useStyles(theme);
   const { title, value, options, data, currentYear, changeHandler } = props;
   const matches = useMediaQuery("(max-width:1300px)");
-  console.log(data);
   return (
     <div
       className={classes.chartCardBox}

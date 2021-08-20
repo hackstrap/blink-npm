@@ -4,93 +4,93 @@ import React, {
   useMemo,
   ReactNode,
   useReducer,
-  ReactElement
-} from 'react'
-import Table, { TableConfig, TableUIConfig } from '../../Table'
-import DropdownComponent from '../DropdownComponent/DropdownComponent'
-import styles from './commonTableStyle.module.css'
+  ReactElement,
+} from "react";
+import Table, { TableConfig, TableUIConfig } from "../../Table";
+import DropdownComponent from "../DropdownComponent/DropdownComponent";
+import styles from "./commonTableStyle.module.css";
 
 type YearDataInterface = (
   | string
   | number
   | { Header: string; accessor: string }
-)[][]
+)[][];
 interface TableDataInterface {
-  fields: { Header: string; accessor: string }[]
-  data: YearDataInterface
+  fields: { Header: string; accessor: string }[];
+  data: YearDataInterface;
 }
 
 interface OptionsInterface {
-  roleType: { Header: string; accessor: string }[]
+  roleType: { Header: string; accessor: string }[];
 }
 
 interface TablePropsInterface {
-  data: TableDataInterface
-  changeHandler: (data: TableDataInterface) => void
-  options: OptionsInterface
+  data: TableDataInterface;
+  changeHandler: (data: TableDataInterface) => void;
+  options: OptionsInterface;
 }
 
 interface ActionInterface {
-  type: string
-  payload?: any
+  type: string;
+  payload?: any;
 }
 
 interface TablePropsInterface {
-  data: TableDataInterface
-  changeHandler: (data: TableDataInterface) => void
+  data: TableDataInterface;
+  changeHandler: (data: TableDataInterface) => void;
 }
 
 interface TeamTableRowInterface {
-  [key: string]: string | number | ReactNode | JSX.Element
+  [key: string]: string | number | ReactNode | JSX.Element;
 }
 
 // program to convert first letter of a string to uppercase
 function capitalizeFirstLetter(str: string) {
   // converting first letter to uppercase
-  const capitalized = str.charAt(0).toUpperCase() + str.slice(1)
+  const capitalized = str.charAt(0).toUpperCase() + str.slice(1);
 
-  return capitalized
+  return capitalized;
 }
 
 const assignWidth = (normalWidth: number, extension: number) =>
-  window.innerWidth > 1500 ? normalWidth + extension : normalWidth
+  window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
 
 const UserInfoForm = ({
   options,
   addUserHandler,
-  close
+  close,
 }: {
-  close: () => void
-  options: OptionsInterface
+  close: () => void;
+  options: OptionsInterface;
   addUserHandler: (info: {
-    name: string
-    email: string
-    permission: { Header: string; accessor: string }
-  }) => void
+    name: string;
+    email: string;
+    permission: { Header: string; accessor: string };
+  }) => void;
 }) => {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [permission, setPermission] = useState<{
-    Header: string
-    accessor: string
-  } | null>(null)
+    Header: string;
+    accessor: string;
+  } | null>(null);
   return (
     <div className={styles.userInfoFormContainer}>
-      <label htmlFor='name'>Name</label>
+      <label htmlFor="name">Name</label>
       <input
-        id='name'
+        id="name"
         value={name}
-        placeholder='Enter Name'
+        placeholder="Enter Name"
         onChange={(e) => setName(e.target.value)}
       />
-      <label htmlFor='email'>Email</label>
+      <label htmlFor="email">Email</label>
       <input
-        id='email'
+        id="email"
         value={email}
-        placeholder='Enter Email'
+        placeholder="Enter Email"
         onChange={(e) => setEmail(e.target.value)}
       />
-      <label htmlFor='dropdown'>Name</label>
+      <label htmlFor="dropdown">Name</label>
       <DropdownComponent
         options={options.roleType}
         changeHandler={(val) => setPermission(val)}
@@ -101,22 +101,22 @@ const UserInfoForm = ({
             addUserHandler({
               name,
               email,
-              permission
-            })
-          setName('')
-          setEmail('')
-          setPermission(null)
-          close()
+              permission,
+            });
+          setName("");
+          setEmail("");
+          setPermission(null);
+          close();
         }}
       >
         Add User
       </button>
     </div>
-  )
-}
+  );
+};
 
 const TeamTable = ({ data, changeHandler, options }: TablePropsInterface) => {
-  const init = (data: TableDataInterface) => data
+  const init = (data: TableDataInterface) => data;
 
   const updateData = (
     data: (string | number | { Header: string; accessor: string })[][],
@@ -124,55 +124,52 @@ const TeamTable = ({ data, changeHandler, options }: TablePropsInterface) => {
     columnIndex: number,
     value: string | number
   ) => {
-    data[rowIndex][columnIndex] = value
-    return data
-  }
+    data[rowIndex][columnIndex] = value;
+    return data;
+  };
 
   const removeUser = (
     data: (string | number | { Header: string; accessor: string })[][],
     rowIndex: number
   ) => {
-    let arr = [...data]
+    let arr = [...data];
     return arr.filter((ele, i) => {
-      if (i === rowIndex) return false
-      return true
-    })
-    // console.log(arr);
-    // return arr;
-  }
+      if (i === rowIndex) return false;
+      return true;
+    });
+  };
 
   const addUserHandler = (info: {
-    name: string
-    email: string
-    permission: { Header: string; accessor: string }
+    name: string;
+    email: string;
+    permission: { Header: string; accessor: string };
   }) => {
     dispatch({
-      type: 'ADD_USER',
-      payload: info
-    })
-  }
+      type: "ADD_USER",
+      payload: info,
+    });
+  };
 
   const addUser = (
     data: (string | number | { Header: string; accessor: string })[][],
     value: {
-      name: string
-      email: string
-      permission: { Header: string; accessor: string }
+      name: string;
+      email: string;
+      permission: { Header: string; accessor: string };
     }
   ) => {
-    let thisData = [...data]
-    thisData.push([value.name, value.email, value.permission, 'button'])
-    return thisData
-  }
+    let thisData = [...data];
+    thisData.push([value.name, value.email, value.permission, "button"]);
+    return thisData;
+  };
 
   const reducer = (
     state: TableDataInterface,
     action: ActionInterface
   ): TableDataInterface => {
-    console.log('reducer called', action)
-    let currentState = { ...state }
+    let currentState = { ...state };
     switch (action.type) {
-      case 'UPDATE_DATA':
+      case "UPDATE_DATA":
         return {
           ...currentState,
           data: updateData(
@@ -180,35 +177,35 @@ const TeamTable = ({ data, changeHandler, options }: TablePropsInterface) => {
             action.payload.rowIndex,
             action.payload.columnIndex,
             action.payload.value
-          )
-        }
-      case 'REMOVE_USER':
+          ),
+        };
+      case "REMOVE_USER":
         return {
           ...currentState,
-          data: removeUser(currentState.data, action.payload.rowIndex)
-        }
-      case 'ADD_USER':
+          data: removeUser(currentState.data, action.payload.rowIndex),
+        };
+      case "ADD_USER":
         return {
           ...currentState,
-          data: addUser(currentState.data, action.payload)
-        }
+          data: addUser(currentState.data, action.payload),
+        };
     }
-    return state
-  }
+    return state;
+  };
 
   const checkIfObject = (value: any) => {
-    if (typeof value === 'object') return ''
-    return value
-  }
+    if (typeof value === "object") return "";
+    return value;
+  };
 
   const checkIfOptionValue = (
     value: string | number | { Header: string; accessor: string }
   ) => {
-    if (typeof value === 'string') return undefined
-    else if (typeof value === 'number') return undefined
-    else return value
-  }
-  const [state, dispatch] = useReducer(reducer, data, init)
+    if (typeof value === "string") return undefined;
+    else if (typeof value === "number") return undefined;
+    else return value;
+  };
+  const [state, dispatch] = useReducer(reducer, data, init);
 
   const passRequiredElement = (
     i: number,
@@ -218,72 +215,71 @@ const TeamTable = ({ data, changeHandler, options }: TablePropsInterface) => {
   ): ReactElement | ReactNode | string | number => {
     switch (j) {
       case 2:
-        console.log(typeof thisData.data[i][j])
         return (
-          <div style={{ display: 'flex', width: '100%' }}>
+          <div style={{ display: "flex", width: "100%" }}>
             <DropdownComponent
               options={options.roleType}
               changeHandler={(value) => {
                 dispatch({
-                  type: 'UPDATE_DATA',
+                  type: "UPDATE_DATA",
                   payload: {
                     rowIndex: i,
                     columnIndex: j,
-                    value
-                  }
-                })
+                    value,
+                  },
+                });
               }}
               defaultValue={checkIfOptionValue(thisData.data[i][j])}
             />
           </div>
-        )
+        );
       case 3:
         return (
           <button
             onClick={() => {
               dispatch({
-                type: 'REMOVE_USER',
+                type: "REMOVE_USER",
                 payload: {
-                  rowIndex: i
-                }
-              })
+                  rowIndex: i,
+                },
+              });
             }}
           >
             Remove User
           </button>
-        )
+        );
       default:
         return (
           <input
-            className='editableInput'
+            className="editableInput"
             value={
-              thisData.data[i][j] ? checkIfObject(thisData.data[i][j]) : ''
+              thisData.data[i][j] ? checkIfObject(thisData.data[i][j]) : ""
             }
-            title={thisData.data[i][j] ? `${thisData.data[i][j]}` : '0'}
+            title={thisData.data[i][j] ? `${thisData.data[i][j]}` : "0"}
             onChange={(e) => {
               dispatch({
-                type: 'UPDATE_DATA',
+                type: "UPDATE_DATA",
                 payload: {
                   rowIndex: i,
                   columnIndex: j,
-                  value: checkIfObject(e.target.value)
-                }
-              })
+                  value: checkIfObject(e.target.value),
+                },
+              });
             }}
             key={`row${i}column${j}`}
           />
-        )
+        );
     }
-  }
+  };
 
   const generateTableData = (state: TableDataInterface) => {
-    const thisData = { ...state }
-    const currentData: TeamTableRowInterface[] = []
+    const thisData = { ...state };
+    const currentData: TeamTableRowInterface[] = [];
     if (state.data) {
       // 1st loop is for iterating over rows
-      let loop1 = thisData.data.length
+      let loop1 = thisData.data.length;
       // 2nd loop is for iterating over columns
-      let loop2 = thisData.fields.length
+      let loop2 = thisData.fields.length;
       for (let i = 0; i < loop1; i++) {
         for (let j = 0; j < loop2; j++) {
           currentData[i] = {
@@ -293,17 +289,17 @@ const TeamTable = ({ data, changeHandler, options }: TablePropsInterface) => {
               j,
               thisData,
               currentData
-            )
-          }
+            ),
+          };
         }
       }
     }
-    return currentData
-  }
+    return currentData;
+  };
 
   // thisData.data[currentYear][i][j]
 
-  const tableData = useMemo(() => generateTableData(state), [state])
+  const tableData = useMemo(() => generateTableData(state), [state]);
   // const tableConfig = useMemo(
   //   () => generateTableConfig(state, monthsArray),
   //   []
@@ -312,45 +308,45 @@ const TeamTable = ({ data, changeHandler, options }: TablePropsInterface) => {
   const tableConfig: TableUIConfig = {
     columns: [
       {
-        Header: 'Name',
-        accessor: 'name',
-        width: assignWidth(10, 5)
+        Header: "Name",
+        accessor: "name",
+        width: assignWidth(10, 5),
       },
       {
-        Header: 'Email',
-        accessor: 'email',
-        width: assignWidth(10, 5)
+        Header: "Email",
+        accessor: "email",
+        width: assignWidth(10, 5),
       },
       {
-        Header: 'Permissions',
-        accessor: 'permissions',
-        width: assignWidth(10, 0)
+        Header: "Permissions",
+        accessor: "permissions",
+        width: assignWidth(10, 0),
       },
       {
-        Header: 'Remove User',
-        accessor: 'removeUser',
-        width: assignWidth(4, 0)
-      }
-    ]
-  }
+        Header: "Remove User",
+        accessor: "removeUser",
+        width: assignWidth(4, 0),
+      },
+    ],
+  };
 
-  const [showCurrencyConfig, setShowCurrencyConfig] = useState(false)
-  const [showYearConfig, setShowYearConfig] = useState(false)
+  const [showCurrencyConfig, setShowCurrencyConfig] = useState(false);
+  const [showYearConfig, setShowYearConfig] = useState(false);
 
   const renderCurrencyOptions = () => {
-    let currencyList = ['USD', 'INR']
+    let currencyList = ["USD", "INR"];
     return currencyList.map((c, i) => {
-      return <div key={i}>{c}</div>
-    })
-  }
+      return <div key={i}>{c}</div>;
+    });
+  };
 
   const renderYearOptions = (years: string[]) => {
     return years.map((year, i) => {
-      return <div key={i}>{year}</div>
-    })
-  }
+      return <div key={i}>{year}</div>;
+    });
+  };
 
-  const [showUserInfoInput, setShowUserInfoInput] = useState(false)
+  const [showUserInfoInput, setShowUserInfoInput] = useState(false);
 
   return (
     <div className={styles.mainTableContainer}>
@@ -380,7 +376,7 @@ const TeamTable = ({ data, changeHandler, options }: TablePropsInterface) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TeamTable
+export default TeamTable;

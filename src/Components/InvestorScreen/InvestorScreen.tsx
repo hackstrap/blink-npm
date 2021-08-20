@@ -23,9 +23,10 @@ import Dashboard from "./Dashboard/Dashboard";
 import AppsIcon from "@material-ui/icons/Apps";
 import { globalContext } from "../../AppContext";
 import { OptionInterface } from "../interfaces";
-import { fetchInvestorInfo } from "../fetch";
+import { fetchInvestorInfo, fetchInvestorInfoUnity } from "../fetch";
 import { EqualizerRounded, PieChartRounded } from "@material-ui/icons";
 import styles from "./index.module.css";
+import PageNotAvaliable from "../PageNotAvaliable";
 
 const useStyles = makeStyles({
   screen: {
@@ -144,18 +145,9 @@ const InvestorScreen = () => {
     setValue(newValue);
   };
 
-  const [startupOptions, setStartupOptions] = React.useState<OptionInterface[]>(
-    [
-      {
-        Header: "Startup 1",
-        accessor: "startup-1slug",
-      },
-      {
-        Header: "Startup 2",
-        accessor: "startup-2slug",
-      },
-    ]
-  );
+  const [startupOptions, setStartupOptions] = React.useState<
+    OptionInterface[] | null
+  >(null);
 
   const renderCurrentView = (view: string | undefined) => {
     switch (view) {
@@ -170,7 +162,7 @@ const InvestorScreen = () => {
       default:
         return (
           <Dashboard
-            startupOptions={startupOptions}
+            startupOptions={startupOptions ? startupOptions : []}
             setStartupOptions={(value: OptionInterface[]) =>
               setStartupOptions(value)
             }
@@ -179,8 +171,35 @@ const InvestorScreen = () => {
     }
   };
 
+  const getStartupList = () => {
+    fetchInvestorInfoUnity(
+      appContext?.apiRoute,
+      appContext?.token,
+      "investor_startups",
+      undefined,
+      appContext?.userInfo?.accessor
+    )
+      .then((res) => {
+        if (!Array.isArray(res?.data)) {
+          let updatedList = Object.values(res.data).map((s: any) => {
+            return {
+              Header: s.startup_name,
+              accessor: s.startup_id,
+            };
+          });
+          setStartupOptions(updatedList);
+        } else {
+          setStartupOptions(null);
+        }
+      })
+      .catch((err) => {
+        setStartupOptions(null);
+      });
+  };
+
   React.useEffect(() => {
     // set the navigation bar value on initial load
+    getStartupList();
     switch (appContext?.currentView) {
       case "dashboard":
         setValue(1);
@@ -250,15 +269,16 @@ const InvestorScreen = () => {
               className={value === 1 ? styles.active : styles.inactive}
               {...a11yProps(1)}
             />
-            {/* <Tab
-              label="Settings"
-              icon={<SettingsRounded />}
-              {...a11yProps(2)}
-            /> */}
           </Tabs>
         </AppBar>
       </div>
-      {renderCurrentView(appContext?.currentView)}
+      {startupOptions ? (
+        renderCurrentView(appContext?.currentView)
+      ) : (
+        <Container style={{ marginTop: "3rem" }}>
+          <PageNotAvaliable />
+        </Container>
+      )}
     </Container>
   );
 };
