@@ -21,7 +21,7 @@ export interface ProductDataInterface {
   startup_id: string;
   year: number;
   labels: string[];
-  dataset: (string | undefined)[][];
+  dataset: (string | undefined | number)[][];
 }
 
 export interface ProductTableInterface {
@@ -220,19 +220,19 @@ const ProductPage = (props: PropsInterface) => {
                   labels: ["Fill your data here"],
                   dataset: [
                     [
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
-                      null,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
+                      undefined,
                     ],
                   ],
                 };

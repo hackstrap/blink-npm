@@ -2,6 +2,8 @@ import {
   Button,
   capitalize,
   makeStyles,
+  MenuItem,
+  Select,
   Theme,
   Tooltip,
   Typography,
@@ -26,16 +28,8 @@ import { KeyDownIcon } from "../StartupScreen/TablesView/NotesPage/NotesComponen
 import { renderToolTip } from "./RevenueTable";
 
 interface UserTableRowInterface {
-  [key: string]: string | ReactNode;
+  [key: string]: string | number | ReactNode;
 }
-
-// // program to convert first letter of a string to uppercase
-// function capitalizeFirstLetter(str: string) {
-//   // converting first letter to uppercase
-//   const capitalized = str.charAt(0).toUpperCase() + str.slice(1)
-
-//   return capitalized
-// }
 
 const assignWidth = (normalWidth: number, extension: number) =>
   window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
@@ -50,6 +44,11 @@ const useStyles = makeStyles((theme: Theme) => {
       padding: "64px",
       paddingTop: "48px",
       [theme.breakpoints.down("md")]: {
+        padding: "32px",
+        paddingTop: "32px",
+        paddingBottom: "32px",
+      },
+      [theme.breakpoints.down("sm")]: {
         padding: "15px",
         paddingTop: "32px",
         paddingBottom: "32px",
@@ -61,7 +60,7 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     infoContainer: {
       alignItems: "center",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         gap: 15,
         flexDirection: "column",
         alignItems: "flex-start",
@@ -72,8 +71,9 @@ const useStyles = makeStyles((theme: Theme) => {
     btnGroup: {
       display: "flex",
       marginLeft: "auto",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         marginLeft: 0,
+        width: "100%",
       },
     },
     boldText: {
@@ -152,7 +152,7 @@ const UsersTable = ({
     },
   ];
 
-  const addMonth = (year: (string | undefined)[][], payload: any) => {
+  const addMonth = (year: (string | number | undefined)[][], payload: any) => {
     setSaveChangesBtn(true);
     let data = [...year];
     data[payload.index] = [payload.monthName, 0, 0, 0];
@@ -163,7 +163,10 @@ const UsersTable = ({
     dispatch({ type: "RESET", payload: data });
   }, [data]);
 
-  const removeMonth = (year: (string | undefined)[][], payload: any) => {
+  const removeMonth = (
+    year: (string | number | undefined)[][],
+    payload: any
+  ) => {
     setSaveChangesBtn(true);
     let data = [...year];
     data[payload.index] = [];
@@ -171,10 +174,10 @@ const UsersTable = ({
   };
 
   const updateData = (
-    data: (string | undefined)[][],
+    data: (string | number | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | undefined
+    value: string | number | undefined
   ) => {
     setSaveChangesBtn(true);
     data[columnIndex][rowIndex] = value;
@@ -421,15 +424,9 @@ const UsersTable = ({
     }
     return years.map((year, i) => {
       return (
-        <Typography
-          onClick={() => {
-            setCurrentYear(year);
-            setShowYearConfig(false);
-          }}
-          key={i}
-        >
+        <MenuItem value={year} key={i}>
           {year}
-        </Typography>
+        </MenuItem>
       );
     });
   };
@@ -484,27 +481,16 @@ const UsersTable = ({
               <div></div>
             )}
           </div> */}
-          <div>
-            <Button
-              onClick={(e) => {
-                setShowYearConfig(!showYearConfig);
-              }}
-              variant="outlined"
-              className={styles.dropdownButton}
-            >
-              {`${currentYear}`} <KeyDownIcon />
-            </Button>
-            {showYearConfig ? (
-              <div
-                className={styles.columnConfigBox}
-                onMouseLeave={(e) => setShowYearConfig(false)}
-              >
-                {renderYearOptions()}
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </div>
+          <Select
+            value={currentYear}
+            onChange={(e) => {
+              setCurrentYear(e.target.value);
+            }}
+            variant="outlined"
+            className={styles.dropdownButton}
+          >
+            {renderYearOptions()}
+          </Select>
           {/* <div>
             <Button
               onClick={(e) => {

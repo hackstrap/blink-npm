@@ -113,16 +113,16 @@ export const defaultTheme = responsiveFontSizes(
     breakpoints: {
       /**========================================================================
        * *                                INFO
-       * value         |0px     480px    780px    1025px   1600px
+       * value         |0px     550px    780px    1280px   1600px
        * key           |xs      sm       md       lg       xl
        * screen width  |--------|--------|--------|--------|-------->
        * range         |   xs   |   sm   |   md   |   lg   |   xl
        *========================================================================**/
       values: {
         xs: 0,
-        sm: 480,
-        md: 780,
-        lg: 1400,
+        sm: 550,
+        md: 760,
+        lg: 1280,
         xl: 1600
       }
     }

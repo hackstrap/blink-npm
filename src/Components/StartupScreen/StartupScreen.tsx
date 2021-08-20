@@ -140,7 +140,7 @@ const StartupScreen = () => {
   }, [value]);
 
   return (
-    <Container maxWidth="lg" className={classes.screen}>
+    <Container className={classes.screen}>
       <Snackbar
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         open={appContext?.snackbarState.open}

@@ -42,3 +42,16 @@
   overflow-y: auto;
   cursor: pointer;
 }
+.dropdownButton > div {
+  padding: 12px 0px;
+  padding-right: 32px !important;
+  padding-left: 18px !important;
+  text-align: center;
+  background-color: #fff !important;
+  outline: none;
+}
+@media only screen and (max-width: 760px) {
+  .dropdownButton {
+    margin-right: auto;
+  }
+}

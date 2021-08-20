@@ -77,11 +77,11 @@ const employeeTableFields = [
 export interface TableDataInterface {
   currency?: string;
   fields: OptionInterface[];
-  data: (string | undefined)[][];
+  data: (string | number | undefined)[][];
 }
 
 interface EmployeeTableRowInterface {
-  [key: string]: string | undefined | ReactNode | JSX.Element;
+  [key: string]: string | number | undefined | ReactNode | JSX.Element;
 }
 
 const useStyles = makeStyles((theme: Theme) => {
@@ -94,6 +94,11 @@ const useStyles = makeStyles((theme: Theme) => {
       padding: "64px",
       paddingTop: "48px",
       [theme.breakpoints.down("md")]: {
+        padding: "32px",
+        paddingTop: "32px",
+        paddingBottom: "32px",
+      },
+      [theme.breakpoints.down("sm")]: {
         padding: "15px",
         paddingTop: "32px",
         paddingBottom: "32px",
@@ -105,7 +110,7 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     infoContainer: {
       alignItems: "center",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         gap: 15,
         flexDirection: "column",
         alignItems: "flex-start",
@@ -116,8 +121,9 @@ const useStyles = makeStyles((theme: Theme) => {
     btnGroup: {
       display: "flex",
       marginLeft: "auto",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         marginLeft: 0,
+        width: "100%",
       },
     },
     boldText: {
@@ -162,10 +168,10 @@ const EmployeeTable = ({
   const [deleteRowMode, setDeleteRowMode] = useState(false);
 
   const updateData = (
-    data: (string | undefined)[][],
+    data: (string | number | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | undefined
+    value: string | number | undefined
   ) => {
     setSaveChangesBtn(true);
     let currentData = [...data];
@@ -173,9 +179,9 @@ const EmployeeTable = ({
     return currentData;
   };
 
-  const addRow = (data: (string | undefined)[][]) => {
+  const addRow = (data: (string | number | undefined)[][]) => {
     setSaveChangesBtn(true);
-    let currentData: (string | undefined)[][] = [];
+    let currentData: (string | number | undefined)[][] = [];
 
     if (data !== undefined && data?.length) {
       currentData = [...data];
@@ -184,7 +190,10 @@ const EmployeeTable = ({
     return currentData;
   };
 
-  const removeRow = (data: (string | undefined)[][], rowIndex: number) => {
+  const removeRow = (
+    data: (string | number | undefined)[][],
+    rowIndex: number
+  ) => {
     return data.filter((d, i) => {
       return i === rowIndex ? false : true;
     });
@@ -347,7 +356,7 @@ const EmployeeTable = ({
                 });
               }}
               className={styles.selectInput}
-              value={getDateString(thisData.data[i][j])}
+              value={getDateString(thisData.data[i][j]?.toString())}
             />
           </Typography>
         ) : (

@@ -108,7 +108,7 @@
   border: 1px solid #0066eb !important;
   background-color: #0066eb18 !important;
   color: #0066eb !important;
-  padding: 5px !important;
+  padding: 10px 36px !important;
   margin-left: 2rem !important;
   font-size: small !important;
 }
@@ -129,23 +129,36 @@
   margin-left: 15px;
 }
 
-.dropdownButton:focus {
+.dropdownButton > div {
+  padding: 12px 0px;
+  padding-right: 32px !important;
+  padding-left: 18px !important;
+  text-align: center;
+  background-color: #fff !important;
+  outline: none;
+}
+
+/* .dropdownButton:focus {
   border: 1px solid #0066eb !important;
   box-shadow: 0 0 1.5pt 1.5pt #78b3ff78 !important;
-}
+} */
 
 .fixedData {
   /* font-weight: 600; */
   color: #0066eb;
 }
 
-@media only screen and (max-width: 1400px) {
+@media only screen and (max-width: 760px) {
   .saveChanges {
     margin-left: 0rem !important;
+    width: 100%;
   }
   .commonButton {
     margin-left: 0px;
     margin-top: 15px;
+    width: 100%;
+  }
+  .dropdownButton {
     width: 100%;
   }
 }

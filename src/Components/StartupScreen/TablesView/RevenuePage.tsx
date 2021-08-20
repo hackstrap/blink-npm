@@ -110,7 +110,7 @@ export const convertToFrontendSchema = (
       return m1["month"] - m2["month"];
     });
     convertedData.data[year] = currentData.map((monthData: any) => {
-      let arr: (string | undefined)[] = [];
+      let arr: (string | undefined | number)[] = [];
       fields.forEach((field, i) => {
         if (monthData[field.accessor] || monthData[field.accessor] === 0) {
           arr.push(monthData[field.accessor]);

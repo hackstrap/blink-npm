@@ -2,6 +2,8 @@ import {
   Button,
   capitalize,
   makeStyles,
+  MenuItem,
+  Select,
   Theme,
   Tooltip,
   Typography,
@@ -27,7 +29,7 @@ import { KeyDownIcon } from "../StartupScreen/TablesView/NotesPage/NotesComponen
 import { renderToolTip } from "./RevenueTable";
 
 interface ExpenseTableRowInterface {
-  [key: string]: string | ReactNode;
+  [key: string]: string | number | ReactNode;
 }
 
 const assignWidth = (normalWidth: number, extension: number) =>
@@ -43,6 +45,11 @@ const useStyles = makeStyles((theme: Theme) => {
       padding: "64px",
       paddingTop: "48px",
       [theme.breakpoints.down("md")]: {
+        padding: "32px",
+        paddingTop: "32px",
+        paddingBottom: "32px",
+      },
+      [theme.breakpoints.down("sm")]: {
         padding: "15px",
         paddingTop: "32px",
         paddingBottom: "32px",
@@ -54,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     infoContainer: {
       alignItems: "center",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         gap: 15,
         flexDirection: "column",
         alignItems: "flex-start",
@@ -65,8 +72,9 @@ const useStyles = makeStyles((theme: Theme) => {
     btnGroup: {
       display: "flex",
       marginLeft: "auto",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         marginLeft: 0,
+        width: "100%",
       },
     },
     boldText: {
@@ -102,23 +110,26 @@ const ExpensesTable = ({
     "december",
   ];
 
-  const addMonth = (year: (string | undefined)[][], payload: any) => {
+  const addMonth = (year: (string | number | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [payload.monthName, 0, 0, 0];
     return data;
   };
 
-  const removeMonth = (year: (string | undefined)[][], payload: any) => {
+  const removeMonth = (
+    year: (string | number | undefined)[][],
+    payload: any
+  ) => {
     let data = [...year];
     data[payload.index] = [];
     return data;
   };
 
   const updateData = (
-    data: (string | undefined)[][],
+    data: (string | number | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | undefined
+    value: string | number | undefined
   ) => {
     setSaveChangesBtn(true);
     data[columnIndex][rowIndex] = value;
@@ -488,15 +499,9 @@ const ExpensesTable = ({
     }
     return years.map((year, i) => {
       return (
-        <Typography
-          onClick={() => {
-            setShowYearConfig(false);
-            setCurrentYear(year);
-          }}
-          key={i}
-        >
+        <MenuItem value={year} key={i}>
           {year}
-        </Typography>
+        </MenuItem>
       );
     });
   };
@@ -541,27 +546,16 @@ const ExpensesTable = ({
               <div></div>
             )}
           </div> */}
-          <div>
-            <Button
-              onClick={(e) => {
-                setShowYearConfig(!showYearConfig);
-              }}
-              variant="outlined"
-              className={styles.dropdownButton}
-            >
-              {`${currentYear}`} <KeyDownIcon />
-            </Button>
-            {showYearConfig ? (
-              <div
-                className={styles.columnConfigBox}
-                onMouseLeave={(e) => setShowYearConfig(false)}
-              >
-                {renderYearOptions()}
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </div>
+          <Select
+            value={currentYear}
+            onChange={(e) => {
+              setCurrentYear(e.target.value);
+            }}
+            variant="outlined"
+            className={styles.dropdownButton}
+          >
+            {renderYearOptions()}
+          </Select>
         </div>
       </div>
       <div className={styles.tableContainer}>

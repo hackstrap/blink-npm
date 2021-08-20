@@ -22,7 +22,7 @@ interface PropsInterface {
 export interface TableDataInterface {
   currency?: string;
   fields: OptionInterface[];
-  data: (string | undefined)[][];
+  data: (string | undefined | number)[][];
 }
 
 export const convertToFrontendSchema = (
@@ -39,7 +39,7 @@ export const convertToFrontendSchema = (
     return convertedData;
   } else {
     convertedData.data = data.map((document: any) => {
-      let arr: (string | undefined)[] = [];
+      let arr: (string | undefined | number)[] = [];
       fields.forEach((field, i) => {
         if (document[field.accessor]) {
           arr.push(document[field.accessor]);

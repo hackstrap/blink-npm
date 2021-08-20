@@ -5,6 +5,8 @@ import {
   Button,
   capitalize,
   makeStyles,
+  MenuItem,
+  Select,
   Theme,
   Tooltip,
   Typography,
@@ -30,6 +32,11 @@ const useStyles = makeStyles((theme: Theme) => {
       padding: "64px",
       paddingTop: "48px",
       [theme.breakpoints.down("md")]: {
+        padding: "32px",
+        paddingTop: "32px",
+        paddingBottom: "32px",
+      },
+      [theme.breakpoints.down("sm")]: {
         padding: "15px",
         paddingTop: "32px",
         paddingBottom: "32px",
@@ -41,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => {
     },
     infoContainer: {
       alignItems: "center",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         gap: 15,
         flexDirection: "column",
         alignItems: "flex-start",
@@ -52,8 +59,9 @@ const useStyles = makeStyles((theme: Theme) => {
     btnGroup: {
       display: "flex",
       marginLeft: "auto",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         marginLeft: 0,
+        width: "100%",
       },
     },
     boldText: {
@@ -111,23 +119,26 @@ const RevenueTable = ({
     "december",
   ];
 
-  const addMonth = (year: (string | undefined)[][], payload: any) => {
+  const addMonth = (year: (string | number | undefined)[][], payload: any) => {
     let data = [...year];
     data[payload.index] = [payload.monthName, 0, 0, 0];
     return data;
   };
 
-  const removeMonth = (year: (string | undefined)[][], payload: any) => {
+  const removeMonth = (
+    year: (string | number | undefined)[][],
+    payload: any
+  ) => {
     let data = [...year];
     data[payload.index] = [];
     return data;
   };
 
   const updateData = (
-    data: (string | undefined)[][],
+    data: (string | number | undefined)[][],
     rowIndex: number,
     columnIndex: number,
-    value: string | undefined
+    value: string | number | undefined
   ) => {
     data[columnIndex][rowIndex] = value;
     return data;
@@ -442,6 +453,30 @@ const RevenueTable = ({
     });
   };
 
+  // const renderYearOptions = () => {
+  //   let years: string[] = [];
+  //   for (
+  //     let i = new Date().getFullYear();
+  //     i > parseInt(currentYear) - 200;
+  //     i--
+  //   ) {
+  //     years = [...years, i.toString()];
+  //   }
+  //   return years.map((year, i) => {
+  //     return (
+  //       <Typography
+  //         onClick={() => {
+  //           setShowYearConfig(false);
+  //           setCurrentYear(year);
+  //         }}
+  //         key={i}
+  //       >
+  //         {year}
+  //       </Typography>
+  //     );
+  //   });
+  // };
+
   const renderYearOptions = () => {
     let years: string[] = [];
     for (
@@ -453,15 +488,9 @@ const RevenueTable = ({
     }
     return years.map((year, i) => {
       return (
-        <Typography
-          onClick={() => {
-            setShowYearConfig(false);
-            setCurrentYear(year);
-          }}
-          key={i}
-        >
+        <MenuItem key={i} value={year}>
           {year}
-        </Typography>
+        </MenuItem>
       );
     });
   };
@@ -507,7 +536,17 @@ const RevenueTable = ({
               <div></div>
             )}
           </div> */}
-          <div>
+          <Select
+            value={currentYear}
+            onChange={(e) => {
+              setCurrentYear(e.target.value);
+            }}
+            variant="outlined"
+            className={styles.dropdownButton}
+          >
+            {renderYearOptions()}
+          </Select>
+          {/* <div>
             <Button
               onClick={(e) => {
                 setShowYearConfig(!showYearConfig);
@@ -527,7 +566,7 @@ const RevenueTable = ({
             ) : (
               <div></div>
             )}
-          </div>
+          </div> */}
           {/* <div>
             <Button
               onClick={(e) => {

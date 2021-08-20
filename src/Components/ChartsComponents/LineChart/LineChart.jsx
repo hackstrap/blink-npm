@@ -13,6 +13,8 @@ import {
   FormControlLabel,
   Switch,
   CircularProgress,
+  MenuItem,
+  Select,
 } from "@material-ui/core";
 import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
 import { DateRange } from "react-date-range";
@@ -28,8 +30,9 @@ const useStyles = makeStyles((theme) => {
   return {
     title: {
       marginRight: "auto",
-      [theme.breakpoints.down("md")]: {
+      [theme.breakpoints.down("sm")]: {
         width: "100%",
+        marginBottom: "1rem",
       },
       marginBottom: "0.5rem",
     },
@@ -161,15 +164,9 @@ const LineChartComponent = ({
     }
     return years.map((year, i) => {
       return (
-        <Typography
-          onClick={() => {
-            setShowDatePicker(false);
-            setCurrentYear(year);
-          }}
-          key={i}
-        >
+        <MenuItem value={year} key={i}>
           {year}
-        </Typography>
+        </MenuItem>
       );
     });
   };
@@ -180,30 +177,16 @@ const LineChartComponent = ({
         <div className={classes.title}>
           <Typography variant="h4">{title}</Typography>
         </div>
-        <div className={classes.datePicker}>
-          <Button
-            onClick={(e) => {
-              setShowDatePicker(!showDatePicker);
-            }}
-            variant="outlined"
-            classes={classes.dropDownBtn}
-          >
-            <Typography variant="body2">{currentYear}</Typography>
-            <KeyDownIcon />
-          </Button>
-          {showDatePicker ? (
-            <div
-              className={styles.columnConfigBox}
-              onMouseLeave={() => {
-                setShowDatePicker(false);
-              }}
-            >
-              {renderYearOptions()}
-            </div>
-          ) : (
-            <div></div>
-          )}
-        </div>
+        <Select
+          value={currentYear}
+          onChange={(e) => {
+            setCurrentYear(e.target.value);
+          }}
+          variant="outlined"
+          className={styles.dropdownButton}
+        >
+          {renderYearOptions()}
+        </Select>
         <div>
           {appContext?.currentScreen === "startupScreen" ? (
             <button
