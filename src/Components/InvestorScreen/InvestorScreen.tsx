@@ -275,7 +275,7 @@ const InvestorScreen = () => {
       {startupOptions ? (
         renderCurrentView(appContext?.currentView)
       ) : (
-        <Container style={{ marginTop: "3rem" }}>
+        <Container style={{ marginTop: "5rem" }}>
           <PageNotAvaliable />
         </Container>
       )}

@@ -34,7 +34,7 @@ const PageNotAvaliable = () => {
         <Puff />
       </div>
 
-      <Typography variant="h4" className={classes.text}>
+      <Typography variant="subtitle1" className={classes.text}>
         Data will be visible when Startup updates it.
       </Typography>
     </div>

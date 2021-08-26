@@ -89,9 +89,10 @@ const InvestmentSummary = () => {
             <InfoCard
               t1="Current Total Investment Value (₹)"
               v1={
-                summaryData && summaryData?.current_total_investment_value
-                  ? `${summaryData?.current_total_investment_value}`
-                  : undefined
+                summaryData?.current_total_investment_value
+                // summaryData && summaryData?.current_total_investment_value
+                //   ? `${summaryData?.current_total_investment_value}`
+                //   : undefined
               }
               v1bool={summaryData?.current_total_investment_value_bool}
               t2="Total Investment"
@@ -101,34 +102,18 @@ const InvestmentSummary = () => {
                   : undefined
               }
               t3="Aggregate Multiple"
-              v3={
-                summaryData && summaryData?.aggregate_multiple
-                  ? `${summaryData?.aggregate_multiple}`
-                  : undefined
-              }
+              v3={summaryData?.aggregate_multiple}
             />
           </Grid>
           <Grid item xs={12} md={6}>
             <InfoCard
               t1="Total Transactions"
-              v1={
-                summaryData && summaryData?.total_transactions?.all_transactions
-                  ? `${summaryData?.total_transactions?.all_transactions}`
-                  : undefined
-              }
+              v1={summaryData?.total_transactions?.all_transactions}
+              // v1bool={summaryData?.current_total_investment_value_bool}
               t2="Last 3 months"
-              v2={
-                summaryData &&
-                summaryData?.total_transactions?.last_three_months
-                  ? `${summaryData?.total_transactions?.last_three_months}`
-                  : undefined
-              }
+              v2={summaryData?.total_transactions?.last_three_months}
               t3="This Year"
-              v3={
-                summaryData && summaryData?.total_transactions?.this_year
-                  ? `${summaryData?.total_transactions?.this_year}`
-                  : undefined
-              }
+              v3={summaryData?.total_transactions?.this_year}
             />
           </Grid>
           <Grid item xs={12} md={6}>
@@ -224,7 +209,10 @@ const InvestmentSummary = () => {
           </Grid>
         </Grid>
       ) : (
-        <PageNotAvaliable />
+        <div style={{ marginTop: "2rem" }}>
+          {" "}
+          <PageNotAvaliable />
+        </div>
       )}
     </Container>
   );

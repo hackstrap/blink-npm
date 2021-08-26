@@ -47,11 +47,11 @@ interface PropsInterface {
 
 interface InfoCardPropsInterface {
   t1: string | undefined;
-  v1: string | undefined;
+  v1?: number | string | undefined;
   t2: string | undefined;
-  v2: string | undefined;
+  v2?: number | string | undefined;
   t3: string | undefined;
-  v3: string | undefined;
+  v3?: number | string | undefined;
   v1bool?: boolean;
 }
 
@@ -108,6 +108,8 @@ const useStyles = makeStyles((theme) => ({
   chartCardValue: {
     fontSize: "1.6rem",
     fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
   },
   chartCardTitle: {
     fontWeight: "bold",
@@ -297,15 +299,15 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
           variant="h3"
           className={classes.chartCardValue}
         >
-          {v1 ? (
+          {v1 !== null && v1 !== undefined ? (
             v1bool ? (
               <React.Fragment>
-                <span>{v1}</span>
+                <span style={{ marginRight: "15px" }}>{v1}</span>
                 <ArrowUpward style={{ color: "#53BB53" }} />
               </React.Fragment>
             ) : (
               <React.Fragment>
-                <span>{v1}</span>
+                <span style={{ marginRight: "15px" }}>{v1}</span>
                 <ArrowDownward style={{ color: "F34848" }} />
               </React.Fragment>
             )
@@ -319,7 +321,7 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
           variant="h3"
           className={classes.chartCardValue}
         >
-          {v1 ? v1 : <NoData />}
+          {v1 !== null && v1 !== undefined ? v1 : <NoData />}
         </Typography>
       )}
 
@@ -337,7 +339,7 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
             variant="h3"
             className={classes.infoCardValue}
           >
-            {v2 ? v2 : <NoData />}
+            {v2 !== null && v2 !== undefined ? v2 : <NoData />}
           </Typography>
         </div>
         <div>
@@ -352,7 +354,7 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
             variant="h3"
             className={classes.infoCardValue}
           >
-            {v3 ? v3 : <NoData />}
+            {v3 !== null && v3 !== undefined ? v3 : <NoData />}
           </Typography>
         </div>
       </div>
@@ -386,15 +388,15 @@ export const ChartCard = (props: ChartCardInterface) => {
                 : { marginTop: "30%" }
             }
           >
-            {data && value ? (
+            {data && value !== null && value !== undefined ? (
               valueBool ? (
                 <React.Fragment>
-                  <span>{value}</span>{" "}
+                  <span style={{ marginRight: "15px" }}>{value}</span>{" "}
                   <ArrowUpward style={{ color: "#53BB53" }} />
                 </React.Fragment>
               ) : (
                 <React.Fragment>
-                  <span>P{value}</span>{" "}
+                  <span style={{ marginRight: "15px" }}>{value}</span>{" "}
                   <ArrowDownward style={{ color: "F34848" }} />
                 </React.Fragment>
               )
@@ -413,7 +415,7 @@ export const ChartCard = (props: ChartCardInterface) => {
                 : { marginTop: "30%" }
             }
           >
-            {data && value ? value : <NoData />}
+            {data && value !== null && value !== undefined ? value : <NoData />}
           </Typography>
         )}
       </div>
@@ -745,7 +747,7 @@ const ValuationPage = (props: PropsInterface) => {
                       {
                         axis: "y",
                         type: "line",
-                        label: "Valuation (₹)",
+                        label: "Valuation (₹Cr.) ",
                         fill: true,
                         data:
                           valuationData?.valuation_data &&
@@ -775,14 +777,17 @@ const ValuationPage = (props: PropsInterface) => {
                 datasets: [
                   {
                     type: "bar",
-                    label: "Transactions Comparable",
-                    backgroundColor: "rgba(240, 140, 121, 1.0)",
-                    borderColor: "rgba(140, 140, 140, 0.0)",
+                    label: "Transactions Comparable (in Cr)",
+                    backgroundColor: "#5222D0",
+                    borderColor: "#5222D0",
+                    height: 15,
                     data: [
-                      valuationData?.valuation_chart[0].min,
-                      valuationData?.valuation_chart[0].max,
+                      [
+                        valuationData?.valuation_chart[0].min,
+                        valuationData?.valuation_chart[0].max,
+                      ],
                     ],
-                    barPercentage: 0.2,
+                    barPercentage: 0.4,
                   },
                 ],
               }
@@ -809,13 +814,27 @@ const ValuationPage = (props: PropsInterface) => {
                           line1: {
                             type: "line",
                             xMin:
-                              (valuationData?.valuation_chart[0].max -
-                                valuationData?.valuation_chart[0].min) /
-                              2,
+                              valuationData?.valuation_data &&
+                              Object.keys(valuationData?.valuation_data).length
+                                ? Object.values(
+                                    valuationData?.valuation_data
+                                  )[0][
+                                    Object.values(
+                                      valuationData?.valuation_data
+                                    )[0].length - 1
+                                  ]?.toString()
+                                : 0,
                             xMax:
-                              (valuationData?.valuation_chart[0].max -
-                                valuationData?.valuation_chart[0].min) /
-                              2,
+                              valuationData?.valuation_data &&
+                              Object.keys(valuationData?.valuation_data).length
+                                ? Object.values(
+                                    valuationData?.valuation_data
+                                  )[0][
+                                    Object.values(
+                                      valuationData?.valuation_data
+                                    )[0].length - 1
+                                  ]?.toString()
+                                : 0,
                             borderColor: "#000",
                             borderWidth: 2,
                             // borderDashOffset: 2,
