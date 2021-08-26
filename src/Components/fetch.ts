@@ -94,6 +94,25 @@ export const deleteCollection = (
   });
 };
 
+export const fetchInvestedStartupSummary = (
+  apiRoute: string | undefined,
+  token: string | undefined,
+  collection: string | undefined,
+  investor_id: string | undefined,
+  startup_id: string | undefined
+) => {
+  return axios.get(
+    `${
+      apiRoute ? apiRoute : fallbackRoute
+    }unity/v1/investor/${collection}?page=0&page_size=30&investor_id=${investor_id}&startup_id=${startup_id}`,
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  );
+};
+
 // export const uploadImage = () => {
 
 // }

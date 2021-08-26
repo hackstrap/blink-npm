@@ -162,7 +162,24 @@ const ProfileSettings = (props: PropsInterface) => {
       props.selectedStartup.accessor
     )
       .then((res) => {
-        setStartupInfo(res.data[0]);
+        if (res.data.length) {
+          setStartupInfo(res.data[0]);
+        } else {
+          setStartupInfo({
+            startup_name: "",
+            email_id: "",
+            sectors: "",
+            startupDescription: "",
+            date_format: "",
+            number_format: "",
+            first_month_of_financial_year: "",
+            first_month_of_tax_year: "",
+            accounting_method: "",
+            company_type: "",
+            time_zone: "",
+            currency: [],
+          });
+        }
       })
       .catch((err) => console.log(err));
   }, []);
@@ -183,20 +200,28 @@ const ProfileSettings = (props: PropsInterface) => {
   ];
 
   const renderMonthOptions = () => {
-    return monthsArray.map((month) => {
-      return <option value={month}>{capitalize(month)}</option>;
+    return monthsArray.map((month, i) => {
+      return (
+        <option key={i} value={month}>
+          {capitalize(month)}
+        </option>
+      );
     });
   };
 
   const renderTaxMonthOptions = () => {
     let arr: any[] = [];
     arr.push(
-      <option value={"Same as financial year"}>
+      <option key={0} value={"Same as financial year"}>
         {"Same as financial year"}
       </option>
     );
-    let options = monthsArray.map((month) => {
-      return <option value={month}>{capitalize(month)}</option>;
+    let options = monthsArray.map((month, i) => {
+      return (
+        <option key={i} value={month}>
+          {capitalize(month)}
+        </option>
+      );
     });
     return [arr, options];
   };

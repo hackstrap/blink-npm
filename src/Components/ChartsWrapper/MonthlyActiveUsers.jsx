@@ -252,7 +252,7 @@ const MonthlyActiveUsers = (props) => {
         },
       });
     }
-  }, [currentYear, props]);
+  }, [currentYear, props.selectedStartup]);
 
   return (
     <div ref={chartRef} style={{ height: "100%" }}>

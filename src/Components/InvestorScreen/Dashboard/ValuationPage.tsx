@@ -18,6 +18,7 @@ import {
 import {
   fetchCollection,
   fetchCollectionUnity,
+  fetchInvestedStartupSummary,
   fetchInvestorInfo,
 } from "../../fetch";
 import { useContext } from "react";
@@ -28,7 +29,7 @@ import { useState } from "react";
 import { ReactNode } from "react";
 import { BallTriangle } from "@agney/react-loading";
 import NoData from "../../NoData";
-import { Timer3 } from "@material-ui/icons";
+import { ArrowDownward, ArrowUpward, Timer3 } from "@material-ui/icons";
 
 interface ChartCardInterface {
   title: string;
@@ -37,6 +38,7 @@ interface ChartCardInterface {
   data: any;
   currentYear: string;
   changeHandler: Function;
+  valueBool?: boolean;
 }
 
 interface PropsInterface {
@@ -50,6 +52,7 @@ interface InfoCardPropsInterface {
   v2: string | undefined;
   t3: string | undefined;
   v3: string | undefined;
+  v1bool?: boolean;
 }
 
 interface ValuationChartInterface {
@@ -110,6 +113,22 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
   },
   yearSelect: {
+    borderRadius: "10px",
+    backgroundColor: "white",
+    marginLeft: "auto",
+    // outline: "none",
+    // "&:focus": {
+    //   border: "1px solid #0066eb",
+    //   boxShadow: "0 0 1.5pt 1.5pt #78b3ff78",
+    // },
+    // "& .MuiSelect-select:focus": {
+    //   backgroundColor: "white",
+    // },
+    border: "1px solid #777",
+    padding: "5px 14px",
+    fontWeight: "bold",
+  },
+  yearSelectCustom: {
     borderRadius: "10px",
     backgroundColor: "white",
     marginLeft: "auto",
@@ -217,7 +236,7 @@ export const StartupPieChartCard = (props: StartupPieInterface) => {
       >
         <Select
           variant="outlined"
-          className={classes.yearSelect}
+          className={classes.yearSelectCustom}
           value={state}
           onChange={(e) =>
             setState(typeof e.target.value === "string" ? e.target.value : "")
@@ -260,7 +279,7 @@ const renderYearOptions = (handleClick: Function) => {
 };
 
 export const InfoCard = (props: InfoCardPropsInterface) => {
-  let { t1, v1, t2, v2, t3, v3 } = props;
+  let { t1, v1, t2, v2, t3, v3, v1bool } = props;
   const theme = useTheme();
   const classes = useStyles(theme);
   return (
@@ -272,13 +291,38 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
       >
         {t1}
       </Typography>
-      <Typography
-        color="primary"
-        variant="h3"
-        className={classes.chartCardValue}
-      >
-        {v1 ? v1 : <NoData />}
-      </Typography>
+      {typeof v1bool === "boolean" ? (
+        <Typography
+          color="primary"
+          variant="h3"
+          className={classes.chartCardValue}
+        >
+          {v1 ? (
+            v1bool ? (
+              <React.Fragment>
+                <span>{v1}</span>
+                <ArrowUpward style={{ color: "#53BB53" }} />
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <span>{v1}</span>
+                <ArrowDownward style={{ color: "F34848" }} />
+              </React.Fragment>
+            )
+          ) : (
+            <NoData />
+          )}
+        </Typography>
+      ) : (
+        <Typography
+          color="primary"
+          variant="h3"
+          className={classes.chartCardValue}
+        >
+          {v1 ? v1 : <NoData />}
+        </Typography>
+      )}
+
       <Divider style={{ marginTop: "1rem", marginBottom: "1rem" }} />
       <div style={{ display: "flex" }}>
         <div style={{ marginRight: "2.5rem" }}>
@@ -319,7 +363,8 @@ export const InfoCard = (props: InfoCardPropsInterface) => {
 export const ChartCard = (props: ChartCardInterface) => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { title, value, options, data, currentYear, changeHandler } = props;
+  const { title, value, options, data, currentYear, changeHandler, valueBool } =
+    props;
   const matches = useMediaQuery("(max-width:1300px)");
   return (
     <div
@@ -330,18 +375,47 @@ export const ChartCard = (props: ChartCardInterface) => {
         <Typography variant="h4" className={classes.chartCardTitle}>
           {title}
         </Typography>
-        <Typography
-          color="primary"
-          variant="h3"
-          className={classes.chartCardValue}
-          style={
-            matches
-              ? { marginTop: "10%", marginBottom: "10%" }
-              : { marginTop: "30%" }
-          }
-        >
-          {data && value ? value : <NoData />}
-        </Typography>
+        {typeof valueBool === "boolean" ? (
+          <Typography
+            color="primary"
+            variant="h3"
+            className={classes.chartCardValue}
+            style={
+              matches
+                ? { marginTop: "10%", marginBottom: "10%" }
+                : { marginTop: "30%" }
+            }
+          >
+            {data && value ? (
+              valueBool ? (
+                <React.Fragment>
+                  <span>{value}</span>{" "}
+                  <ArrowUpward style={{ color: "#53BB53" }} />
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <span>P{value}</span>{" "}
+                  <ArrowDownward style={{ color: "F34848" }} />
+                </React.Fragment>
+              )
+            ) : (
+              <NoData />
+            )}
+          </Typography>
+        ) : (
+          <Typography
+            color="primary"
+            variant="h3"
+            className={classes.chartCardValue}
+            style={
+              matches
+                ? { marginTop: "10%", marginBottom: "10%" }
+                : { marginTop: "30%" }
+            }
+          >
+            {data && value ? value : <NoData />}
+          </Typography>
+        )}
       </div>
 
       {data && value ? (
@@ -352,14 +426,17 @@ export const ChartCard = (props: ChartCardInterface) => {
           />
           <div className={classes.chartInfoRight}>
             <div style={{ display: "flex" }}>
-              <Select
+              {/* <Select
                 className={classes.yearSelect}
                 value={currentYear}
                 onChange={(e) => changeHandler(e.target.value)}
                 variant="outlined"
               >
                 {renderYearOptions(changeHandler)}
-              </Select>
+              </Select> */}
+              <Typography className={classes.yearSelect}>
+                {currentYear}
+              </Typography>
             </div>
             <ChartWrapper
               type={"line"}
@@ -391,14 +468,7 @@ export const ValuationChart = (props: ValuationChartInterface) => {
         <Typography variant="h4" className={classes.chartCardTitle}>
           {title}
         </Typography>
-        <Select
-          className={classes.yearSelect}
-          value={currentYear}
-          onChange={(e) => changeHandler(e.target.value)}
-          variant="outlined"
-        >
-          {renderYearOptions(changeHandler)}
-        </Select>
+        <Typography className={classes.yearSelect}>{currentYear}</Typography>
       </div>
       {data ? (
         <React.Fragment>
@@ -457,22 +527,22 @@ const ValuationPage = (props: PropsInterface) => {
       props.selectedStartup.accessor
     ).then((res) => {
       if (res.data.length) {
-        setValuationData(res.data);
+        setValuationData(res.data[0]);
       } else {
         setValuationData(null);
       }
     });
   };
 
-  const getPortfolioData = () => {
-    fetchInvestorInfo(
+  const getInvestedStartupInfo = () => {
+    fetchInvestedStartupSummary(
       appContext?.apiRoute,
       appContext?.token,
-      "portfolio",
-      currentYear,
-      appContext?.userInfo?.accessor
+      "startup_summary",
+      appContext?.userInfo?.accessor,
+      props.selectedStartup.accessor
     ).then((res) => {
-      if (res.data.length) {
+      if (res.data) {
         setPortfolioData(res.data);
       } else {
         setPortfolioData(null);
@@ -481,15 +551,17 @@ const ValuationPage = (props: PropsInterface) => {
   };
   React.useEffect(() => {
     getValuationData();
-  }, [props, currentYear]);
+  }, [props.selectedStartup, currentYear]);
 
   React.useEffect(() => {
-    getPortfolioData();
-  }, []);
+    getInvestedStartupInfo();
+  }, [props.selectedStartup]);
+
+  console.log(valuationData, portfolioData);
 
   return (
     <Container maxWidth="lg">
-      {!valuationData ? (
+      {!valuationData && portfolioData ? (
         <div style={{ textAlign: "center", display: "flex" }}>
           <Typography
             style={{ display: "flex", margin: "auto", alignItems: "center" }}
@@ -507,28 +579,52 @@ const ValuationPage = (props: PropsInterface) => {
         <Grid item xs={12} md={6}>
           <InfoCard
             t1="Current Investment Value (₹)"
-            v1={undefined}
+            v1={portfolioData?.current_investment_value}
+            v1bool={portfolioData?.current_investment_value_bool}
             t2="Total Money Invested"
-            v2={undefined}
+            v2={portfolioData?.total_money_invested?.toString()}
             t3="Multiple"
-            v3={undefined}
+            v3={portfolioData?.startup_multiple?.toString()}
           />
         </Grid>
         <Grid item xs={12} md={6}>
           <InfoCard
             t1="Investment Time"
-            v1={undefined}
+            v1={
+              portfolioData?.investment_time
+                ? portfolioData?.investment_time?.in_year_month_day[0] +
+                  " Years " +
+                  portfolioData?.investment_time?.in_year_month_day[1] +
+                  " Months "
+                : undefined
+            }
             t2="In Days"
-            v2={undefined}
-            t3="In Years"
-            v3={undefined}
+            v2={portfolioData?.investment_time?.in_days.toString()}
+            t3="Total Transactions"
+            v3={portfolioData?.investment_time?.startup_total_number_of_transactions.toString()}
           />
         </Grid>
+
         <Grid item xs={12} md={6}>
           <ChartCard
-            title="IRR ( % )"
-            value="25%"
-            currentYear={currentYear}
+            title={"IRR (%)"}
+            valueBool={portfolioData?.startup_net_irr_bool}
+            value={
+              portfolioData?.startup_net_irr_data &&
+              Object.keys(portfolioData?.startup_net_irr_data).length
+                ? Object.values(portfolioData?.startup_net_irr_data)[0][
+                    -1
+                  ]?.toString()
+                : undefined
+            }
+            currentYear={
+              portfolioData?.startup_net_irr_data &&
+              Object.keys(portfolioData?.startup_net_irr_data).length
+                ? Object.keys(
+                    portfolioData?.startup_net_irr_data
+                  )[0]?.toString()
+                : "2021"
+            }
             changeHandler={handleYearChange}
             options={{
               scales: {
@@ -561,33 +657,55 @@ const ValuationPage = (props: PropsInterface) => {
               },
             }}
             data={
-              undefined
-              // {
-              //   labels: ["Q1", "Q2", "Q3", "Q4"],
-              //   datasets: [
-              //     {
-              //       axis: "y",
-              //       type: "line",
-              //       label: "Valuation (₹)",
-              //       fill: true,
-              //       data: [10, 45, 20, 30],
-              //       // backgroundColor: ["rgba(91, 143, 249, .5)"],
-              //       borderColor: ["#5B8FF9"],
-              //       borderWidth: 3,
-              //       pointRadius: 4,
-              //       pointBorderWidth: 3,
-              //       pointBackgroundColor: "#fff",
-              //     },
-              //   ],
-              // }
+              portfolioData?.startup_net_irr_data
+                ? {
+                    labels: ["Q1", "Q2", "Q3", "Q4"],
+                    datasets: [
+                      {
+                        axis: "y",
+                        type: "line",
+                        label: "Valuation (₹)",
+                        fill: true,
+                        data:
+                          portfolioData?.startup_net_irr_data &&
+                          Object.keys(portfolioData?.startup_net_irr_data)
+                            .length
+                            ? Object.values(
+                                portfolioData?.startup_net_irr_data
+                              )[0]
+                            : [],
+                        // backgroundColor: ["rgba(184, 219, 129, .5)"],
+                        borderColor: ["#A3C272"],
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBorderWidth: 3,
+                        pointBackgroundColor: "#fff",
+                      },
+                    ],
+                  }
+                : undefined
             }
           />
         </Grid>
+
         <Grid item xs={12} md={6}>
           <ChartCard
-            title={"Valuation "}
-            value="₹ 6 Cr"
-            currentYear={currentYear}
+            title="Valuation (Cr.)"
+            valueBool={valuationData?.valuation_bool}
+            value={
+              valuationData?.valuation_data &&
+              Object.keys(valuationData?.valuation_data).length
+                ? Object.values(valuationData?.valuation_data)[0][
+                    Object.values(valuationData?.valuation_data)[0].length - 1
+                  ]?.toString()
+                : undefined
+            }
+            currentYear={
+              valuationData?.valuation_data &&
+              Object.keys(valuationData?.valuation_data).length
+                ? Object.keys(valuationData?.valuation_data)[0]?.toString()
+                : "2021"
+            }
             changeHandler={handleYearChange}
             options={{
               scales: {
@@ -620,26 +738,30 @@ const ValuationPage = (props: PropsInterface) => {
               },
             }}
             data={
-              undefined
-
-              // {
-              //   labels: ["Q1", "Q2", "Q3", "Q4"],
-              //   datasets: [
-              //     {
-              //       axis: "y",
-              //       type: "line",
-              //       label: "Valuation (₹)",
-              //       fill: true,
-              //       data: [10, 45, 20, 30],
-              //       // backgroundColor: ["rgba(184, 219, 129, .5)"],
-              //       borderColor: ["#A3C272"],
-              //       borderWidth: 3,
-              //       pointRadius: 4,
-              //       pointBorderWidth: 3,
-              //       pointBackgroundColor: "#fff",
-              //     },
-              //   ],
-              // }
+              valuationData?.valuation_data
+                ? {
+                    labels: ["Q1", "Q2", "Q3", "Q4"],
+                    datasets: [
+                      {
+                        axis: "y",
+                        type: "line",
+                        label: "Valuation (₹)",
+                        fill: true,
+                        data:
+                          valuationData?.valuation_data &&
+                          Object.keys(valuationData?.valuation_data).length
+                            ? Object.values(valuationData?.valuation_data)[0]
+                            : [],
+                        // backgroundColor: ["rgba(91, 143, 249, .5)"],
+                        borderColor: ["#5B8FF9"],
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBorderWidth: 3,
+                        pointBackgroundColor: "#fff",
+                      },
+                    ],
+                  }
+                : undefined
             }
           />
         </Grid>
@@ -647,10 +769,90 @@ const ValuationPage = (props: PropsInterface) => {
         <Grid item xs={12} md={6}>
           <ValuationChart
             title="Valuation Chart"
-            data={undefined}
+            data={
+              valuationData?.valuation_chart[0] && {
+                labels: ["Transactions Comparable (in Cr)"],
+                datasets: [
+                  {
+                    type: "bar",
+                    label: "Transactions Comparable",
+                    backgroundColor: "rgba(240, 140, 121, 1.0)",
+                    borderColor: "rgba(140, 140, 140, 0.0)",
+                    data: [
+                      valuationData?.valuation_chart[0].min,
+                      valuationData?.valuation_chart[0].max,
+                    ],
+                    barPercentage: 0.2,
+                  },
+                ],
+              }
+            }
             // matches ? chartDataMobile : chartData
             description="Business valuation determines the economic value of a business"
-            options={chartOptions}
+            options={
+              valuationData?.valuation_chart[0]
+                ? {
+                    indexAxis: "y",
+                    layout: {
+                      padding: 5,
+                    },
+                    plugins: {
+                      legend: {
+                        position: "bottom",
+                        labels: {
+                          usePointStyle: true,
+                        },
+                      },
+                      autocolors: false,
+                      annotation: {
+                        annotations: {
+                          line1: {
+                            type: "line",
+                            xMin:
+                              (valuationData?.valuation_chart[0].max -
+                                valuationData?.valuation_chart[0].min) /
+                              2,
+                            xMax:
+                              (valuationData?.valuation_chart[0].max -
+                                valuationData?.valuation_chart[0].min) /
+                              2,
+                            borderColor: "#000",
+                            borderWidth: 2,
+                            // borderDashOffset: 2,
+                            borderDash: [6],
+                          },
+                        },
+                      },
+                    },
+                    tooltips: {
+                      mode: "index",
+                      intersect: false,
+                      displayColors: false,
+                    },
+                    title: {
+                      display: true,
+                      text: "Chart.js stackable with Min/Avg/Max",
+                    },
+                    scales: {
+                      y: {
+                        // position: "left",
+                        stacked: true,
+                        ticks: {
+                          count: 2,
+                        },
+                        display: false,
+                      },
+                      x: {
+                        stacked: false,
+
+                        ticks: {
+                          count: 4,
+                        },
+                      },
+                    },
+                  }
+                : {}
+            }
             currentYear={currentYear}
             changeHandler={handleYearChange}
           />

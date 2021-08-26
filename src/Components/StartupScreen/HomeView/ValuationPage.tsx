@@ -9,7 +9,7 @@ import {
   Container,
 } from "@material-ui/core";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { OptionInterface } from "../../interfaces";
+import { OptionInterface, ValuationDataInterface } from "../../interfaces";
 import { fetchCollection } from "../../fetch";
 import { useContext } from "react";
 import { globalContext } from "../../../AppContext";
@@ -35,27 +35,50 @@ const ValuationPage = (props: PropsInterface) => {
     setCurrentYear(year);
   };
 
-  const appContext = useContext(globalContext);
+  const [valuationData, setValuationData] =
+    React.useState<ValuationDataInterface | null>(null);
 
-  const getData = () => {
+  const appContext = useContext(globalContext);
+  const getValuationData = () => {
     fetchCollection(
       appContext?.apiRoute,
       appContext?.token,
       "valuation",
-      currentYear,
-      props.selectedStartup.accessor
-    );
+      undefined,
+      appContext?.userInfo?.accessor
+    ).then((res) => {
+      if (res.data.length) {
+        setValuationData(res.data[0]);
+      } else {
+        setValuationData(null);
+      }
+    });
   };
-  React.useEffect(() => {}, [props]);
+  React.useEffect(() => {
+    getValuationData();
+  }, [props.selectedStartup]);
 
   return (
     <Container maxWidth="lg">
       <Grid style={{ marginTop: "2rem" }} container spacing={matches ? 2 : 10}>
         <Grid item xs={12} md={6}>
           <ChartCard
-            title={"Valuation "}
-            value="₹ 6 Cr"
-            currentYear={currentYear}
+            title="Valuation (Cr.)"
+            valueBool={valuationData?.valuation_bool}
+            value={
+              valuationData?.valuation_data &&
+              Object.keys(valuationData?.valuation_data).length
+                ? Object.values(valuationData?.valuation_data)[0][
+                    Object.values(valuationData?.valuation_data)[0].length - 1
+                  ]?.toString()
+                : undefined
+            }
+            currentYear={
+              valuationData?.valuation_data &&
+              Object.keys(valuationData?.valuation_data).length
+                ? Object.keys(valuationData?.valuation_data)[0]?.toString()
+                : "2021"
+            }
             changeHandler={handleYearChange}
             options={{
               scales: {
@@ -88,25 +111,30 @@ const ValuationPage = (props: PropsInterface) => {
               },
             }}
             data={
-              undefined
-              // {
-              //   labels: ["Q1", "Q2", "Q3", "Q4"],
-              //   datasets: [
-              //     {
-              //       axis: "y",
-              //       type: "line",
-              //       label: "Valuation (₹)",
-              //       fill: true,
-              //       data: [10, 45, 20, 30],
-              //       backgroundColor: ["rgba(184, 219, 129, .5)"],
-              //       borderColor: ["#A3C272"],
-              //       borderWidth: 3,
-              //       pointRadius: 4,
-              //       pointBorderWidth: 3,
-              //       pointBackgroundColor: "#fff",
-              //     },
-              //   ],
-              // }
+              valuationData?.valuation_data
+                ? {
+                    labels: ["Q1", "Q2", "Q3", "Q4"],
+                    datasets: [
+                      {
+                        axis: "y",
+                        type: "line",
+                        label: "Valuation (₹)",
+                        fill: true,
+                        data:
+                          valuationData?.valuation_data &&
+                          Object.keys(valuationData?.valuation_data).length
+                            ? Object.values(valuationData?.valuation_data)[0]
+                            : [],
+                        // backgroundColor: ["rgba(91, 143, 249, .5)"],
+                        borderColor: ["#5B8FF9"],
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointBorderWidth: 3,
+                        pointBackgroundColor: "#fff",
+                      },
+                    ],
+                  }
+                : undefined
             }
           />
         </Grid>
@@ -114,10 +142,90 @@ const ValuationPage = (props: PropsInterface) => {
         <Grid item xs={12} md={6}>
           <ValuationChart
             title="Valuation Chart"
+            data={
+              valuationData?.valuation_chart[0] && {
+                labels: ["Transactions Comparable (in Cr)"],
+                datasets: [
+                  {
+                    type: "bar",
+                    label: "Transactions Comparable",
+                    backgroundColor: "rgba(240, 140, 121, 1.0)",
+                    borderColor: "rgba(140, 140, 140, 0.0)",
+                    data: [
+                      valuationData?.valuation_chart[0].min,
+                      valuationData?.valuation_chart[0].max,
+                    ],
+                    barPercentage: 0.2,
+                  },
+                ],
+              }
+            }
             // matches ? chartDataMobile : chartData
-            data={undefined}
             description="Business valuation determines the economic value of a business"
-            options={chartOptions}
+            options={
+              valuationData?.valuation_chart[0]
+                ? {
+                    indexAxis: "y",
+                    layout: {
+                      padding: 5,
+                    },
+                    plugins: {
+                      legend: {
+                        position: "bottom",
+                        labels: {
+                          usePointStyle: true,
+                        },
+                      },
+                      autocolors: false,
+                      annotation: {
+                        annotations: {
+                          line1: {
+                            type: "line",
+                            xMin:
+                              (valuationData?.valuation_chart[0].max -
+                                valuationData?.valuation_chart[0].min) /
+                              2,
+                            xMax:
+                              (valuationData?.valuation_chart[0].max -
+                                valuationData?.valuation_chart[0].min) /
+                              2,
+                            borderColor: "#000",
+                            borderWidth: 2,
+                            // borderDashOffset: 2,
+                            borderDash: [6],
+                          },
+                        },
+                      },
+                    },
+                    tooltips: {
+                      mode: "index",
+                      intersect: false,
+                      displayColors: false,
+                    },
+                    title: {
+                      display: true,
+                      text: "Chart.js stackable with Min/Avg/Max",
+                    },
+                    scales: {
+                      y: {
+                        // position: "left",
+                        stacked: true,
+                        ticks: {
+                          count: 2,
+                        },
+                        display: false,
+                      },
+                      x: {
+                        stacked: false,
+
+                        ticks: {
+                          count: 4,
+                        },
+                      },
+                    },
+                  }
+                : {}
+            }
             currentYear={currentYear}
             changeHandler={handleYearChange}
           />

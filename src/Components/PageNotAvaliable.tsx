@@ -35,7 +35,7 @@ const PageNotAvaliable = () => {
       </div>
 
       <Typography variant="h4" className={classes.text}>
-        This page is building...
+        Data will be visible when Startup updates it.
       </Typography>
     </div>
   );

@@ -152,7 +152,7 @@ const GrossProfitMargin = (props) => {
         },
       });
     }
-  }, [currentYear, props]);
+  }, [currentYear, props.selectedStartup]);
 
   return (
     <div style={{ height: "100%" }}>

@@ -93,6 +93,7 @@ const InvestmentSummary = () => {
                   ? `${summaryData?.current_total_investment_value}`
                   : undefined
               }
+              v1bool={summaryData?.current_total_investment_value_bool}
               t2="Total Investment"
               v2={
                 summaryData && summaryData?.total_investment
@@ -103,6 +104,29 @@ const InvestmentSummary = () => {
               v3={
                 summaryData && summaryData?.aggregate_multiple
                   ? `${summaryData?.aggregate_multiple}`
+                  : undefined
+              }
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <InfoCard
+              t1="Total Transactions"
+              v1={
+                summaryData && summaryData?.total_transactions?.all_transactions
+                  ? `${summaryData?.total_transactions?.all_transactions}`
+                  : undefined
+              }
+              t2="Last 3 months"
+              v2={
+                summaryData &&
+                summaryData?.total_transactions?.last_three_months
+                  ? `${summaryData?.total_transactions?.last_three_months}`
+                  : undefined
+              }
+              t3="This Year"
+              v3={
+                summaryData && summaryData?.total_transactions?.this_year
+                  ? `${summaryData?.total_transactions?.this_year}`
                   : undefined
               }
             />
@@ -121,6 +145,7 @@ const InvestmentSummary = () => {
                     }`
                   : undefined
               }
+              valueBool={summaryData?.agg_net_irr_bool}
               currentYear={currentYear}
               changeHandler={handleYearChange}
               options={{

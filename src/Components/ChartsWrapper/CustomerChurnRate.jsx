@@ -153,7 +153,7 @@ const CustomerChurnRate = (props) => {
         },
       });
     }
-  }, [currentYear, props]);
+  }, [currentYear, props.selectedStartup]);
 
   return (
     <div style={{ height: "100%" }}>

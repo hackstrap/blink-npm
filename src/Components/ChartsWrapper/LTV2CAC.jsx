@@ -266,7 +266,7 @@ const LTV2CAC = (props) => {
         },
       });
     }
-  }, [currentYear, props]);
+  }, [currentYear, props.selectedStartup]);
 
   return (
     <div ref={chartRef} style={{ height: "100%" }}>

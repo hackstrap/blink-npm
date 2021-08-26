@@ -287,7 +287,7 @@ const MRRChart = (props) => {
         },
       });
     }
-  }, [currentYear]);
+  }, [currentYear, props.selectedStartup]);
 
   return (
     <div ref={chartRef} style={{ height: "100%" }}>

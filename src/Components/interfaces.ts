@@ -64,6 +64,8 @@ export interface InvestmentSummaryInterface {
   };
   aggregate_multiple: number;
   aggregate_net_irr: number;
+  current_total_investment_value_bool: boolean;
+  agg_net_irr_bool: boolean;
   current_total_investment_value: number;
   organization: string;
   startups_by: [
@@ -75,6 +77,11 @@ export interface InvestmentSummaryInterface {
   ];
   total_investment: string;
   total_startups: string;
+  total_transactions: {
+    all_transactions: number;
+    last_three_months: number;
+    this_year: number;
+  };
 }
 
 export interface ValuationDataInterface {
@@ -89,32 +96,22 @@ export interface ValuationDataInterface {
   valuation_data: {
     [key: string]: number[];
   };
+  valuation_bool: boolean;
 }
 
 export interface PortfolioDataInterface {
-  investor_id: string;
-  investment_summary: InvestmentSummaryInterface[];
-  startup_summary: {
-    startup_id: string;
-    total_money_invested: number;
-    current_investment_value: number;
-    multiple: number;
-    startup_net_irr_data: {
-      [key: string]: number[];
-    };
-    investment_time: {
-      in_months: number[];
-      in_days: number;
-      in_years: number;
-    };
-    organization: {
-      fees: number;
-      carry: number;
-      one_time_fees: number;
-      name: string;
-      discount: number;
-      valuation_cap: number;
-      entry_valuation: number;
-    }[];
+  current_investment_value: string;
+  current_investment_value_bool: boolean;
+  investment_time: {
+    in_days: number;
+    in_year_month_day: number[];
+    startup_total_number_of_transactions: number;
   };
+  startup_id: string;
+  startup_multiple: number;
+  startup_net_irr_bool: boolean;
+  startup_net_irr_data: {
+    [key: string]: (number | undefined)[];
+  };
+  total_money_invested: number;
 }
