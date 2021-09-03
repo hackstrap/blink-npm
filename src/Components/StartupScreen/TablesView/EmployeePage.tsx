@@ -1,28 +1,28 @@
-import React, { useContext, useState } from 'react'
-import OpexExpensesTable from '../../TableComponents/OpexExpensesTable'
-import { OptionInterface } from '../../interfaces'
+import React, { useContext, useState } from "react";
+import OpexExpensesTable from "../../TableComponents/OpexExpensesTable";
+import { OptionInterface } from "../../interfaces";
 import {
   deleteCollection,
   fetchCollection,
-  updateCollection
-} from '../../fetch'
+  updateCollection,
+} from "../../fetch";
 
 // import {
 //   convertToFrontendSchema,
 //   convertToBackendSchema,
 // } from "../RevenuePage/RevenuePage";
-import EmployeeTable from '../../TableComponents/EmployeeTable'
-import { globalContext } from '../../../AppContext'
-import { extractChartData } from '../../ChartsWrapper/MRRChart'
+import EmployeeTable from "../../TableComponents/EmployeeTable";
+import { globalContext } from "../../../AppContext";
+import { extractChartData } from "../../ChartsWrapper/MRRChart";
 
 interface PropsInterface {
-  selectedStartup: OptionInterface
+  selectedStartup: OptionInterface;
 }
 
 export interface TableDataInterface {
-  currency?: string
-  fields: OptionInterface[]
-  data: (string | undefined | number)[][]
+  currency?: string;
+  fields: OptionInterface[];
+  data: (string | undefined | number)[][];
 }
 
 export const convertToFrontendSchema = (
@@ -32,27 +32,27 @@ export const convertToFrontendSchema = (
   const convertedData: any = {
     fields: [...fields],
     data: [],
-    currency: 'INR'
-  }
+    currency: "INR",
+  };
   if (data.length == 0) {
-    console.log('no data')
-    return convertedData
+    console.log("no data");
+    return convertedData;
   } else {
     convertedData.data = data.map((document: any) => {
-      let arr: (string | undefined | number)[] = []
+      let arr: (string | undefined | number)[] = [];
       fields.forEach((field, i) => {
         if (document[field.accessor]) {
-          arr.push(document[field.accessor])
+          arr.push(document[field.accessor]);
         } else {
-          arr.push(undefined)
+          arr.push(undefined);
         }
-      })
-      arr.push(document._id)
-      return arr
-    })
-    return convertedData
+      });
+      arr.push(document._id);
+      return arr;
+    });
+    return convertedData;
   }
-}
+};
 
 export const convertToBackendSchema = (
   data: TableDataInterface,
@@ -61,36 +61,36 @@ export const convertToBackendSchema = (
 ) => {
   // fields should be strictly according to sequence of table rows
   let serverData = data.data.map((rowData, rowIndex) => {
-    let obj: any = {}
+    let obj: any = {};
 
     data.fields.forEach((field, i) => {
-      let d = rowData[i]?.toString()
+      let d = rowData[i]?.toString();
 
       // because we want to ignore 1st field
       obj = {
         ...obj,
-        [field.accessor]: d ? d : null
-      }
-    })
+        [field.accessor]: d ? d : null,
+      };
+    });
     // Adding the id
     if (rowData[fields.length]) {
       obj = {
         ...obj,
         // as ID will be the last one in array
-        _id: rowData[fields.length]
-      }
+        _id: rowData[fields.length],
+      };
     } else {
       obj = {
         ...obj,
         startup_id: startupId,
-        employee_id: ''
-      }
+        employee_id: "",
+      };
     }
 
-    return obj
-  })
-  return serverData
-}
+    return obj;
+  });
+  return serverData;
+};
 
 // export const employeeTableOptions = {
 //   department: [
@@ -125,47 +125,47 @@ export const convertToBackendSchema = (
 
 export const employeeTableFields = [
   {
-    Header: 'Name',
-    accessor: 'employee_name'
+    Header: "Name",
+    accessor: "employee_name",
   },
   {
-    Header: 'Department',
-    accessor: 'department'
+    Header: "Department",
+    accessor: "department",
   },
   {
-    Header: 'Role Type',
-    accessor: 'role_type'
+    Header: "Role Type",
+    accessor: "role_type",
   },
   {
-    Header: 'Role Name',
-    accessor: 'role_name'
+    Header: "Role Name",
+    accessor: "role_name",
   },
   {
-    Header: 'CXO',
-    accessor: 'cxo'
+    Header: "CXO",
+    accessor: "cxo",
   },
   {
-    Header: 'Annual Salary',
-    accessor: 'annual_salary'
+    Header: "Annual Salary",
+    accessor: "annual_salary",
   },
   {
-    Header: 'Start Date',
-    accessor: 'start_date'
+    Header: "Start Date",
+    accessor: "start_date",
   },
   {
-    Header: 'End Date',
-    accessor: 'end_data'
-  }
+    Header: "End Date",
+    accessor: "end_data",
+  },
   // {
   //   Header: "id",
   //   accessor: "_id",
   // },
-]
+];
 
 const EmployeePage = (props: PropsInterface) => {
-  const appContext = useContext(globalContext)
+  const appContext = useContext(globalContext);
   const [employeeTableData, setEmployeeTableData] =
-    useState<TableDataInterface | null>(null)
+    useState<TableDataInterface | null>(null);
   // const [currentYearEmployeeTable, setCurrentYearEmployeeTable] =
   //   useState<string>(new Date().getFullYear().toString());
 
@@ -173,7 +173,7 @@ const EmployeePage = (props: PropsInterface) => {
     fetchCollection(
       appContext?.apiRoute,
       appContext?.token,
-      'employee',
+      "employee",
       undefined,
       props.selectedStartup.accessor
     )
@@ -181,24 +181,24 @@ const EmployeePage = (props: PropsInterface) => {
         const frontendData = convertToFrontendSchema(
           res.data,
           employeeTableFields
-        )
-        setEmployeeTableData(frontendData)
+        );
+        setEmployeeTableData(frontendData);
       })
       .catch((err) => {
-        console.log(err)
-      })
-  }
+        console.log(err);
+      });
+  };
   React.useEffect(() => {
-    getData()
-  }, [])
+    getData();
+  }, []);
   return (
     <div
       style={{
-        width: '100%',
-        display: 'flex',
-        marginTop: '64px',
-        flexDirection: 'column',
-        gap: '64px'
+        width: "100%",
+        display: "flex",
+        marginTop: "64px",
+        flexDirection: "column",
+        gap: "64px",
       }}
     >
       {employeeTableData ? (
@@ -210,36 +210,36 @@ const EmployeePage = (props: PropsInterface) => {
                 data,
                 employeeTableFields,
                 props.selectedStartup.accessor
-              )
+              );
               deleteCollection(
                 appContext?.apiRoute,
                 appContext?.token,
-                'employee',
+                "employee",
                 serverData,
                 serverData[0]?._id
               )
                 .then((res) => {
-                  getData()
+                  getData();
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => console.log(err));
             }}
             changeHandler={(value: TableDataInterface) => {
               const serverData = convertToBackendSchema(
                 value,
                 employeeTableFields,
                 props.selectedStartup.accessor
-              )
+              );
               updateCollection(
                 appContext?.apiRoute,
                 appContext?.token,
-                'employee',
+                "employee",
                 serverData,
                 props.selectedStartup.accessor
               )
                 .then((res) => {
-                  getData()
+                  getData();
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => console.log(err));
             }}
             // currentYear={currentYearEmployeeTable}
             // setCurrentYear={(year: string) => setCurrentYearEmployeeTable(year)}
@@ -251,7 +251,7 @@ const EmployeePage = (props: PropsInterface) => {
         <div>No Data Avaliable</div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default EmployeePage
+export default EmployeePage;

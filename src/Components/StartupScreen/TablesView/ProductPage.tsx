@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import RevenueTable from "../../TableComponents/RevenueTable";
 import { testData, usersTableData } from "../../../RevenueData";
-import { CircularProgress, Container } from "@material-ui/core";
+import { CircularProgress, Container, Typography } from "@material-ui/core";
 import UsersTable from "../../TableComponents/UsersTable";
 import {
   fetchCollection,
@@ -15,6 +15,7 @@ import {
 } from "../../interfaces";
 import { globalContext } from "../../../AppContext";
 import ProductTable from "../../TableComponents/ProductTable";
+import { initializeProductTable } from "./CustomTables/initializeProductTable";
 
 export interface ProductDataInterface {
   _id?: string;
@@ -92,94 +93,10 @@ const ProductPage = (props: PropsInterface) => {
     )
       .then((res) => {
         if (res.data.length < 1) {
-          let emptyData = {
-            startup_id: props.selectedStartup.accessor,
-            year: parseInt(currentYear),
-            labels: [
-              "No. of Campaigns",
-              "Investors Participated",
-              "Total Invested Amount",
-              "Avg Investor Participation per Campaign",
-              "Avg Investor Investment Amount per Campaign",
-            ],
-            dataset: [
-              [
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-              ],
-              [
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-              ],
-              [
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-              ],
-              [
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-              ],
-              [
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-                undefined,
-              ],
-            ],
-          };
+          let emptyData = initializeProductTable(
+            props.selectedStartup.accessor,
+            currentYear
+          );
           setProductTableData(emptyData);
         } else {
           setProductTableData(res.data[0]);
@@ -214,28 +131,10 @@ const ProductPage = (props: PropsInterface) => {
             changeHandler={(data: any) => {
               let currentData = { ...data };
               if (!data.labels?.length) {
-                currentData = {
-                  startup_id: props.selectedStartup.accessor,
-                  year: parseInt(currentYear),
-                  labels: ["Fill your data here"],
-                  dataset: [
-                    [
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                      undefined,
-                    ],
-                  ],
-                };
+                currentData = initializeProductTable(
+                  props.selectedStartup.accessor,
+                  currentYear
+                );
               }
               updateCollection(
                 appContext?.apiRoute,
@@ -251,7 +150,12 @@ const ProductPage = (props: PropsInterface) => {
           <br />
         </div>
       ) : (
-        <CircularProgress />
+        <div>
+          <CircularProgress />
+          <Typography variant="subtitle1">
+            * Please contact Tyke team to enable this table
+          </Typography>
+        </div>
       )}
     </div>
   );

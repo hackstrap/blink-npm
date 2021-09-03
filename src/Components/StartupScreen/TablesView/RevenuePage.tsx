@@ -59,10 +59,10 @@ export const userTableFields = [
     Header: "Total New Customers Churned",
     accessor: "total_customers_churned",
   },
-  // {
-  //   Header: "Average Revenue Per Account",
-  //   accessor: "averageRevenuePerAccount",
-  // },
+  {
+    Header: "Total Registered Users",
+    accessor: "total_registered_users",
+  },
 ];
 
 export const createEmptyData = (year: string, fields: OptionInterface[]) => {
