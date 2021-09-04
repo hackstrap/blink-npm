@@ -40,6 +40,10 @@ export const fields = [
 export const userTableFields = [
   { Header: "", accessor: "" },
   {
+    Header: "Total Registered Users",
+    accessor: "total_registered_users",
+  },
+  {
     Header: "Total Monthly Active Users",
     accessor: "total_monthly_active_users",
   },
@@ -58,10 +62,6 @@ export const userTableFields = [
   {
     Header: "Total New Customers Churned",
     accessor: "total_customers_churned",
-  },
-  {
-    Header: "Total Registered Users",
-    accessor: "total_registered_users",
   },
 ];
 
@@ -197,7 +197,8 @@ const RevenuePage = (props: PropsInterface) => {
     new Date().getFullYear().toString()
   );
   const [currentYearUserTable, setCurrentYearUserTable] = useState<string>(
-    new Date().getFullYear().toString()
+    // new Date().getFullYear().toString()
+    "2020"
   );
   const getRevenueData = () => {
     fetchCollectionUnity(

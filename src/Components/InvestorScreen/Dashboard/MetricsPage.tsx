@@ -21,6 +21,7 @@ import { globalContext } from "../../../AppContext";
 import PageNotAvaliable from "../../PageNotAvaliable";
 import InvestorParticipation from "../../ChartsWrapper/Startups/Tyke/InvestorParticipation";
 import InvestorAmountChart from "../../ChartsWrapper/Startups/Tyke/InvestorAmount";
+import TotalRegisteredUsers from "../../ChartsWrapper/TotalRegisteredUsers";
 
 const useStyles = makeStyles({
   page: {
@@ -187,6 +188,17 @@ const MetricsPage = (props: PropsInterface) => {
                 chartInfo={
                   chartInfo?.avg_investor_investment_amount_per_campaign_chart
                 }
+                selectedStartup={props.selectedStartup}
+              />
+            </Grid>
+          ) : (
+            <div></div>
+          )}
+
+          {chartInfo?.total_registered_users_chart?.show_chart ? (
+            <Grid item lg={6} xs={12}>
+              <TotalRegisteredUsers
+                chartInfo={chartInfo?.total_registered_users_chart}
                 selectedStartup={props.selectedStartup}
               />
             </Grid>

@@ -35,10 +35,14 @@ interface TablePropsInterface {
   // };
 }
 
+const assignWidth = (normalWidth: number, extension: number) =>
+  window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
+
 const employeeTableFields = [
   {
     Header: "Name",
     accessor: "employee_name",
+    width: assignWidth(15, 0),
   },
   {
     Header: "Department",
@@ -51,6 +55,7 @@ const employeeTableFields = [
   {
     Header: "Role Name",
     accessor: "role_name",
+    width: assignWidth(12, 0),
   },
   {
     Header: "CXO",
@@ -59,6 +64,7 @@ const employeeTableFields = [
   {
     Header: "Annual Salary",
     accessor: "annual_salary",
+    width: assignWidth(8, 0),
   },
   {
     Header: "Start Date",
@@ -152,9 +158,6 @@ const formatDate = (date: string | number) => {
 
   return [year, month, day].join("-");
 };
-
-const assignWidth = (normalWidth: number, extension: number) =>
-  window.innerWidth > 1500 ? normalWidth + extension : normalWidth;
 
 const EmployeeTable = ({
   data,
@@ -271,7 +274,7 @@ const EmployeeTable = ({
     "Apprenticeship",
     "Freelance",
   ];
-  const booleanOption = ["Choose", "true", "false"];
+  const booleanOption = ["Choose", "True", "False"];
   const renderTableOptions = (num: number) => {
     if (num === 1) {
       return departmentOptions.map((item, i) => {
@@ -371,6 +374,7 @@ const EmployeeTable = ({
                 },
               });
             }}
+            style={{ color: "#9397B1" }}
           >
             Add Date
           </Typography>
@@ -380,7 +384,8 @@ const EmployeeTable = ({
           <input
             className={styles.editableInput}
             type="number"
-            value={thisData.data[i][j] !== undefined ? thisData.data[i][j] : 0}
+            value={thisData.data[i][j]}
+            placeholder="Enter Data"
             title={
               thisData.data[i][j] !== undefined ? `${thisData.data[i][j]}` : "0"
             }
@@ -402,11 +407,8 @@ const EmployeeTable = ({
           <input
             className={styles.editableInput}
             // type="number"
-            value={
-              thisData.data[i][j] !== undefined
-                ? thisData.data[i][j]
-                : "Enter Data"
-            }
+            value={thisData.data[i][j]}
+            placeholder="Enter Data"
             title={
               thisData.data[i][j] !== undefined
                 ? `${thisData.data[i][j]}`
