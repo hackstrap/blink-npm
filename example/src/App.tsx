@@ -8,8 +8,8 @@ const mainRoute = 'https://blink.hackstrap.com/'
 const App = () => {
   return (
     <BlinkApp
-      userInfo={{ Header: 'Startup 1', accessor: 'investor-1slug' }}
-      screen={'investorScreen'}
+      userInfo={{ Header: 'Startup 1', accessor: 'startup-1slug' }}
+      screen={'startupScreen'}
       view={'homeView'}
       page={'metrics'}
       apiRoute={mainRoute}
