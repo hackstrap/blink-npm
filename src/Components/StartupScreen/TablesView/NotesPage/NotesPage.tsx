@@ -8,6 +8,7 @@ import {
   Button,
   Grid,
   CircularProgress,
+  capitalize,
 } from "@material-ui/core";
 import NotesComponent from "../../../StartupScreen/TablesView/NotesPage/NotesComponent/NotesComponent";
 import { fetchCollection, updateCollection } from "../../../fetch";
@@ -104,7 +105,9 @@ const NotesPage = (props: PropsInterface) => {
         } else {
           console.log("note not avaliable, init empty note");
           setnoteData({
-            note_name: "Investor Data",
+            note_name: `Investor Updates ${capitalize(
+              currentMonth
+            )} ${currentYear}`,
             month: new Date().getMonth() + 1,
             note_data: [
               {

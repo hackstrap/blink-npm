@@ -18,14 +18,17 @@ export const fetchCollection = (
   collection: string,
   year?: string,
   startupId?: string,
-  month?: string
+  month?: string,
+  pageSize?: number
 ) => {
   return axios.get(
     `${
       apiRoute ? apiRoute : fallbackRoute
-    }v1/${collection}?page=${page}&page_size=${page_size}&startup_id=${
-      startupId ? startupId : ""
-    }${year ? `&year=${year}` : ""}${month ? "&month=" + month : ""}`,
+    }v1/${collection}?page=${page}&page_size=${
+      pageSize ? pageSize : page_size
+    }&startup_id=${startupId ? startupId : ""}${year ? `&year=${year}` : ""}${
+      month ? "&month=" + month : ""
+    }`,
     {
       headers: {
         Authorization: token,

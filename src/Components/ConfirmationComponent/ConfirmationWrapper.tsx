@@ -1,9 +1,9 @@
-import React from 'react'
-import Styles from './index.module.css'
+import React, { CSSProperties } from "react";
+import Styles from "./index.module.css";
 
 interface Cordinates {
-  x: Number
-  y: Number
+  x: Number;
+  y: Number;
 }
 
 /* ------------------------ Purpose of this component ----------------------- */
@@ -16,15 +16,15 @@ export default function ConfirmationWrapper({
   message,
   handler,
   children,
-  position
+  position,
 }: {
-  message: String
-  handler: Function
-  children: React.ReactNode
-  position?: Cordinates
+  message: String;
+  handler: Function;
+  children: React.ReactNode;
+  position?: Cordinates;
 }) {
   // const container = React.useRef()
-  const [show, setShow] = React.useState(false)
+  const [show, setShow] = React.useState(false);
 
   // React.useEffect(() => {
 
@@ -33,9 +33,9 @@ export default function ConfirmationWrapper({
   //   }
   // }, [])
   const containerStyle = {
-    display: 'flex',
-    transform: position ? `translate(${position.x}px,${position.y}px)` : 'none'
-  }
+    display: "flex",
+    transform: position ? `translate(${position.x}px,${position.y}px)` : "none",
+  };
   return (
     <div onClick={() => setShow(!show)}>
       {show ? (
@@ -61,5 +61,5 @@ export default function ConfirmationWrapper({
         <div>{children}</div>
       )}
     </div>
-  )
+  );
 }

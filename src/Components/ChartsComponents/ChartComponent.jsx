@@ -260,6 +260,9 @@ const ChartComponent = ({
                         method: "post",
                         url: `${appContext.apiRoute}blink/media/upload`,
                         data: formData,
+                        headers: {
+                          Authorization: appContext.token,
+                        },
                       })
                         .then((res) => {
                           e.target.style.opacity = "1";

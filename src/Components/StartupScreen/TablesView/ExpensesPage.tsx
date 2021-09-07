@@ -3,7 +3,11 @@ import React, { useContext, useState } from "react";
 import ExpensesTable from "../../TableComponents/ExpensesTable";
 import OpexExpensesTable from "../../TableComponents/OpexExpensesTable";
 import { OptionInterface, TableDataInterface } from "../../interfaces";
-import { fetchCollection, updateCollection } from "../../fetch";
+import {
+  fetchCollection,
+  fetchCollectionUnity,
+  updateCollection,
+} from "../../fetch";
 import { convertToFrontendSchema, convertToBackendSchema } from "./RevenuePage";
 import { globalContext } from "../../../AppContext";
 
@@ -87,10 +91,10 @@ const ExpensesPage = (props: PropsInterface) => {
     new Date().getFullYear().toString()
   );
   const getData1 = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
-      "expense",
+      "expenses",
       currentYearExpenseTable,
       props.selectedStartup.accessor
     )
@@ -108,7 +112,7 @@ const ExpensesPage = (props: PropsInterface) => {
   };
 
   const getData2 = () => {
-    fetchCollection(
+    fetchCollectionUnity(
       appContext?.apiRoute,
       appContext?.token,
       "opex",

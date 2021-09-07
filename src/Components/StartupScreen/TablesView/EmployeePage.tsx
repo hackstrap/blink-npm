@@ -175,7 +175,9 @@ const EmployeePage = (props: PropsInterface) => {
       appContext?.token,
       "employee",
       undefined,
-      props.selectedStartup.accessor
+      props.selectedStartup.accessor,
+      undefined,
+      100
     )
       .then((res) => {
         const frontendData = convertToFrontendSchema(

@@ -319,7 +319,9 @@ const NotesComponent = ({
   return (
     <div className={classes.mainContainer}>
       <div className={styles.notesHeading}>
-        {noteData?.note_name ? noteData.note_name : "Investor Data"}
+        {noteData?.note_name
+          ? noteData.note_name
+          : `Investor Updates ${capitalize(currentMonth)} ${currentYear}`}
       </div>
       <div className={styles.infoContainer}>
         <div className={styles.commonBtnContainer}>

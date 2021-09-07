@@ -317,7 +317,6 @@ const ExpensesTable = ({
       case 1:
       case 4:
       case 6:
-      case 12:
         if (thisData.data[currentYear][j][i + 1]) {
           return {
             ...currentData[i],

@@ -13,12 +13,12 @@ import { extractChartData } from "./MRRChart";
 
 const chartFields = [
   {
-    Header: "Total Registered Users",
-    accessor: "total_registered_users",
+    Header: "Total Registered Users Change (%)",
+    accessor: "total_registered_users_gr",
   },
   {
     Header: "Total Registered Users",
-    accessor: "total_registered_users_gr",
+    accessor: "total_registered_users",
   },
 ];
 

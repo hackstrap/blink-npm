@@ -197,8 +197,7 @@ const RevenuePage = (props: PropsInterface) => {
     new Date().getFullYear().toString()
   );
   const [currentYearUserTable, setCurrentYearUserTable] = useState<string>(
-    // new Date().getFullYear().toString()
-    "2020"
+    new Date().getFullYear().toString()
   );
   const getRevenueData = () => {
     fetchCollectionUnity(

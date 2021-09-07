@@ -144,7 +144,7 @@ const ProfileSettings = (props: PropsInterface) => {
     date_format: "",
     number_format: "",
     first_month_of_financial_year: "",
-    first_month_of_tax_year: "",
+    first_month_of_tax_year: "Same as financial year",
     accounting_method: "",
     company_type: "",
     time_zone: "",
@@ -434,7 +434,7 @@ const ProfileSettings = (props: PropsInterface) => {
             placeholder="Enter Currency"
             className={classes.inputValue}
             value={startupInfo?.currency}
-            open={currencySelect}
+            // open={currencySelect}
             multiple
             onChange={(e) => {
               if (Array.isArray(e.target.value))
