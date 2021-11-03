@@ -327,7 +327,6 @@ const ProductTable = ({
     let thisData = { ...state };
     let currentData: ProductTableRowInterface[] = [];
     let loop1 = thisData?.labels?.length;
-    console.log(state);
     for (let i = 0; i < loop1; i++) {
       // Add data for first column
       currentData[i] = {
@@ -464,8 +463,6 @@ const ProductTable = ({
     () => generateTableConfig(state, monthsArray),
     [state.dataset, deleteRowMode]
   );
-
-  console.log(tableData, tableConfig);
 
   const [showColumnConfig, setShowColumnConfig] = useState(false);
   const [showCurrencyConfig, setShowCurrencyConfig] = useState(false);

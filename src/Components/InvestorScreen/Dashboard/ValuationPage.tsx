@@ -559,8 +559,6 @@ const ValuationPage = (props: PropsInterface) => {
     getInvestedStartupInfo();
   }, [props.selectedStartup]);
 
-  console.log(valuationData, portfolioData);
-
   return (
     <Container maxWidth="lg">
       {!valuationData && portfolioData ? (
