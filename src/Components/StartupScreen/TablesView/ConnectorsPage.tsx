@@ -165,7 +165,7 @@ const ConnectorsPage = () => {
           <img style={{ width: '50px', height: '50px' }} src={excelIcon} />
           <div style={{ marginLeft: '2rem' }}>
             <Typography className={classes.boldText}>
-              Uplod your data using Excel File
+              Upload your data using Excel File
             </Typography>
             <button
               style={{
@@ -267,7 +267,7 @@ const ConnectorsPage = () => {
             style={{ marginLeft: '2rem' }}
             className={classes.boldText}
           >
-            Uplod your Quickbooks data
+            Upload your Quickbooks data
           </Typography>
           <button
             style={{
